@@ -3,7 +3,7 @@
   "versionName": "1.2.0",
   "versionCode": 4,
   "package": "app.shike.diet.fixed",
-  "payload_file_count": 38,
+  "payload_file_count": 39,
   "manifest_note": "files 列表不包含 SOURCE_MANIFEST.json 自身；文本文件哈希按 Git 的 LF 规范化内容计算",
   "excluded": [
     "签名私钥与密码",
@@ -27,6 +27,11 @@
       "path": "BUILD_VERIFICATION.json",
       "bytes": 848,
       "sha256": "2626745e8930f12b2679d495711983c6dfd8b273e74d7b55c4994be59748cfcc"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4274,
+      "sha256": "0370d1e84c4ca842dde19d860d1e234048e590e5a52a901bb48289cd56ae8448"
     },
     {
       "path": "README_zh-CN.md",
