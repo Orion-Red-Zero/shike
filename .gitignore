@@ -31,3 +31,10 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Generated signing material and test output
+keystore/
+*.pass
+tests/output/
+__pycache__/
+*.pyc
