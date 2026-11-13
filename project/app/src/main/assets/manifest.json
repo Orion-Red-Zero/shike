@@ -1,0 +1,70 @@
+{
+  "id": "/shike-app/",
+  "name": "食刻 · 每日饮食能量账本",
+  "short_name": "食刻",
+  "description": "拍照或描述饮食，确认份量后记录每日能量。依据 FAO 能量换算原则与 USDA FoodData Central 食物成分数据。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#f4f6f1",
+  "theme_color": "#173f35",
+  "categories": [
+    "health",
+    "food",
+    "lifestyle",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "记一笔",
+      "short_name": "记录",
+      "url": "./index.html?screen=add",
+      "description": "用文字或照片记录饮食"
+    },
+    {
+      "name": "今日汇总",
+      "short_name": "今日",
+      "url": "./index.html?screen=today",
+      "description": "查看今日已确认摄入"
+    },
+    {
+      "name": "摄入趋势",
+      "short_name": "趋势",
+      "url": "./index.html?screen=trend",
+      "description": "查看近 7 天趋势"
+    }
+  ]
+}

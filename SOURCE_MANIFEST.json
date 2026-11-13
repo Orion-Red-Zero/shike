@@ -1,0 +1,202 @@
+{
+  "application": "食刻",
+  "versionName": "1.2.0",
+  "versionCode": 4,
+  "package": "app.shike.diet.fixed",
+  "payload_file_count": 37,
+  "manifest_note": "files 列表不包含 SOURCE_MANIFEST.json 自身",
+  "excluded": [
+    "签名私钥与密码",
+    "Android SDK",
+    "APK 文件",
+    "构建产物",
+    "测试输出与缓存"
+  ],
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 79,
+      "sha256": "f9d77e30e4335ac6ece09c6ce95ba12973cada8483f118c56b37aa76c3c711d0"
+    },
+    {
+      "path": "BUILD_VERIFICATION.json",
+      "bytes": 848,
+      "sha256": "2626745e8930f12b2679d495711983c6dfd8b273e74d7b55c4994be59748cfcc"
+    },
+    {
+      "path": "README_zh-CN.md",
+      "bytes": 5327,
+      "sha256": "9bc3e74e72aea40a90e34f282d1a2c33293ef9f582b482ef964e0fde9554d5cc"
+    },
+    {
+      "path": "project/app/src/main/AndroidManifest.xml",
+      "bytes": 1540,
+      "sha256": "a3c18edb17e12fe5148dfec8eb910920977b1cbf9307df069e377d2538d7da1b"
+    },
+    {
+      "path": "project/app/src/main/assets/icons/apple-touch-icon.png",
+      "bytes": 10592,
+      "sha256": "9fb858171d71c3d53c2a4749c98c26a08d6b43bce7fdb5c80308b116295e0581"
+    },
+    {
+      "path": "project/app/src/main/assets/icons/icon-192.png",
+      "bytes": 11478,
+      "sha256": "c63d057e0643dc584a7d47aace70f6b5d8924d4a8a94779cdf4be78aa030bb4f"
+    },
+    {
+      "path": "project/app/src/main/assets/icons/icon-512.png",
+      "bytes": 30751,
+      "sha256": "f4954c5c6ddf66df5e5f8ce50992825716e80787c3d054d73b470beb73fa899a"
+    },
+    {
+      "path": "project/app/src/main/assets/icons/icon-maskable-512.png",
+      "bytes": 19757,
+      "sha256": "5fb44333d91408473da6a0076e41e7b15c017a35fd17ec379525712517049e68"
+    },
+    {
+      "path": "project/app/src/main/assets/index.html",
+      "bytes": 182262,
+      "sha256": "4f70a210fef38655ad75313ea770ae9fa11cb07c07774edebff3952489e7e4a5"
+    },
+    {
+      "path": "project/app/src/main/assets/lucide-LICENSE.txt",
+      "bytes": 948,
+      "sha256": "b5a68e977892ce54fcc16ae6c2eef587438ff9a7d8b9607f29f8635c5d33d76d"
+    },
+    {
+      "path": "project/app/src/main/assets/manifest.json",
+      "bytes": 1665,
+      "sha256": "7958fd861ef76c0b9dcf26fd0eddea831163d274169197afc755e013d8f28a50"
+    },
+    {
+      "path": "project/app/src/main/assets/sw.js",
+      "bytes": 1848,
+      "sha256": "0ddf6d62a524de807f54a1eb53130675942f11eaa27fac72f681d4e29ff4452c"
+    },
+    {
+      "path": "project/app/src/main/java/app/shike/diet/fixed/MainActivity.java",
+      "bytes": 20549,
+      "sha256": "1ba33bc673acb7baa38bec911e1ea42904a2146bad8c603f415e9b4f4b9a89de"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "bytes": 252,
+      "sha256": "b4f485d6af24776240db5c3bb111073b76c225751e40e044c2c043338c6d7b3d"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+      "bytes": 252,
+      "sha256": "b4f485d6af24776240db5c3bb111073b76c225751e40e044c2c043338c6d7b3d"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "bytes": 3937,
+      "sha256": "23c88c1090bb6c1cd7a7fddc782609a9d0bcf95428cdb0e24d919c0c0cefbb93"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+      "bytes": 3937,
+      "sha256": "23c88c1090bb6c1cd7a7fddc782609a9d0bcf95428cdb0e24d919c0c0cefbb93"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "bytes": 2522,
+      "sha256": "ab3a0bc20d1ae95a60d572d18848795107c3c199de5b05dfa1c35a27599d6f26"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+      "bytes": 2522,
+      "sha256": "ab3a0bc20d1ae95a60d572d18848795107c3c199de5b05dfa1c35a27599d6f26"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "bytes": 5531,
+      "sha256": "528d39ce4f744f6ad3b32c852f32662adc4db28fc815b5188786f3b89d3c90da"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+      "bytes": 5531,
+      "sha256": "528d39ce4f744f6ad3b32c852f32662adc4db28fc815b5188786f3b89d3c90da"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "bytes": 8627,
+      "sha256": "2c3d9c795c9c6530e1f24b3dded86f5fe7bb0dce6e7ebadf72e76e20ffff0d47"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+      "bytes": 8627,
+      "sha256": "2c3d9c795c9c6530e1f24b3dded86f5fe7bb0dce6e7ebadf72e76e20ffff0d47"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "bytes": 11802,
+      "sha256": "b83aa4e17e0bb233bb17fa31aa67a043a68202521b6a1b0af92613095f20189e"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "bytes": 19453,
+      "sha256": "734628a1e62a65d74b789f1af5f67078de3c3b669a868dc894a547e04c8917cb"
+    },
+    {
+      "path": "project/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+      "bytes": 11802,
+      "sha256": "b83aa4e17e0bb233bb17fa31aa67a043a68202521b6a1b0af92613095f20189e"
+    },
+    {
+      "path": "project/app/src/main/res/values/colors.xml",
+      "bytes": 195,
+      "sha256": "67954a421d8122b7d629ffc8cf15ba0347668e5921daea5925a494ec0d594097"
+    },
+    {
+      "path": "project/app/src/main/res/values/strings.xml",
+      "bytes": 108,
+      "sha256": "908e3711d69cc6cc1f4f6050b0e1c102f6701f2a337f9ecc32123ac4526168d7"
+    },
+    {
+      "path": "project/app/src/main/res/values/styles.xml",
+      "bytes": 689,
+      "sha256": "27f39c1a777863c98186ddbd1a94382d81debb23c28a1e046e0667ed91105deb"
+    },
+    {
+      "path": "reference/Shike_1.2.0_README_zh-CN.txt",
+      "bytes": 4025,
+      "sha256": "f0a4237a8c59d4050a5431bbe9acdfa13114d248bb6b4115f5fa8f2029cc796c"
+    },
+    {
+      "path": "reference/Shike_1.2.0_runtime-tests.json",
+      "bytes": 3758,
+      "sha256": "2c0612e5623445f1c46d610d062b657914a883c10538391c5245fd37c1b2bc46"
+    },
+    {
+      "path": "reference/Shike_1.2.0_verification.json",
+      "bytes": 2825,
+      "sha256": "bc0af1b2e29be305977d1d24e84007d1774fb8c14ff7446aae630e8eeee034fb"
+    },
+    {
+      "path": "scripts/build_apk.sh",
+      "bytes": 5223,
+      "sha256": "b53ae43f120df2604ab418fdeaae50012516fc38959918a97832e1ef4d8401d1"
+    },
+    {
+      "path": "scripts/verify_apk_assets.py",
+      "bytes": 2785,
+      "sha256": "b57c52c9ef3a9f0ce63b532d39fc3ea787f31e3b6f862f7f701f07f41cd9685c"
+    },
+    {
+      "path": "tests/baselines/index-1.1.0.html",
+      "bytes": 150670,
+      "sha256": "5c314ebe56994398cdd5c1ddca312b87ae3a8ffc806e5931c15e0005f8800430"
+    },
+    {
+      "path": "tests/preflight_1_2_0.py",
+      "bytes": 4548,
+      "sha256": "f29b212e6b57596568b80df1e8cd304535e95a41e1a090bd7d6fe0ca9b3fdaaa"
+    },
+    {
+      "path": "tests/test_1_2_0_vm.cjs",
+      "bytes": 21823,
+      "sha256": "360f8a3aeefdc58b96215266710f46728a2983325ac27c503d3d23d2ae86b07d"
+    }
+  ]
+}

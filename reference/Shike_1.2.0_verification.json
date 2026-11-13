@@ -1,0 +1,82 @@
+{
+  "status": "PASS",
+  "application": {
+    "label": "食刻",
+    "package": "app.shike.diet.fixed",
+    "versionName": "1.2.0",
+    "versionCode": 4,
+    "minAndroid": "Android 10 / API 29",
+    "targetSdk": 35
+  },
+  "apk": {
+    "filename": "shike-android-1.2.0.apk",
+    "bytes": 227566,
+    "sha256": "2fb54e1d58c2ec289977ba871b4472c302cbf2fe0889fdf0786018417c87203b",
+    "zipalign": "PASS",
+    "zip_crc": "PASS",
+    "dex_magic": "PASS",
+    "dex_version": "039",
+    "native_diagnostic_version": "食刻 1.2.0",
+    "signature_v3": "PASS",
+    "certificate_sha256": "df2e3ce99ba4cd1ea31ec94adecb4e1877c7cc9ad8159ff33733a39535bd75b3",
+    "certificate_matches_1_1_0": true
+  },
+  "web_assets": {
+    "source_assets_byte_compared": 8,
+    "asset_mismatches": [],
+    "inline_scripts_syntax_checked": 4,
+    "service_worker_syntax": "PASS",
+    "html_artifact_checker_on_packaged_html": "PASS",
+    "dom_ids": 113,
+    "duplicate_dom_ids": [],
+    "lucide_icons": 56,
+    "missing_icons": [],
+    "navigation_targets": [
+      "today",
+      "add",
+      "trend",
+      "me"
+    ],
+    "meal_targets": [
+      "早餐",
+      "午餐",
+      "晚餐",
+      "加餐"
+    ],
+    "dynamic_photo_controls": [
+      "photo-add-all",
+      "data-photo-add",
+      "data-photo-usda"
+    ],
+    "food_data_unchanged_from_1_1_0": true,
+    "storage_key_preserved": "shike-food-energy-ledger-v1"
+  },
+  "runtime_regression": {
+    "status": "PASS",
+    "passed_groups": 15,
+    "failed_groups": 0,
+    "html_source": "index.html extracted from final signed APK",
+    "method": "Node VM + deterministic DOM/canvas/fetch fixtures; no rendered browser preview",
+    "includes": [
+      "legacy data and global custom food reuse across meals/dates",
+      "food edit/delete history snapshots",
+      "quantity validation",
+      "local image resize/JPEG conversion",
+      "dual confidence/range/reference object",
+      "batch add and duplicate protection",
+      "missing weight rejection",
+      "recognition failure/no-consent guards",
+      "request adapter fixtures",
+      "USDA match fixture and local energy recomputation",
+      "breakfast 304.4 kcal and lunch 477.5 kcal baselines",
+      "CSV formula escaping and reload persistence"
+    ]
+  },
+  "verification_boundary": {
+    "browser_preview_or_screenshot_performed": false,
+    "android_device_or_emulator_test_performed": false,
+    "real_photo_recognition_accuracy_test_performed": false,
+    "fixture_notice": "识别与 USDA 在线响应均为协议测试夹具，不代表真实识别准确率或实时 USDA 查询结果。",
+    "note": "代码级、签名 APK 包级及包内页面无渲染运行时检查通过；真机启动、相机、导出和实际覆盖升级仍需设备安装验证。单目照片不能保证绝对克重或识别准确率。"
+  }
+}

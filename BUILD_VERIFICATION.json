@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "source_version": "食刻 1.2.0",
+  "runtime_test_groups_passed": 15,
+  "static_preflight": "PASS",
+  "full_apk_rebuild_from_source": "PASS",
+  "official_apk": {
+    "filename": "shike-android-1.2.0.apk",
+    "sha256": "2fb54e1d58c2ec289977ba871b4472c302cbf2fe0889fdf0786018417c87203b",
+    "assets_match_source": true,
+    "certificate_sha256": "df2e3ce99ba4cd1ea31ec94adecb4e1877c7cc9ad8159ff33733a39535bd75b3"
+  },
+  "rebuilt_apk": {
+    "filename": "shike-android-1.2.0.apk (not included)",
+    "sha256": "881961d35c819c43ee5ebb55a7bcddd86a8f746c7074426f9058c8f0bf3e222e",
+    "assets_match_source": true,
+    "certificate_matches_official": true
+  },
+  "source_asset_count": 8,
+  "note": "APK 文件哈希可因 ZIP 时间戳和签名块而不同；本核验要求应用资源逐字节一致且签名证书一致。"
+}

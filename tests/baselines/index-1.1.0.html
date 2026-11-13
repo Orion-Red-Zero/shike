@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script>
+if (!window.globalThis) window.globalThis = window;
+if (!Array.prototype.at) Object.defineProperty(Array.prototype, "at", {
+  configurable: true,
+  writable: true,
+  value: function(index) {
+    var i = Math.trunc(index) || 0;
+    if (i < 0) i += this.length;
+    if (i < 0 || i >= this.length) return void 0;
+    return this[i];
+  }
+});
+if (!String.prototype.matchAll) Object.defineProperty(String.prototype, "matchAll", {
+  configurable: true,
+  writable: true,
+  value: function(regexp) {
+    var flags = regexp.flags || "";
+    if (flags.indexOf("g") < 0) flags += "g";
+    var copy = new RegExp(regexp.source, flags);
+    var text = String(this);
+    return function* () {
+      var match;
+      while ((match = copy.exec(text)) !== null) {
+        yield match;
+        if (match[0] === "") copy.lastIndex++;
+      }
+    }();
+  }
+});
+window.SHIKE_NATIVE_ANDROID = true;
+window.__shikeBootOK = false;
+window.__shikeErrors = [];
+window.addEventListener("error", function(e) {
+  window.__shikeErrors.push(String(e.message || e.error || "页面资源错误"));
+});
+window.addEventListener("unhandledrejection", function(e) {
+  window.__shikeErrors.push("未处理 Promise：" + String(e.reason && (e.reason.stack || e.reason.message) || e.reason));
+});
+
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173f35">
+<meta name="color-scheme" content="light">
+<meta name="description" content="食刻：拍照或描述，确认份量后记录每日饮食能量。依据 FAO 能量换算与 USDA FoodData Central 食物成分数据。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="食刻">
+<meta name="application-name" content="食刻">
+<meta name="mobile-web-app-capable" content="yes">
+<title>食刻 · 每日饮食能量</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<style>:root{
+  --bg:#f4f6f1;--card:#ffffff;--ink:#152620;--ink-2:#33463c;--muted:#6d7c73;--faint:#93a098;
+  --line:#e2e8de;--soft:#eef2ea;
+  --forest:#173f35;--forest-2:#12463a;--accent:#c3e68c;--accent-ink:#2c4a1e;
+  --protein:#7cc4b0;--carb:#c3e68c;--fat:#efc37b;
+  --danger:#a8403a;--warn-bg:#fff8ef;--warn-line:#ecd6ba;--warn-ink:#7b5225;
+  --r-lg:22px;--r-md:16px;--r-sm:11px;
+  --shadow:0 2px 10px rgba(20,45,35,.05);
+  --font:"PingFang SC","HarmonyOS Sans SC","Noto Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --tab-h:64px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+i[data-icon]{display:inline-flex;align-items:center;justify-content:center;font-style:normal}
+[hidden]{display:none!important}
+:focus-visible{outline:2.5px solid #7ba663;outline-offset:2px;border-radius:6px}
+
+/* frame */
+.app{max-width:520px;margin:0 auto;min-height:100dvh;background:var(--bg);position:relative;display:flex;flex-direction:column}
+@media(min-width:560px){
+  body{background:#e8ece3}
+  .app{box-shadow:0 0 60px rgba(20,45,35,.10);min-height:100dvh}
+}
+.appbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 18px 10px;background:rgba(244,246,241,.88);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid transparent;transition:border-color .2s}
+.appbar.scrolled{border-bottom-color:var(--line)}
+.appbar-mark{width:34px;height:34px;border-radius:10px;background:var(--forest);color:var(--accent);display:grid;place-items:center;font-size:9px;font-weight:800;letter-spacing:-.02em;flex:none}
+.appbar-title{font-size:17px;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
+.appbar-sub{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:1px;letter-spacing:.02em}
+.appbar-spacer{flex:1}
+.icon-btn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);background:transparent}
+.icon-btn:active{background:var(--soft)}
+.icon-btn svg{width:21px;height:21px}
+
+main{flex:1;padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 26px)}
+.screen{display:none;padding:4px 16px 0;animation:fade .22s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.screen{animation:none}*{transition:none!important}}
+
+/* generic */
+.card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);border:1px solid rgba(226,232,222,.7)}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:24px 2px 10px}
+.section-head h2{font-size:15px;margin:0;font-weight:700;letter-spacing:-.01em}
+.section-head .link{font-size:12.5px;color:var(--forest);font-weight:650;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.section-head .meta{font-size:12px;color:var(--muted)}
+.btn{min-height:46px;border-radius:14px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14.5px;font-weight:700;transition:transform .12s ease,background .15s}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:var(--forest);color:#fff}
+.btn-primary svg{color:var(--accent)}
+.btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.btn-soft{background:var(--soft);color:var(--forest)}
+.btn-danger{background:#fff;border:1px solid #eccfcc;color:var(--danger)}
+.btn-block{width:100%}
+.btn-sm{min-height:38px;padding:0 13px;font-size:13px;border-radius:11px}
+.btn[disabled]{opacity:.45}
+.chip{min-height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:12.5px;color:var(--ink-2);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.chip:active{background:var(--soft)}
+.chip.solid{background:var(--forest);color:#fff;border-color:var(--forest)}
+.field{display:block;margin-bottom:14px}
+.field-label{display:block;font-size:12.5px;font-weight:650;color:var(--ink-2);margin-bottom:6px}
+.input,.textarea,.select{width:100%;border:1px solid var(--line);background:var(--card);border-radius:var(--r-md);padding:12px 13px;font-size:15px;outline:none;transition:border-color .15s,box-shadow .15s}
+.input:focus,.textarea:focus,.select:focus{border-color:#7ba663;box-shadow:0 0 0 3px rgba(123,166,99,.14)}
+.textarea{min-height:104px;resize:vertical;line-height:1.7}
+.select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236d7c73' stroke-width='2' stroke-linecap='round'><path d='m6 9 6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 11px center;padding-right:34px}
+.hint{font-size:11.5px;color:var(--muted);line-height:1.6;margin:6px 0 0}
+.row{display:flex;align-items:center;gap:10px}
+.mt10{margin-top:10px}.mt14{margin-top:14px}.mt20{margin-top:20px}
+
+/* week strip */
+.weekstrip{display:flex;gap:6px;margin:8px 0 16px}
+.day{flex:1;border-radius:14px;padding:8px 0 7px;text-align:center;background:transparent;border:1px solid transparent;color:var(--muted);min-height:58px}
+.day span{display:block;font-size:10.5px;letter-spacing:.02em}
+.day strong{display:block;font-size:15.5px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.day.today strong{color:var(--forest)}
+.day.sel{background:var(--forest);border-color:var(--forest);color:#c9d9cd}
+.day.sel strong{color:#fff}
+.day .dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--accent);margin:3px auto 0;opacity:0}
+.day.has .dot{opacity:1}
+.day.sel .dot{background:var(--accent)}
+
+/* hero ring */
+.hero{background:linear-gradient(160deg,#1a4a3d 0%,#123a30 60%,#0f332a 100%);border-radius:26px;padding:20px 20px 18px;color:#fff;position:relative;overflow:hidden;box-shadow:0 14px 34px rgba(18,50,40,.22)}
+.hero::after{content:"";position:absolute;width:210px;height:210px;right:-70px;top:-80px;background:radial-gradient(circle,rgba(195,230,140,.20),transparent 65%);pointer-events:none}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11.5px;color:#b9cbbf;letter-spacing:.04em}
+.hero-top b{color:#e9f2e6;font-weight:650;letter-spacing:0}
+.ring-wrap{display:flex;align-items:center;gap:14px;margin-top:10px}
+.ring{width:132px;height:132px;flex:none;position:relative}
+.ring svg{width:132px;height:132px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-linecap:round}
+.ring .bg{stroke:rgba(255,255,255,.13);stroke-width:9}
+.ring .fg{stroke:var(--accent);stroke-width:9;transition:stroke-dashoffset .5s ease}
+.ring .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.ring .mid b{font-size:29px;font-weight:750;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.ring .mid span{font-size:10px;color:#a9bfb0;letter-spacing:.08em;text-transform:uppercase}
+.hero-nums{min-width:0;flex:1}
+.hero-nums .big{font-size:15px;color:#dbe8dc}
+.hero-nums .big strong{font-size:19px;font-weight:750;color:#fff;font-variant-numeric:tabular-nums}
+.hero-nums .sub{font-size:12px;color:#a9bfb0;margin-top:4px;font-variant-numeric:tabular-nums}
+.hero-nums .goal-line{margin-top:12px}
+.hero-nums .goal-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--accent);background:rgba(195,230,140,.12);border:1px solid rgba(195,230,140,.28);padding:6px 11px;border-radius:999px;font-weight:650}
+.macro-stack{display:flex;height:6px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.12);margin-top:16px}
+.macro-stack span{display:block;width:0;transition:width .4s ease}
+.macro-stack .p{background:var(--protein)}.macro-stack .c{background:var(--carb)}.macro-stack .f{background:var(--fat)}
+.macro-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.macro-cell{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 10px}
+.macro-cell i{display:block;width:6px;height:6px;border-radius:50%;margin-bottom:5px}
+.macro-cell i.p{background:var(--protein)}.macro-cell i.c{background:var(--carb)}.macro-cell i.f{background:var(--fat)}
+.macro-cell span{display:block;font-size:10px;color:#a9bfb0}
+.macro-cell b{display:block;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px}
+
+/* meal summary */
+.meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.meal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 13px;text-align:left}
+.meal-card:active{background:var(--soft)}
+.meal-card .m-top{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+.meal-card b{display:block;font-size:18px;font-weight:750;letter-spacing:-.02em;margin-top:6px;font-variant-numeric:tabular-nums}
+.meal-card b small{font-size:10.5px;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
+.meal-card .m-items{font-size:11px;color:var(--faint);margin-top:2px}
+
+/* entry rows */
+.entry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:13px 0;border-bottom:1px solid var(--line);align-items:center}
+.entry:last-child{border-bottom:0}
+.entry-main{min-width:0}
+.entry-title{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.entry-title strong{font-size:14.5px;font-weight:650;overflow-wrap:anywhere}
+.entry-title em{font-style:normal;font-size:10.5px;color:var(--muted);background:var(--soft);padding:1px 6px;border-radius:5px}
+.entry-sub{font-size:11.5px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere;line-height:1.5}
+.entry-sub .warn{color:var(--warn-ink)}
+.entry-right{display:flex;align-items:center;gap:2px}
+.entry-kcal{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.entry-kcal b{font-size:15px;font-weight:750}
+.entry-kcal small{display:block;font-size:10px;color:var(--muted);font-weight:500}
+.entry-act{display:flex;gap:0;margin-left:2px}
+.entry-act button{width:34px;height:40px;display:grid;place-items:center;color:var(--faint);border-radius:9px}
+.entry-act button:active{background:var(--soft)}
+.entry-act button.del:active{color:var(--danger)}
+.entry-act svg{width:16px;height:16px}
+.meal-group{margin-bottom:16px}
+.meal-group:last-child{margin-bottom:0}
+.meal-title{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-2);font-weight:650;margin-bottom:2px}
+.meal-title .ln{flex:1;height:1px;background:var(--line)}
+.meal-title .k{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* empty */
+.empty{text-align:center;padding:26px 18px 22px;color:var(--muted)}
+.empty i{display:inline-flex;width:52px;height:52px;border-radius:16px;background:var(--soft);color:#7f9488;align-items:center;justify-content:center;margin-bottom:10px}
+.empty i svg{width:26px;height:26px;stroke-width:1.5}
+.empty h3{margin:0 0 4px;font-size:14px;color:var(--ink-2)}
+.empty p{margin:0 auto;font-size:12.5px;max-width:280px;line-height:1.6}
+
+/* add screen */
+.tabline{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:14px;margin:6px 0 16px}
+.tabline button{flex:1;min-height:38px;border-radius:11px;font-size:13.5px;font-weight:650;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:7px}
+.tabline button[aria-selected="true"]{background:var(--card);color:var(--forest);box-shadow:0 1px 5px rgba(20,45,35,.09)}
+.tabline svg{width:17px;height:17px}
+.examples{display:flex;gap:7px;overflow-x:auto;padding:2px 0 8px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.examples::-webkit-scrollbar{display:none}
+.mealpick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mealpick button{min-height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:12.5px;color:var(--muted);font-weight:600}
+.mealpick button[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+
+/* photo */
+.photo-box{border:1.5px dashed #c2cebd;border-radius:var(--r-md);background:#fbfcf9;min-height:190px;display:grid;place-items:center;text-align:center;padding:20px;position:relative;overflow:hidden}
+.photo-box.empty-photo{padding:20px 16px}
+.photo-box .ph-icon{width:46px;height:46px;border-radius:14px;background:var(--soft);color:var(--forest);display:grid;place-items:center;margin:0 auto 10px}
+.photo-box h3{margin:0 0 4px;font-size:14px}
+.photo-box p{margin:0 0 14px;font-size:12px;color:var(--muted);max-width:270px;line-height:1.6}
+.photo-box .ph-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.photo-box.has-photo{border-style:solid;border-color:var(--line);padding:0;min-height:230px;background:#10251f}
+.photo-box img{width:100%;height:100%;max-height:320px;object-fit:contain;display:none}
+.photo-box.has-photo img{display:block}
+.photo-box.has-photo .ph-inner{display:none}
+.photo-rm{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;background:rgba(12,32,26,.78);color:#fff;display:grid;place-items:center;backdrop-filter:blur(4px)}
+.photo-rm svg{width:17px;height:17px}
+label.filebtn{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:650}
+label.filebtn:active{background:var(--soft)}
+.service-note{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--muted);margin-top:10px}
+.service-note span{display:flex;align-items:center;gap:6px;min-width:0}
+.service-note svg{width:15px;height:15px;flex:none}
+.inline-link{color:var(--forest);font-weight:650;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#b9c9b0;font-size:11.5px;white-space:nowrap}
+
+/* review */
+.review-wrap{margin-top:20px}
+.review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.review-head h3{margin:0;font-size:14.5px}
+.review-head p{margin:2px 0 0;font-size:11.5px;color:var(--muted);line-height:1.5}
+.rcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:12px;margin-bottom:9px;box-shadow:var(--shadow)}
+.rcard.unmatched{border-color:var(--warn-line);background:var(--warn-bg)}
+.rcard-top{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:8px;align-items:start}
+.rcard .select{min-height:42px;font-size:13.5px;padding:9px 30px 9px 11px;border-radius:11px}
+.rcard .del-row{width:34px;height:42px;display:grid;place-items:center;color:var(--faint);border-radius:9px}
+.rcard .del-row:active{background:var(--soft);color:var(--danger)}
+.rcard .del-row svg{width:16px;height:16px}
+.rcard-grid{display:grid;grid-template-columns:1fr 1fr 92px;gap:7px;margin-top:8px}
+.rcard-grid .input,.rcard-grid .select{min-height:40px;font-size:13px;padding:8px 10px;border-radius:10px}
+.rcard-grid .select{padding-right:28px;background-position:right 9px center}
+.rcard-kcal{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;background:var(--soft);border-radius:10px;padding:6px 10px}
+.rcard-kcal b{font-size:14px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1.2}
+.rcard-kcal small{font-size:10px;color:var(--muted)}
+.rcard-meta{display:flex;gap:6px;align-items:flex-start;font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.55}
+.rcard-meta svg{width:13px;height:13px;margin-top:2px}
+.rcard-meta .usda-link{color:var(--forest);text-decoration:underline;font-size:10.5px;padding:0;white-space:nowrap}
+.review-foot{display:flex;gap:8px;margin-top:12px}
+.review-foot .btn-primary{flex:1}
+
+/* trend */
+.seg{display:inline-flex;gap:3px;background:var(--soft);padding:3px;border-radius:10px}
+.seg button{padding:5px 11px;border-radius:8px;font-size:12px;color:var(--muted);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--forest);box-shadow:0 1px 4px rgba(20,45,35,.08)}
+.chart{display:flex;align-items:flex-end;gap:8px;height:168px;padding:8px 4px 0;margin-top:6px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%;min-width:0}
+.bar-val{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar-stick{width:100%;max-width:34px;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#9fd47a,#78b95c);min-height:3px;transition:height .35s ease;position:relative}
+.bar-col.over .bar-stick{background:linear-gradient(180deg,#f0b06a,#df9450)}
+.bar-col.empty .bar-stick{background:#e6ece2}
+.bar-col.today .bar-stick{box-shadow:0 0 0 2px rgba(23,63,53,.16)}
+.bar-lab{font-size:10.5px;color:var(--muted);white-space:nowrap}
+.bar-col.today .bar-lab{color:var(--forest);font-weight:700}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px}
+.stat span{font-size:10.5px;color:var(--muted);display:block}
+.stat b{display:block;font-size:17px;font-weight:750;margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat b small{font-size:10.5px;font-weight:600;color:var(--muted)}
+
+/* settings list */
+.list{background:var(--card);border-radius:var(--r-lg);border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow)}
+.list-item{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.list-item:last-child{border-bottom:0}
+.list-item:active{background:var(--soft)}
+.li-icon{width:34px;height:34px;border-radius:10px;background:var(--soft);color:var(--forest);display:grid;place-items:center;flex:none}
+.li-icon svg{width:17px;height:17px}
+.li-text{flex:1;min-width:0}
+.li-text b{display:block;font-size:14px;font-weight:650}
+.li-text span{display:block;font-size:11.5px;color:var(--muted);margin-top:1px;overflow-wrap:anywhere}
+.li-chev{color:var(--faint)}
+.li-chev svg{width:17px;height:17px}
+.li-badge{font-size:10.5px;font-weight:650;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--ink-2);white-space:nowrap}
+.li-badge.on{background:#e7f3d9;color:var(--accent-ink)}
+.about{padding:16px 4px 4px;font-size:11px;color:var(--faint);line-height:1.7;text-align:center}
+
+/* tabbar */
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:40;max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:rgba(252,253,250,.92);backdrop-filter:saturate(1.7) blur(16px);-webkit-backdrop-filter:saturate(1.7) blur(16px);border-top:1px solid var(--line)}
+.tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;color:#8b9a90;font-size:10px;font-weight:600;min-height:48px}
+.tabbar button svg{width:22px;height:22px;stroke-width:1.7}
+.tabbar button[aria-selected="true"]{color:var(--forest)}
+.tabbar button[aria-selected="true"] svg{stroke-width:2.1}
+.tabbar .add-tab{position:relative}
+.tabbar .add-tab span.bub{display:grid;place-items:center;width:38px;height:30px;border-radius:10px;background:var(--forest);color:#fff;margin-bottom:1px}
+.tabbar .add-tab span.bub svg{width:18px;height:18px;color:var(--accent)}
+.fab{position:fixed;right:calc(50% - 260px + 16px);bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 18px);z-index:35;width:54px;height:54px;border-radius:18px;background:var(--forest);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(20,50,40,.3)}
+.fab svg{width:24px;height:24px;color:var(--accent)}
+@media(max-width:559px){.fab{right:16px}}
+@media(min-height:760px) and (min-width:560px){.fab{display:none}}
+
+/* sheet & dialog */
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(11,30,24,.45);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s}
+.backdrop.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;max-width:520px;margin:0 auto;background:var(--card);border-radius:24px 24px 0 0;padding:8px 16px calc(16px + env(safe-area-inset-bottom));transform:translateY(102%);transition:transform .26s cubic-bezier(.3,.9,.3,1);max-height:88dvh;overflow:auto}
+.sheet.show{transform:none}
+.sheet-grip{width:38px;height:4px;border-radius:99px;background:#d7e0d2;margin:2px auto 12px}
+.sheet h2{font-size:17px;margin:0 0 3px}
+.sheet .sheet-sub{font-size:12px;color:var(--muted);margin:0 0 14px;line-height:1.55}
+dialog{border:0;padding:0;border-radius:22px;width:calc(100% - 28px);max-width:480px;max-height:88dvh;background:var(--card);color:var(--ink);box-shadow:0 24px 60px rgba(10,30,24,.3);overflow:auto}
+dialog::backdrop{background:rgba(11,30,24,.45);backdrop-filter:blur(2px)}
+.dlg-head{position:sticky;top:0;z-index:2;background:rgba(255,255,255,.97);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.dlg-head h2{font-size:16px;margin:0 0 2px;letter-spacing:-.01em}
+.dlg-head p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.5}
+.dlg-body{padding:16px}
+.dlg-sec{padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.dlg-sec:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.dlg-sec h3{font-size:13.5px;margin:0 0 6px;display:flex;align-items:center;gap:7px}
+.dlg-sec h3 svg{width:16px;height:16px;color:var(--forest)}
+.dlg-sec p{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.65}
+.dlg-actions{display:flex;gap:8px;margin-top:16px}
+.dlg-actions .btn{flex:1}
+.formula{background:var(--forest);color:#fff;border-radius:12px;padding:14px;font-size:12.5px;line-height:1.8;overflow-x:auto;margin:10px 0}
+.formula strong{color:var(--accent)}
+.factors{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.factors div{background:var(--soft);border-radius:10px;padding:9px 4px;text-align:center}
+.factors b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.factors span{font-size:9.5px;color:var(--muted)}
+.note{background:#f5f8f1;border:1px solid #dde7d6;border-radius:11px;padding:11px 12px;font-size:11.5px;line-height:1.7;color:#4d6153;margin:10px 0}
+.note.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
+.srclist{list-style:none;padding:0;margin:8px 0 0}
+.srclist a{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.srclist a:last-child{border-bottom:0}
+.srclist small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px;line-height:1.5}
+.srclist svg{width:15px;height:15px;color:var(--faint);margin-top:2px}
+details{border:1px solid var(--line);border-radius:11px;padding:10px 11px;margin-top:10px}
+summary{font-size:12px;font-weight:650;cursor:pointer}
+pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-size:10.5px;line-height:1.65;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0 0}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.6;margin:10px 0 0}
+.check input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--forest);flex:none}
+.search-res{display:grid;gap:8px;margin-top:12px}
+.res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px}
+.res b{display:block;font-size:12.5px;overflow-wrap:anywhere}
+.res small{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.res .k{text-align:right;font-variant-numeric:tabular-nums;font-weight:750;font-size:13px;white-space:nowrap}
+.res .k small{font-weight:500}
+.danger-text{color:var(--danger)}
+
+/* toast */
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(10px);bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);z-index:80;background:#132f27;color:#fff;border-radius:13px;padding:11px 14px;display:flex;align-items:center;gap:14px;font-size:13px;max-width:calc(100% - 28px);box-shadow:0 14px 34px rgba(10,30,24,.28);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%)}
+.toast button{color:var(--accent);font-weight:700;font-size:13px;white-space:nowrap}
+.spin{animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* 1.1.0 — coherent Lucide iconography and meal-specific visual cues. */
+.hero-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.hero-kicker,.local-chip{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:650;letter-spacing:.02em}
+.hero-kicker{color:#d7e8c4}.local-chip{color:#b8cebf;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:5px 8px;border-radius:999px;white-space:nowrap}
+.hero-kicker svg,.local-chip svg{width:14px;height:14px;stroke-width:1.8}
+.hero-nums{min-width:0}
+.section-head h2{display:flex;align-items:center;gap:7px}
+.section-head h2>i{display:inline-flex;color:#7a927f}
+.section-head h2 svg{width:16px;height:16px;stroke-width:1.8}
+.macro-cell{padding:9px 9px 8px;border:1px solid rgba(255,255,255,.045)}
+.macro-cell .macro-label{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.macro-cell .macro-label>span{font-size:10px;color:#b7cabd;line-height:1}
+.macro-cell i{display:grid;place-items:center;width:22px;height:22px;border-radius:7px;margin:0;flex:none}
+.macro-cell i svg{width:13px;height:13px;stroke-width:1.9}
+.macro-cell i.p{background:rgba(157,200,245,.16);color:#a9d1f7}
+.macro-cell i.c{background:rgba(242,197,118,.16);color:#f2ca83}
+.macro-cell i.f{background:rgba(237,155,132,.16);color:#efa894}
+.macro-cell b{margin-top:0}
+.tone-dawn{--meal-bg:#fff3d9;--meal-fg:#996318}
+.tone-day{--meal-bg:#e7f1fa;--meal-fg:#36729b}
+.tone-night{--meal-bg:#eeeaf7;--meal-fg:#6a598d}
+.tone-snack{--meal-bg:#f8eae2;--meal-fg:#9d6041}
+.meal-card{position:relative;min-width:0;padding:12px;border-radius:18px;box-shadow:0 2px 8px rgba(31,53,37,.025);transition:transform .12s ease,background .12s ease}
+.meal-card:active{transform:scale(.985)}
+.meal-card .m-top{gap:5px;align-items:center}
+.meal-card .m-title{display:flex;align-items:center;gap:8px;min-width:0;color:var(--ink);font-size:13px;font-weight:700}
+.meal-card .m-title>span{min-width:0;line-height:1.15}
+.meal-card .m-title small{display:block;margin-top:4px;color:var(--faint);font-size:8.5px;font-weight:550;letter-spacing:.025em}
+.meal-symbol{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--meal-bg);color:var(--meal-fg);flex:none}
+.meal-symbol svg{width:20px;height:20px;stroke-width:1.8}
+.meal-card .m-add{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:var(--meal-bg);color:var(--meal-fg);flex:none}
+.meal-card .m-add svg{width:13px;height:13px;stroke-width:2}
+.meal-card>b{font-size:22px;margin-top:12px;line-height:1.1}
+.meal-card .m-items{display:block;margin-top:5px;font-size:10.5px;line-height:1.4}
+.meal-heading{display:inline-flex;align-items:center;gap:6px}
+.meal-mini{display:grid;place-items:center;width:23px;height:23px;border-radius:8px;background:var(--meal-bg);color:var(--meal-fg)}
+.meal-mini svg{width:14px;height:14px;stroke-width:1.8}
+.mealpick button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:59px;padding:6px 2px}
+.mealpick button>i{display:inline-flex;color:#6f8878}
+.mealpick button svg{width:18px;height:18px;stroke-width:1.8}
+.mealpick button[data-meal="早餐"]:not([aria-pressed="true"])>i{color:#a47025}
+.mealpick button[data-meal="午餐"]:not([aria-pressed="true"])>i{color:#3e7da7}
+.mealpick button[data-meal="晚餐"]:not([aria-pressed="true"])>i{color:#716392}
+.mealpick button[data-meal="加餐"]:not([aria-pressed="true"])>i{color:#a26849}
+.mealpick button[aria-pressed="true"]{box-shadow:0 3px 9px rgba(23,63,53,.15)}
+.mealpick button[aria-pressed="true"]>i{color:var(--accent)}
+.stat{min-width:0;padding:11px 10px}
+.stat .stat-label{display:flex;align-items:flex-start;gap:4px;font-size:10px;line-height:1.35;color:var(--muted)}
+.stat-label>i{display:inline-flex;flex:none;margin-top:0}
+.stat-label svg{width:13px;height:13px;stroke-width:1.9}
+.stat-mint .stat-label>i{color:#557c4b}.stat-blue .stat-label>i{color:#477b9e}.stat-amber .stat-label>i{color:#a87632}
+.stat b{font-size:16px;margin-top:6px}
+.list-item .li-icon{width:36px;height:36px;border-radius:12px;flex:none;background:#edf2e8;color:#5f7e4c}
+.list-item .li-icon svg{width:18px;height:18px;stroke-width:1.8}
+.list-item[data-open="dlg-goal"] .li-icon{background:#eaf3df;color:#567c3e}
+#export-csv .li-icon{background:#e6f1eb;color:#39745c}
+#export-json .li-icon{background:#e8eff7;color:#477696}
+.list-item[data-open="dlg-custom"] .li-icon{background:#fff0df;color:#9b6b30}
+.list-item[data-open="dlg-usda"] .li-icon{background:#e8eff7;color:#477696}
+.list-item[data-open="dlg-settings"] .li-icon{background:#eeeaf7;color:#70618d}
+.list-item[data-open="dlg-methods"] .li-icon{background:#e5f0ed;color:#3f7569}
+.list-item[data-open="dlg-install"] .li-icon{background:#edf0e9;color:#61735c}
+.tabbar button{position:relative}
+.tabbar button[aria-selected="true"]:not(.add-tab)::before{content:"";position:absolute;top:4px;width:18px;height:3px;border-radius:99px;background:var(--forest)}
+.tabbar button>svg{width:22px;height:22px;stroke-width:1.8}
+.tabbar button[aria-selected="true"]:not(.add-tab)>svg{stroke-width:2.15}
+.tabbar .add-tab .bub svg{stroke-width:1.8}
+@media(max-width:340px){.hero-topline{gap:6px}.hero-kicker,.local-chip{font-size:9.5px}.local-chip{padding:4px 6px}.meal-symbol{width:32px;height:32px}.meal-card .m-title{gap:6px}.meal-card .m-add{width:20px;height:20px}.stat{padding:10px 8px}}
+@media(prefers-reduced-motion:reduce){.meal-card{transition:none}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="appbar" id="appbar">
+    <span class="appbar-mark" aria-hidden="true">kcal</span>
+    <div style="min-width:0">
+      <h1 class="appbar-title" id="appbar-title">今日</h1>
+      <span class="appbar-sub" id="appbar-sub">已确认摄入</span>
+    </div>
+    <div class="appbar-spacer"></div>
+    <button class="icon-btn" id="install-btn" type="button" aria-label="安装到主屏幕" title="安装到主屏幕" hidden>安装</button>
+    <button class="icon-btn" type="button" data-open="dlg-methods" aria-label="计算依据与来源"><i data-icon="book-open"></i></button>
+    <button class="icon-btn" type="button" data-open="dlg-settings" aria-label="设置"><i data-icon="settings-2"></i></button>
+  </header>
+
+  <main>
+    <!-- ============ TODAY ============ -->
+    <section class="screen active" id="screen-today" aria-label="今日">
+      <div class="weekstrip" id="weekstrip" aria-label="本周"></div>
+
+      <div class="hero">
+        <div class="hero-top hero-topline"><span class="hero-kicker"><i data-icon="leaf"></i><span>今日饮食能量 · <b id="hero-date-label">今天</b></span></span><span class="local-chip"><i data-icon="shield-check"></i>本机保存</span></div>
+        <div class="ring-wrap">
+          <div class="ring">
+            <svg viewBox="0 0 132 132" role="img" aria-label="今日热量进度环">
+              <circle class="bg" cx="66" cy="66" r="55"></circle>
+              <circle class="fg" id="ring-fg" cx="66" cy="66" r="55"></circle>
+            </svg>
+            <div class="mid"><b id="ring-kcal">0</b><span>kcal</span></div>
+          </div>
+          <div class="hero-nums">
+            <div class="big" id="hero-consumed"><strong>0</strong> kJ 总能量</div>
+            <div class="sub" id="hero-sub">未设置参考目标 · 仅记录，不做推荐</div>
+            <div class="goal-line"><button class="goal-btn" id="hero-target-btn" type="button"><i data-icon="target"></i>设置参考目标</button></div>
+          </div>
+        </div>
+        <div class="macro-stack" aria-label="宏量营养素供能比例"><span class="p" id="bar-p"></span><span class="c" id="bar-c"></span><span class="f" id="bar-f"></span></div>
+        <div class="macro-row">
+          <div class="macro-cell"><span class="macro-label"><i class="p" data-icon="beef"></i><span>蛋白质</span></span><b id="mv-p">0 g</b></div>
+          <div class="macro-cell"><span class="macro-label"><i class="c" data-icon="wheat"></i><span>碳水</span></span><b id="mv-c">0 g</b></div>
+          <div class="macro-cell"><span class="macro-label"><i class="f" data-icon="droplets"></i><span>脂肪</span></span><b id="mv-f">0 g</b></div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2><i data-icon="utensils"></i>各餐</h2><span class="meta">点按某一餐开始记录</span></div>
+      <div class="meal-grid" id="meal-grid"></div>
+
+      <div class="section-head"><h2><i data-icon="list"></i>明细</h2><span class="meta">每项均经确认</span></div>
+      <div class="card" style="padding:4px 14px" id="today-list"></div>
+
+      <p class="hint" style="margin:14px 4px 0">份量、识别与混合菜配方均可能带来误差；称重比目测更可靠。</p>
+    </section>
+
+    <!-- ============ ADD ============ -->
+    <section class="screen" id="screen-add" aria-label="记一笔">
+      <div class="tabline" role="tablist" aria-label="记录方式">
+        <button type="button" role="tab" aria-selected="true" aria-controls="panel-text" data-addtab="text"><i data-icon="pen-line"></i>文字</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="panel-photo" data-addtab="photo"><i data-icon="camera"></i>拍照</button>
+      </div>
+
+      <div id="panel-text" role="tabpanel">
+        <label class="field-label" for="food-notes">描述食物与份量</label>
+        <textarea class="textarea" id="food-notes" placeholder="例如：2个水煮蛋、1杯全脂牛奶；午餐一碗米饭和150克鸡胸肉"></textarea>
+        <div class="examples" aria-label="示例">
+          <button class="chip" type="button" data-example="2个水煮蛋、1杯全脂牛奶">鸡蛋 + 牛奶</button>
+          <button class="chip" type="button" data-example="1碗米饭、150克鸡胸肉、100克西兰花">米饭 + 鸡胸肉</button>
+          <button class="chip" type="button" data-example="1个苹果、10克杏仁">苹果 + 杏仁</button>
+          <button class="chip" type="button" data-example="100g rice">英文示例</button>
+        </div>
+        <p class="hint" style="margin-top:10px">支持“2个”“一杯”“150克”“100g”等写法；未识别到份量时会明确标注假设，不会静默估算。</p>
+      </div>
+
+      <div id="panel-photo" role="tabpanel" hidden>
+        <div class="photo-box empty-photo" id="photo-box">
+          <div class="ph-inner">
+            <div class="ph-icon"><i data-icon="image-plus"></i></div>
+            <h3>给这一餐拍张照片</h3>
+            <p>照片只在当前设备预览；只有你配置并授权识别服务后才会上传。</p>
+            <div class="ph-actions">
+              <label class="filebtn" for="file-cam"><i data-icon="camera"></i>拍照</label>
+              <label class="filebtn" for="file-up"><i data-icon="upload"></i>相册</label>
+            </div>
+          </div>
+          <img id="photo-img" alt="待识别餐食照片预览">
+          <button class="photo-rm" id="photo-rm" type="button" aria-label="移除照片" hidden><i data-icon="x"></i></button>
+        </div>
+        <input id="file-cam" type="file" accept="image/*" capture="environment" hidden>
+        <input id="file-up" type="file" accept="image/*" hidden>
+        <label class="field-label" for="photo-note" style="margin-top:16px">补充说明（可选）</label>
+        <input class="input" id="photo-note" type="text" placeholder="例如：一碗米饭约150克；鸡胸肉约一掌大小">
+        <div class="service-note">
+          <span id="recog-state"><i data-icon="cloud-off"></i><span>未配置照片识别服务</span></span>
+          <button class="inline-link" id="recog-config" type="button">配置</button>
+        </div>
+        <p class="hint" id="photo-status">照片只在本机预览；识别前需要你主动配置并授权服务。</p>
+        <div class="row mt14">
+          <button class="btn btn-ghost" id="manual-photo" type="button" style="flex:1" disabled><i data-icon="pen-line"></i>手动标注</button>
+          <button class="btn btn-primary" id="recog-btn" type="button" style="flex:1.2" disabled><i data-icon="scan-line"></i>识别并核对</button>
+        </div>
+      </div>
+
+      <div class="section-head"><h2><i data-icon="clock-3"></i>餐次</h2><span class="meta">默认写入这一餐</span></div>
+      <div class="mealpick" id="meal-pick">
+        <button type="button" data-meal="早餐" aria-pressed="true"><i data-icon="sunrise"></i><span>早餐</span></button>
+        <button type="button" data-meal="午餐" aria-pressed="false"><i data-icon="sun"></i><span>午餐</span></button>
+        <button type="button" data-meal="晚餐" aria-pressed="false"><i data-icon="moon"></i><span>晚餐</span></button>
+        <button type="button" data-meal="加餐" aria-pressed="false"><i data-icon="coffee"></i><span>加餐</span></button>
+      </div>
+
+      <div class="row mt14">
+        <button class="btn btn-ghost" id="custom-add" type="button" style="flex:1"><i data-icon="plus"></i>自定义食物</button>
+        <button class="btn btn-primary" id="parse-btn" type="button" style="flex:1.3">解析并核对<i data-icon="arrow-up-right"></i></button>
+      </div>
+
+      <div id="review-area" class="review-wrap" hidden></div>
+
+      <div class="note mt20" style="margin-bottom:8px">
+        <b>计算依据：</b>优先使用食物成分记录的能量值（每 100 g），自建食物可用 FAO 通用系数 4/9/4 kcal/g 折算，1 kcal = 4.184 kJ。结果用于日常记录，不构成医疗建议。
+      </div>
+    </section>
+
+    <!-- ============ TREND ============ -->
+    <section class="screen" id="screen-trend" aria-label="趋势">
+      <div class="row" style="justify-content:space-between;margin:6px 0 12px">
+        <h2 style="font-size:16px;margin:0">摄入趋势</h2>
+        <div class="seg" id="trend-range" role="group" aria-label="时间范围">
+          <button type="button" data-range="7" aria-pressed="true">7 天</button>
+          <button type="button" data-range="14" aria-pressed="false">14 天</button>
+        </div>
+      </div>
+      <div class="card" style="padding:14px 14px 10px">
+        <div class="row" style="justify-content:space-between;font-size:11.5px;color:var(--muted)">
+          <span>每日总能量（kcal）</span><span>灰=无记录 · 橙=超过参考目标</span>
+        </div>
+        <div class="chart" id="trend-chart" role="img" aria-label="每日热量柱状图"></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat stat-mint"><span class="stat-label"><i data-icon="chart-column"></i>有记录日均</span><b id="stat-avg">0<small> kcal</small></b></div>
+        <div class="stat stat-blue"><span class="stat-label"><i data-icon="calendar-days"></i>记录天数</span><b id="stat-days">0<small> /7 天</small></b></div>
+        <div class="stat stat-amber"><span class="stat-label"><i data-icon="target"></i>超目标天数</span><b id="stat-over">—</b></div>
+      </div>
+      <div class="section-head"><h2><i data-icon="chart-column"></i>累计</h2><span class="meta" id="stat-since">还没有历史记录</span></div>
+      <div class="stat-grid">
+        <div class="stat stat-amber"><span class="stat-label"><i data-icon="flame"></i>累计热量</span><b id="stat-all">0<small> kcal</small></b></div>
+        <div class="stat stat-blue"><span class="stat-label"><i data-icon="list"></i>记录条目</span><b id="stat-items">0<small> 项</small></b></div>
+        <div class="stat stat-mint"><span class="stat-label"><i data-icon="target"></i>参考目标</span><b id="stat-target-me">—</b></div>
+      </div>
+      <p class="hint" style="margin:14px 4px 0">趋势仅反映已确认记录。目标为个人参考值，不代表推荐摄入量；单日波动通常比平均值更有意义。</p>
+    </section>
+
+    <!-- ============ ME ============ -->
+    <section class="screen" id="screen-me" aria-label="我的">
+      <div class="section-head"><h2>我的目标</h2></div>
+      <div class="list">
+        <button class="list-item" type="button" data-open="dlg-goal">
+          <span class="li-icon"><i data-icon="target"></i></span>
+          <span class="li-text"><b>每日参考目标</b><span>只用于显示进度，不是摄入建议</span></span>
+          <span class="li-badge" id="target-value">未设置</span>
+        </button>
+      </div>
+
+      <div class="section-head"><h2>数据</h2></div>
+      <div class="list">
+        <div class="list-item">
+          <span class="li-icon"><i data-icon="database"></i></span>
+          <span class="li-text"><b>本机记录</b><span id="store-count">0 条记录</span></span>
+          <span class="li-badge" id="sw-badge">离线可用</span>
+        </div>
+        <button class="list-item" type="button" id="export-csv">
+          <span class="li-icon"><i data-icon="download"></i></span>
+          <span class="li-text"><b>导出 CSV</b><span>表格软件可打开的明细</span></span>
+          <span class="li-chev"><i data-icon="chevron-right"></i></span>
+        </button>
+        <button class="list-item" type="button" id="export-json">
+          <span class="li-icon"><i data-icon="file-json"></i></span>
+          <span class="li-text"><b>导出 JSON</b><span>完整记录、来源与能量依据</span></span>
+          <span class="li-chev"><i data-icon="chevron-right"></i></span>
+        </button>
+        <button class="list-item" type="button" id="clear-all">
+          <span class="li-icon" style="color:var(--danger)"><i data-icon="trash-2"></i></span>
+          <span class="li-text"><b>清除全部记录</b><span id="storage-note">记录保存在本机，不上传服务器</span></span>
+          <span class="li-chev"><i data-icon="chevron-right"></i></span>
+        </button>
+      </div>
+
+      <div class="section-head"><h2>能力与来源</h2></div>
+      <div class="list">
+        <button class="list-item" type="button" data-open="dlg-settings">
+          <span class="li-icon"><i data-icon="settings-2"></i></span>
+          <span class="li-text"><b>照片识别与 USDA 查询</b><span id="me-recog">未配置</span></span>
+          <span class="li-chev"><i data-icon="chevron-right"></i></span>
+        </button>
+        <button class="list-item" type="button" data-open="dlg-methods">
+          <span class="li-icon"><i data-icon="book-open"></i></span>
+          <span class="li-text"><b>计算依据与权威来源</b><span>FAO 能量换算 · USDA FoodData Central</span></span>
+          <span class="li-chev"><i data-icon="chevron-right"></i></span>
+        </button>
+        <button class="list-item" type="button" data-open="dlg-install">
+          <span class="li-icon"><i data-icon="smartphone"></i></span>
+          <span class="li-text"><b>安装到手机主屏幕</b><span id="sw-state">已注册离线缓存</span></span>
+          <span class="li-chev"><i data-icon="chevron-right"></i></span>
+        </button>
+      </div>
+      <p class="about">食刻 1.1.0 · 每日饮食能量账本<br>本地优先 · 无账号 · 不采集健康数据<br><span style="color:var(--faint)">估算记录，不用于医疗诊断或处方</span></p>
+    </section>
+  </main>
+
+  <button class="fab" id="fab-add" type="button" aria-label="记一笔"><i data-icon="plus"></i></button>
+
+  <nav class="tabbar" aria-label="主导航">
+    <button type="button" data-screen="today" aria-selected="true"><i data-icon="house"></i><span>今日</span></button>
+    <button type="button" data-screen="add" aria-selected="false" class="add-tab"><span class="bub"><i data-icon="circle-plus"></i></span><span>记一笔</span></button>
+    <button type="button" data-screen="trend" aria-selected="false"><i data-icon="chart-column"></i><span>趋势</span></button>
+    <button type="button" data-screen="me" aria-selected="false"><i data-icon="settings-2"></i><span>我的</span></button>
+  </nav>
+</div>
+
+<!-- ============ DIALOGS ============ -->
+<dialog id="dlg-goal" aria-labelledby="dlg-goal-title">
+  <div class="dlg-head"><div><h2 id="dlg-goal-title">每日参考目标</h2><p>仅用于显示进度百分比，不代表推荐摄入量。</p></div><button class="icon-btn" type="button" data-close="dlg-goal" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <form class="dlg-body" id="goal-form">
+    <label class="field"><span class="field-label">参考能量（kcal / 天）</span><input class="input" id="goal-input" type="number" min="1" max="50000" step="1" inputmode="numeric" placeholder="留空则不显示目标"></label>
+    <p class="hint">个人能量需要受年龄、体型、活动量和健康状况影响，应由专业人员评估；本工具不计算、也不推荐你的个体需求。</p>
+    <p class="hint danger-text" id="goal-err" hidden></p>
+    <div class="dlg-actions"><button class="btn btn-ghost" type="button" data-close="dlg-goal">取消</button><button class="btn btn-primary" type="submit">保存</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-settings" aria-labelledby="dlg-settings-title">
+  <div class="dlg-head"><div><h2 id="dlg-settings-title">服务设置</h2><p>核心记录无需登录；外部接口均为可选增强。</p></div><button class="icon-btn" type="button" data-close="dlg-settings" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <form class="dlg-body" id="settings-form">
+    <section class="dlg-sec">
+      <h3><i data-icon="target"></i>每日参考目标（可选）</h3>
+      <label class="field"><span class="field-label">参考能量（kcal / 天）</span><input class="input" id="set-target" type="number" min="1" max="50000" step="1" inputmode="numeric" placeholder="留空，不设置"></label>
+    </section>
+    <section class="dlg-sec">
+      <h3><i data-icon="scan-line"></i>照片识别服务（可选）</h3>
+      <p>填写你自己的 HTTPS 兼容接口。接口地址保存在本机；密钥只保留在本次会话，照片不会被保存。</p>
+      <label class="field"><span class="field-label">识别接口地址</span><input class="input" id="set-endpoint" type="url" placeholder="https://your-domain.example/recognize" autocomplete="off"></label>
+      <label class="field"><span class="field-label">接口密钥（可选，仅本次会话）</span><input class="input" id="set-reckey" type="password" autocomplete="off" placeholder="通过 Authorization: Bearer 发送"></label>
+      <label class="check"><input id="set-consent" type="checkbox"><span>我理解：点击识别后，当前照片与补充说明会发送到上述服务，其隐私与数据保留政策由该服务决定。</span></label>
+      <details><summary>兼容接口的数据约定</summary><pre class="code">POST {你的接口地址}
+Content-Type: multipart/form-data
+字段：image（图片文件）、note（补充说明）
+
+JSON 响应：
+{"items":[
+  {"name":"米饭","grams":150,"confidence":0.86},
+  {"name":"鸡胸肉","grams":100}
+]}
+fdcId 可选；confidence 取值 0–1。
+所有识别结果仍需你选择食物并确认份量。</pre></details>
+    </section>
+    <section class="dlg-sec">
+      <h3><i data-icon="database"></i>USDA 在线搜索（可选）</h3>
+      <p>本地库没有的食物可在线搜索。未填密钥时使用官方 DEMO_KEY，限额较低；生产环境应由后端代理保护密钥。</p>
+      <label class="field"><span class="field-label">USDA API Key（可选，仅本次会话）</span><input class="input" id="set-usdakey" type="password" autocomplete="off" placeholder="留空使用 DEMO_KEY"></label>
+    </section>
+    <div class="note"><b>本地数据：</b>记录、自定义食物、目标与接口地址存在本机 localStorage；密钥不持久化。清除应用数据会删除记录，请定期导出备份。</div>
+    <p class="hint" id="set-status" hidden></p>
+    <div class="dlg-actions"><button class="btn btn-ghost" type="button" data-close="dlg-settings">取消</button><button class="btn btn-primary" type="submit">保存设置</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-custom" aria-labelledby="dlg-custom-title">
+  <div class="dlg-head"><div><h2 id="dlg-custom-title">自定义食物</h2><p>优先填包装标示的每 100 g 能量。</p></div><button class="icon-btn" type="button" data-close="dlg-custom" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <form class="dlg-body" id="custom-form">
+    <label class="field"><span class="field-label">食物名称</span><input class="input" id="c-name" required maxlength="80" placeholder="例如：某品牌全麦面包"></label>
+    <label class="field"><span class="field-label">能量（kcal / 100 g，可选）</span><input class="input" id="c-kcal" type="number" min="0" max="1000" step="0.01" inputmode="decimal" placeholder="留空则用下方三项折算"></label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <label class="field"><span class="field-label">蛋白质 g/100g</span><input class="input" id="c-p" type="number" min="0" max="100" step="0.01" inputmode="decimal"></label>
+      <label class="field"><span class="field-label">脂肪 g/100g</span><input class="input" id="c-f" type="number" min="0" max="100" step="0.01" inputmode="decimal"></label>
+    </div>
+    <label class="field"><span class="field-label">碳水化合物 g/100g</span><input class="input" id="c-carb" type="number" min="0" max="100" step="0.01" inputmode="decimal"></label>
+    <div class="note">能量留空时按 4/9/4 折算；已填能量则保留原值。包装按“每份”标示时，请先换算成每 100 g。</div>
+    <p class="hint danger-text" id="custom-err" hidden></p>
+    <div class="dlg-actions"><button class="btn btn-ghost" type="button" data-close="dlg-custom">取消</button><button class="btn btn-primary" type="submit">保存并加入</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-usda" aria-labelledby="dlg-usda-title">
+  <div class="dlg-head"><div><h2 id="dlg-usda-title">搜索 USDA 食物库</h2><p>优先 Foundation 与 SR Legacy 一般食物。</p></div><button class="icon-btn" type="button" data-close="dlg-usda" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <div class="dlg-body">
+    <form class="row" id="usda-form"><input class="input" id="usda-q" required placeholder="英文食物名，例如 cooked rice" style="flex:1"><button class="btn btn-primary btn-sm" id="usda-go" type="submit"><i data-icon="search"></i>查询</button></form>
+    <p class="hint">查询词会发送给 USDA；结果未必对应你的品牌、配方或烹饪方式，选用前请核对英文描述。</p>
+    <div class="search-res" id="usda-results"></div>
+  </div>
+</dialog>
+
+<dialog id="dlg-methods" aria-labelledby="dlg-methods-title">
+  <div class="dlg-head"><div><h2 id="dlg-methods-title">热量怎样算出来</h2><p>优先使用可追溯的食物成分记录。</p></div><button class="icon-btn" type="button" data-close="dlg-methods" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <div class="dlg-body">
+    <section class="dlg-sec">
+      <h3><i data-icon="scale"></i>1. 先确定可食部重量</h3>
+      <p>杯、片、个等份量优先取 USDA 对应记录；“碗”“份”不是国际统一重量，若采用应用假设，会在确认行与导出文件中标注。</p>
+      <div class="formula">实际热量 = <strong>每 100 g 能量</strong> × 可食部克数 ÷ 100</div>
+      <p>同时提供 kJ 时保留原值；只有 kcal 时按 <strong>1 kcal = 4.184 kJ</strong> 换算。“卡路里”指千卡（kcal）。</p>
+    </section>
+    <section class="dlg-sec">
+      <h3><i data-icon="wheat"></i>2. 自建食物可用通用 Atwater 系数</h3>
+      <p>只有宏量营养素时，可用 FAO 所述通用代谢能系数折算。若已有包装标示或数据库能量，优先保留原值。</p>
+      <div class="factors"><div><b>4</b><span>蛋白质 kcal/g</span></div><div><b>9</b><span>脂肪 kcal/g</span></div><div><b>4</b><span>碳水 kcal/g</span></div><div><b>7</b><span>酒精 kcal/g</span></div></div>
+      <div class="formula">kcal = 蛋白质×4 + 脂肪×9 + 碳水×4<br>kJ = kcal × <strong>4.184</strong></div>
+      <p>FAO 也讨论膳食纤维、糖醇、有机酸及特定 Atwater 系数。不同国家标签规则与碳水定义不同，数值可能不完全一致。</p>
+    </section>
+    <section class="dlg-sec">
+      <h3><i data-icon="book-open"></i>3. 权威来源</h3>
+      <ul class="srclist">
+        <li><a href="https://www.fao.org/4/y5022e/y5022e04.htm" target="_blank" rel="noopener noreferrer"><span>FAO · Food Energy: Methods of Analysis and Conversion Factors<small>Chapter 3：能量换算系数与 kcal/kJ 换算</small></span><i data-icon="external-link"></i></a></li>
+        <li><a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener noreferrer"><span>USDA · FoodData Central<small>食物能量、宏量营养素、份量与 FDC ID</small></span><i data-icon="external-link"></i></a></li>
+        <li><a href="https://fdc.nal.usda.gov/api-guide.html" target="_blank" rel="noopener noreferrer"><span>USDA · FDC API Guide<small>接口、密钥、限流与数据许可说明</small></span><i data-icon="external-link"></i></a></li>
+      </ul>
+    </section>
+    <div class="note warn">本应用输出的是估算记录，不是医学建议。图像识别、混合菜配方与目测份量均可能产生显著误差；婴幼儿、孕期、疾病或特殊医学用途饮食请由合格专业人员评估。</div>
+  </div>
+</dialog>
+
+<dialog id="dlg-install" aria-labelledby="dlg-install-title">
+  <div class="dlg-head"><div><h2 id="dlg-install-title">安装到主屏幕</h2><p>安装后像普通 App 一样全屏使用，并支持离线打开。</p></div><button class="icon-btn" type="button" data-close="dlg-install" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <div class="dlg-body">
+    <section class="dlg-sec">
+      <h3><i data-icon="smartphone"></i>iPhone / iPad（Safari）</h3>
+      <p>点击底部或顶部的<b>分享</b>按钮，选择<b>“添加到主屏幕”</b>，再点“添加”。</p>
+    </section>
+    <section class="dlg-sec">
+      <h3><i data-icon="smartphone"></i>Android（Chrome / Edge）</h3>
+      <p>打开右侧 ⋮ 菜单，选择<b>“安装应用”</b>或<b>“添加到主屏幕”</b>。</p>
+    </section>
+    <section class="dlg-sec">
+      <h3><i data-icon="wifi"></i>说明</h3>
+      <p>安装与离线缓存需要本应用由网站服务器以安全连接提供。若只是以本地文件方式直接打开，浏览器不会启用离线缓存，也不会出现系统安装入口，但记录、计算与导出功能仍可正常使用。</p>
+    </section>
+    <div class="dlg-actions"><button class="btn btn-primary btn-block" type="button" data-close="dlg-install">知道了</button></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toast-msg"></span><button id="toast-act" type="button" hidden>撤销</button></div>
+
+<script>
+const LOCAL_FOODS = [{ "id": "rice-white", "fdcId": 168878, "name": "白米饭（长粒，熟）", "group": "主食", "aliases": ["米饭", "白米饭", "白饭", "熟米饭", "rice", "white rice"], "description": "Rice, white, long-grain, regular, enriched, cooked", "dataType": "SR Legacy", "kcal": 130, "kj": null, "protein": 2.69, "carb": 28.17, "fat": 0.28, "fiber": 0.4, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 158, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "rice-brown", "fdcId": 169704, "name": "糙米饭（长粒，熟）", "group": "主食", "aliases": ["糙米", "糙米饭", "brown rice"], "description": "Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)", "dataType": "SR Legacy", "kcal": 123, "kj": null, "protein": 2.74, "carb": 25.58, "fat": 0.97, "fiber": 1.6, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 202, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "pasta", "fdcId": 169737, "name": "意大利面（熟，不加盐）", "group": "主食", "aliases": ["意面", "意大利面", "面条", "spaghetti", "pasta"], "description": "Pasta, cooked, enriched, without added salt", "dataType": "SR Legacy", "kcal": 158, "kj": null, "protein": 5.8, "carb": 30.86, "fat": 0.93, "fiber": 1.8, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 124, "label": "杯（非压实）", "raw": "cup spaghetti not packed", "source": "USDA" } } }, { "id": "bread-white", "fdcId": 174924, "name": "白面包", "group": "主食", "aliases": ["面包", "白面包", "吐司", "white bread", "bread"], "description": "Bread, white, commercially prepared (includes soft bread crumbs)", "dataType": "SR Legacy", "kcal": 266, "kj": null, "protein": 8.85, "carb": 49.42, "fat": 3.33, "fiber": 2.7, "allowMl": false, "source": "USDA FoodData Central", "portions": { "slice": { "grams": 29, "label": "片", "raw": "slice", "source": "USDA" } } }, { "id": "oats-cooked", "fdcId": 173905, "name": "燕麦粥（水煮，不加盐）", "group": "主食", "aliases": ["燕麦", "燕麦粥", "熟燕麦", "oatmeal", "oats"], "description": "Cereals, oats, regular and quick, unenriched, cooked with water (includes boiling and microwaving), without salt", "dataType": "SR Legacy", "kcal": 71, "kj": null, "protein": 2.54, "carb": 12, "fat": 1.52, "fiber": 1.7, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 234, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "potato-boiled", "fdcId": 170438, "name": "土豆（带皮水煮，不加盐）", "group": "主食", "aliases": ["土豆", "马铃薯", "水煮土豆", "potato"], "description": "Potatoes, boiled, cooked in skin, flesh, without salt", "dataType": "SR Legacy", "kcal": 87, "kj": null, "protein": 1.87, "carb": 20.13, "fat": 0.1, "fiber": 1.8, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 136, "label": "个（中）", "raw": 'potato (2-1/2" dia, sphere)', "source": "USDA" }, "cup": { "grams": 156, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "sweet-potato", "fdcId": 168483, "name": "红薯（带皮烤熟，不加盐）", "group": "主食", "aliases": ["红薯", "地瓜", "番薯", "sweet potato"], "description": "Sweet potato, cooked, baked in skin, flesh, without salt", "dataType": "SR Legacy", "kcal": 90, "kj": null, "protein": 2.01, "carb": 20.71, "fat": 0.15, "fiber": 3.3, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 180, "label": "个（大）", "raw": "large", "source": "USDA" } } }, { "id": "chicken-breast", "fdcId": 171477, "name": "鸡胸肉（烤熟，仅肉）", "group": "肉蛋奶", "aliases": ["鸡胸肉", "鸡脯肉", "鸡肉", "chicken breast"], "description": "Chicken, broilers or fryers, breast, meat only, cooked, roasted", "dataType": "SR Legacy", "kcal": 165, "kj": null, "protein": 31.02, "carb": 0, "fat": 3.57, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 140, "label": "杯（切碎）", "raw": "cup, chopped or diced", "source": "USDA" } } }, { "id": "chicken-thigh", "fdcId": 172388, "name": "鸡腿肉（烤熟，仅肉）", "group": "肉蛋奶", "aliases": ["鸡腿", "鸡腿肉", "chicken thigh"], "description": "Chicken, broilers or fryers, thigh, meat only, cooked, roasted", "dataType": "SR Legacy", "kcal": 179, "kj": null, "protein": 24.76, "carb": 0, "fat": 8.15, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 116, "label": "个（去皮）", "raw": "thigh without skin", "source": "USDA" } } }, { "id": "beef-ground", "fdcId": 174033, "name": "煎牛肉饼（85% 瘦肉）", "group": "肉蛋奶", "aliases": ["牛肉饼", "煎牛肉", "牛肉", "ground beef", "beef patty"], "description": "Beef, ground, 85% lean meat / 15% fat, patty, cooked, pan-broiled", "dataType": "SR Legacy", "kcal": 232, "kj": null, "protein": 24.62, "carb": 0, "fat": 14.02, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "patty": { "grams": 83, "label": "块肉饼", "raw": "patty ( yield from 1/4 lb raw meat )", "source": "USDA" } } }, { "id": "pork-tenderloin", "fdcId": 168250, "name": "猪里脊（烤熟，纯瘦）", "group": "肉蛋奶", "aliases": ["猪里脊", "猪瘦肉", "猪肉", "pork tenderloin"], "description": "Pork, fresh, loin, tenderloin, separable lean only, cooked, roasted", "dataType": "SR Legacy", "kcal": 143, "kj": null, "protein": 26.17, "carb": 0, "fat": 3.51, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": {} }, { "id": "salmon", "fdcId": 175168, "name": "大西洋三文鱼（养殖，干热熟制）", "group": "肉蛋奶", "aliases": ["三文鱼", "鲑鱼", "salmon"], "description": "Fish, salmon, Atlantic, farmed, cooked, dry heat", "dataType": "SR Legacy", "kcal": 206, "kj": null, "protein": 22.1, "carb": 0, "fat": 12.35, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "fillet": { "grams": 356, "label": "片鱼排", "raw": "fillet", "source": "USDA" } } }, { "id": "tuna", "fdcId": 334194, "name": "水浸金枪鱼罐头（沥干）", "group": "肉蛋奶", "aliases": ["金枪鱼", "吞拿鱼", "tuna"], "description": "Fish, tuna, light, canned in water, drained solids", "dataType": "Foundation", "kcal": 90, "kj": null, "protein": 19, "carb": 0.08, "fat": 0.94, "fiber": null, "allowMl": false, "source": "USDA FoodData Central", "portions": { "can": { "grams": 107, "label": "罐（沥干固形物）", "raw": "drained solids", "source": "USDA" } } }, { "id": "egg-boiled", "fdcId": 173424, "name": "水煮蛋（全蛋）", "group": "肉蛋奶", "aliases": ["鸡蛋", "水煮蛋", "煮鸡蛋", "蛋", "egg", "boiled egg"], "description": "Egg, whole, cooked, hard-boiled", "dataType": "SR Legacy", "kcal": 155, "kj": null, "protein": 12.58, "carb": 1.12, "fat": 10.61, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 50, "label": "个（大）", "raw": "large", "source": "USDA" } } }, { "id": "egg-fried", "fdcId": 173423, "name": "煎蛋（全蛋）", "group": "肉蛋奶", "aliases": ["煎蛋", "煎鸡蛋", "fried egg"], "description": "Egg, whole, cooked, fried", "dataType": "SR Legacy", "kcal": 196, "kj": null, "protein": 13.61, "carb": 0.83, "fat": 14.84, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 46, "label": "个（大）", "raw": "large", "source": "USDA" } } }, { "id": "milk-whole", "fdcId": 746782, "name": "全脂牛奶（3.25% 乳脂）", "group": "肉蛋奶", "aliases": ["牛奶", "全脂牛奶", "milk", "whole milk"], "description": "Milk, whole, 3.25% milkfat, with added vitamin D", "dataType": "Foundation", "kcal": 60, "kj": null, "protein": 3.27, "carb": 4.63, "fat": 3.2, "fiber": null, "allowMl": true, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 249, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "yogurt-plain", "fdcId": 171284, "name": "原味全脂酸奶", "group": "肉蛋奶", "aliases": ["酸奶", "原味酸奶", "yogurt", "yoghurt"], "description": "Yogurt, plain, whole milk", "dataType": "SR Legacy", "kcal": 61, "kj": null, "protein": 3.47, "carb": 4.66, "fat": 3.25, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "container": { "grams": 170, "label": "杯装（6 oz）", "raw": "container (6 oz)", "source": "USDA" } } }, { "id": "cheddar", "fdcId": 328637, "name": "切达奶酪", "group": "肉蛋奶", "aliases": ["奶酪", "芝士", "切达", "cheddar", "cheese"], "description": "Cheese, cheddar", "dataType": "Foundation", "kcal": 408, "kj": null, "protein": 23.3, "carb": 2.44, "fat": 34, "fiber": null, "allowMl": false, "source": "USDA FoodData Central", "portions": { "slice": { "grams": 17, "label": "片", "raw": "slice", "source": "USDA" } } }, { "id": "tofu", "fdcId": 172476, "name": "北豆腐（硫酸钙凝固，常规）", "group": "豆制品", "aliases": ["豆腐", "北豆腐", "老豆腐", "tofu"], "description": "Tofu, raw, regular, prepared with calcium sulfate", "dataType": "SR Legacy", "kcal": 76, "kj": null, "protein": 8.08, "carb": 1.87, "fat": 4.78, "fiber": 0.3, "allowMl": false, "source": "USDA FoodData Central", "portions": { "block": { "grams": 464, "label": "整块", "raw": "block", "source": "USDA" }, "cup": { "grams": 248, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "soybeans", "fdcId": 174271, "name": "黄豆（水煮，不加盐）", "group": "豆制品", "aliases": ["黄豆", "大豆", "毛豆", "soybeans"], "description": "Soybeans, mature cooked, boiled, without salt", "dataType": "SR Legacy", "kcal": 172, "kj": null, "protein": 18.21, "carb": 8.36, "fat": 8.97, "fiber": 6, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 172, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "broccoli", "fdcId": 169967, "name": "西兰花（水煮沥干，不加盐）", "group": "蔬菜", "aliases": ["西兰花", "绿菜花", "broccoli"], "description": "Broccoli, cooked, boiled, drained, without salt", "dataType": "SR Legacy", "kcal": 35, "kj": null, "protein": 2.38, "carb": 7.18, "fat": 0.41, "fiber": 3.3, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 156, "label": "杯（切碎）", "raw": "cup, chopped", "source": "USDA" } } }, { "id": "spinach", "fdcId": 168463, "name": "菠菜（水煮沥干，不加盐）", "group": "蔬菜", "aliases": ["菠菜", "spinach"], "description": "Spinach, cooked, boiled, drained, without salt", "dataType": "SR Legacy", "kcal": 23, "kj": null, "protein": 2.97, "carb": 3.75, "fat": 0.26, "fiber": 2.4, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 180, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "carrot", "fdcId": 170393, "name": "胡萝卜（生）", "group": "蔬菜", "aliases": ["胡萝卜", "红萝卜", "carrot"], "description": "Carrots, raw", "dataType": "SR Legacy", "kcal": 41, "kj": null, "protein": 0.93, "carb": 9.58, "fat": 0.24, "fiber": 2.8, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 61, "label": "根（中）", "raw": "medium", "source": "USDA" }, "cup": { "grams": 110, "label": "杯（擦丝）", "raw": "cup grated", "source": "USDA" } } }, { "id": "tomato", "fdcId": 170457, "name": "番茄（生）", "group": "蔬菜", "aliases": ["番茄", "西红柿", "tomato"], "description": "Tomatoes, red, ripe, raw, year round average", "dataType": "SR Legacy", "kcal": 18, "kj": null, "protein": 0.88, "carb": 3.89, "fat": 0.2, "fiber": 1.2, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 123, "label": "个（中）", "raw": 'medium whole (2-3/5" dia)', "source": "USDA" } } }, { "id": "apple", "fdcId": 171688, "name": "苹果（带皮，生）", "group": "水果", "aliases": ["苹果", "apple"], "description": "Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)", "dataType": "SR Legacy", "kcal": 52, "kj": null, "protein": 0.26, "carb": 13.81, "fat": 0.17, "fiber": 2.4, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 182, "label": "个（中）", "raw": 'medium (3" dia)', "source": "USDA" } } }, { "id": "banana", "fdcId": 173944, "name": "香蕉（生）", "group": "水果", "aliases": ["香蕉", "banana"], "description": "Bananas, raw", "dataType": "SR Legacy", "kcal": 89, "kj": null, "protein": 1.09, "carb": 22.84, "fat": 0.33, "fiber": 2.6, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 118, "label": "根（中）", "raw": 'medium (7" to 7-7/8" long)', "source": "USDA" } } }, { "id": "orange", "fdcId": 169097, "name": "橙子（生）", "group": "水果", "aliases": ["橙子", "橙", "橘子", "orange"], "description": "Oranges, raw, all commercial varieties", "dataType": "SR Legacy", "kcal": 47, "kj": null, "protein": 0.94, "carb": 11.75, "fat": 0.12, "fiber": 2.4, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 131, "label": "个（中）", "raw": 'fruit (2-5/8" dia)', "source": "USDA" } } }, { "id": "avocado", "fdcId": 171705, "name": "牛油果（生）", "group": "水果", "aliases": ["牛油果", "鳄梨", "avocado"], "description": "Avocados, raw, all commercial varieties", "dataType": "SR Legacy", "kcal": 160, "kj": null, "protein": 2, "carb": 8.53, "fat": 14.66, "fiber": 6.7, "allowMl": false, "source": "USDA FoodData Central", "portions": { "piece": { "grams": 201, "label": "个", "raw": "avocado, NS as to Florida or California", "source": "USDA" }, "serving": { "grams": 50, "label": "NLEA 份", "raw": "NLEA Serving", "source": "USDA" } } }, { "id": "almonds", "fdcId": 170567, "name": "杏仁（坚果）", "group": "坚果油脂", "aliases": ["杏仁", "扁桃仁", "almonds"], "description": "Nuts, almonds", "dataType": "SR Legacy", "kcal": 579, "kj": null, "protein": 21.15, "carb": 21.55, "fat": 49.93, "fiber": 12.5, "allowMl": false, "source": "USDA FoodData Central", "portions": { "oz": { "grams": 28.35, "label": "盎司（约23粒）", "raw": "oz (23 whole kernels)", "source": "USDA" }, "almond": { "grams": 1.2, "label": "粒", "raw": "almond", "source": "USDA" } } }, { "id": "olive-oil", "fdcId": 171413, "name": "橄榄油", "group": "坚果油脂", "aliases": ["橄榄油", "食用油", "olive oil"], "description": "Oil, olive, salad or cooking", "dataType": "SR Legacy", "kcal": 884, "kj": null, "protein": 0, "carb": 0, "fat": 100, "fiber": 0, "allowMl": false, "source": "USDA FoodData Central", "portions": { "tbsp": { "grams": 13.5, "label": "汤匙", "raw": "tablespoon", "source": "USDA" }, "tsp": { "grams": 4.5, "label": "茶匙", "raw": "tsp", "source": "USDA" } } }, { "id": "sugar", "fdcId": 746784, "name": "白砂糖", "group": "调味", "aliases": ["糖", "白砂糖", "白糖", "sugar"], "description": "Sugars, granulated", "dataType": "Foundation", "kcal": 385, "kj": null, "protein": 0, "carb": 99.6, "fat": 0.32, "fiber": null, "allowMl": false, "source": "USDA FoodData Central", "portions": { "tsp": { "grams": 4, "label": "茶匙", "raw": "teaspoon", "source": "USDA" } } }, { "id": "honey", "fdcId": 169640, "name": "蜂蜜", "group": "调味", "aliases": ["蜂蜜", "honey"], "description": "Honey", "dataType": "SR Legacy", "kcal": 304, "kj": null, "protein": 0.3, "carb": 82.4, "fat": 0, "fiber": 0.2, "allowMl": false, "source": "USDA FoodData Central", "portions": { "tbsp": { "grams": 21, "label": "汤匙", "raw": "tbsp", "source": "USDA" } } }, { "id": "coffee", "fdcId": 171890, "name": "黑咖啡（冲泡，不加糖奶）", "group": "饮品", "aliases": ["咖啡", "黑咖啡", "coffee"], "description": "Beverages, coffee, brewed, prepared with tap water", "dataType": "SR Legacy", "kcal": 1, "kj": null, "protein": 0.12, "carb": 0, "fat": 0.02, "fiber": 0, "allowMl": true, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 237, "label": "杯（8 fl oz）", "raw": "cup (8 fl oz)", "source": "USDA" } } }, { "id": "tea-black", "fdcId": 173227, "name": "红茶（冲泡，不加糖奶）", "group": "饮品", "aliases": ["红茶", "茶水", "black tea", "tea"], "description": "Beverages, tea, black, brewed, prepared with tap water", "dataType": "SR Legacy", "kcal": 1, "kj": null, "protein": 0, "carb": 0.3, "fat": 0, "fiber": 0, "allowMl": true, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 237, "label": "杯（8 fl oz）", "raw": "cup (8 fl oz)", "source": "USDA" } } }, { "id": "black-beans", "fdcId": 173735, "name": "黑豆（水煮，不加盐）", "group": "豆制品", "aliases": ["黑豆", "black beans"], "description": "Beans, black, mature seeds, cooked, boiled, without salt", "dataType": "SR Legacy", "kcal": 132, "kj": null, "protein": 8.86, "carb": 23.71, "fat": 0.54, "fiber": 8.7, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 172, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "lentils", "fdcId": 172421, "name": "扁豆（水煮，不加盐）", "group": "豆制品", "aliases": ["扁豆", "小扁豆", "lentils"], "description": "Lentils, mature seeds, cooked, boiled, without salt", "dataType": "SR Legacy", "kcal": 116, "kj": null, "protein": 9.02, "carb": 20.13, "fat": 0.38, "fiber": 7.9, "allowMl": false, "source": "USDA FoodData Central", "portions": { "cup": { "grams": 198, "label": "杯", "raw": "cup", "source": "USDA" } } }, { "id": "peanut-butter", "fdcId": 172470, "name": "花生酱（顺滑，不加盐）", "group": "坚果油脂", "aliases": ["花生酱", "peanut butter"], "description": "Peanut butter, smooth style, without salt", "dataType": "SR Legacy", "kcal": 598, "kj": null, "protein": 22.21, "carb": 22.31, "fat": 51.36, "fiber": 5, "allowMl": false, "source": "USDA FoodData Central", "portions": { "tbsp": { "grams": 16, "label": "汤匙", "raw": "tbsp", "source": "USDA" } } }];
+
+</script>
+<script>
+const ICONS = {"camera":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\" /> <circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"13\" r=\"3\" />","pen-line":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 20h9\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\" />","plus":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M5 12h14\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 5v14\" />","trash-2":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 6h18\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\" /> <line xmlns:ns0=\"http://www.w3.org/2000/svg\" x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\" /> <line xmlns:ns0=\"http://www.w3.org/2000/svg\" x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\" />","download":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <polyline xmlns:ns0=\"http://www.w3.org/2000/svg\" points=\"7 10 12 15 17 10\" /> <line xmlns:ns0=\"http://www.w3.org/2000/svg\" x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\" />","settings-2":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M20 7h-9\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M14 17H5\" /> <circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"17\" cy=\"17\" r=\"3\" /> <circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"7\" cy=\"7\" r=\"3\" />","book-open":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 7v14\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z\" />","database":"<ellipse xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 5V19A9 3 0 0 0 21 19V5\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 12A9 3 0 0 0 21 12\" />","shield-check":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m9 12 2 2 4-4\" />","chevron-left":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m15 18-6-6 6-6\" />","chevron-right":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m9 18 6-6-6-6\" />","image-plus":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M16 5h6\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M19 2v6\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\" /> <circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"9\" cy=\"9\" r=\"2\" />","loader-circle":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21 12a9 9 0 1 1-6.219-8.56\" />","check":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M20 6 9 17l-5-5\" />","x":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M18 6 6 18\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m6 6 12 12\" />","info":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"10\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 16v-4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 8h.01\" />","search":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"11\" cy=\"11\" r=\"8\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m21 21-4.3-4.3\" />","utensils":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 2v20\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7\" />","wheat":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 22 16 8\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\" />","beef":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12.5\" cy=\"8.5\" r=\"2.5\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12.5 2a6.5 6.5 0 0 0-6.22 4.6c-1.1 3.13-.78 3.9-3.18 6.08A3 3 0 0 0 5 18c4 0 8.4-1.8 11.4-4.3A6.5 6.5 0 0 0 12.5 2Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m18.5 6 2.19 4.5a6.48 6.48 0 0 1 .31 2 6.49 6.49 0 0 1-2.6 5.2C15.4 20.2 11 22 7 22a3 3 0 0 1-2.68-1.66L2.4 16.5\" />","droplets":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97\" />","clock-3":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"10\" /> <polyline xmlns:ns0=\"http://www.w3.org/2000/svg\" points=\"12 6 12 12 16.5 12\" />","calendar-days":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 2v4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M16 2v4\" /> <rect xmlns:ns0=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 10h18\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 14h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 14h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M16 14h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 18h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 18h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M16 18h.01\" />","arrow-up-right":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 7h10v10\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 17 17 7\" />","square-pen":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z\" />","upload":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <polyline xmlns:ns0=\"http://www.w3.org/2000/svg\" points=\"17 8 12 3 7 8\" /> <line xmlns:ns0=\"http://www.w3.org/2000/svg\" x1=\"12\" x2=\"12\" y1=\"3\" y2=\"15\" />","scan-line":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 7V5a2 2 0 0 1 2-2h2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M17 3h2a2 2 0 0 1 2 2v2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 12h10\" />","leaf":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12\" />","file-json":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M14 2v4a2 2 0 0 0 2 2h4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M10 12a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1 1 1 0 0 1 1 1v1a1 1 0 0 0 1 1\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M14 18a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1 1 1 0 0 1-1-1v-1a1 1 0 0 0-1-1\" />","rotate-ccw":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 3v5h5\" />","wifi":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 20h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 8.82a15 15 0 0 1 20 0\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M5 12.859a10 10 0 0 1 14 0\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8.5 16.429a5 5 0 0 1 7 0\" />","cloud-off":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m2 2 20 20\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07\" />","scale":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 21h10\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 3v18\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\" />","circle-help":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"10\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 17h.01\" />","notebook-pen":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 6h4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 10h4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 14h4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M2 18h4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\" />","minus":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M5 12h14\" />","target":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"10\" /> <circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"6\" /> <circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"2\" />","lock-keyhole":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"16\" r=\"1\" /> <rect xmlns:ns0=\"http://www.w3.org/2000/svg\" x=\"3\" y=\"10\" width=\"18\" height=\"12\" rx=\"2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M7 10V7a5 5 0 0 1 10 0v3\" />","external-link":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M15 3h6v6\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M10 14 21 3\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />","chevron-down":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m6 9 6 6 6-6\" />","chart-column":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 3v16a2 2 0 0 0 2 2h16\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M18 17V9\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M13 17V5\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 17v-3\" />","house":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\" />","list":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 12h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 18h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M3 6h.01\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 12h13\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 18h13\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 6h13\" />","flame":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\" />","circle-plus":"<circle xmlns:ns0=\"http://www.w3.org/2000/svg\" cx=\"12\" cy=\"12\" r=\"10\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M8 12h8\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 8v8\" />","chevron-up":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m18 15-6-6-6 6\" />","arrow-left":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m12 19-7-7 7-7\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M19 12H5\" />","arrow-right":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M5 12h14\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m12 5 7 7-7 7\" />","utensils-crossed":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m2.1 21.8 6.4-6.3\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"m19 5-7 7\" />","sparkles":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M20 3v4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M22 5h-4\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M4 17v2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M5 18H3\" />","smartphone":"<rect xmlns:ns0=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\" /> <path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M12 18h.01\" />","star":"<path xmlns:ns0=\"http://www.w3.org/2000/svg\" d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\" />","sunrise":"<path d=\"M12 2v8\" /> <path d=\"m4.93 10.93 1.41 1.41\" /> <path d=\"M2 18h2\" /> <path d=\"M20 18h2\" /> <path d=\"m19.07 10.93-1.41 1.41\" /> <path d=\"M22 22H2\" /> <path d=\"m8 6 4-4 4 4\" /> <path d=\"M16 18a4 4 0 0 0-8 0\" />","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\" /> <path d=\"M12 2v2\" /> <path d=\"M12 20v2\" /> <path d=\"m4.93 4.93 1.41 1.41\" /> <path d=\"m17.66 17.66 1.41 1.41\" /> <path d=\"M2 12h2\" /> <path d=\"M20 12h2\" /> <path d=\"m6.34 17.66-1.41 1.41\" /> <path d=\"m19.07 4.93-1.41 1.41\" />","moon":"<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\" />","coffee":"<path d=\"M10 2v2\" /> <path d=\"M14 2v2\" /> <path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\" /> <path d=\"M6 2v2\" />"};
+
+</script>
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const STORAGE_KEY = "shike-food-energy-ledger-v1";
+const MEALS = ["早餐", "午餐", "晚餐", "加餐"];
+const MEAL_EN = { 早餐: "Breakfast", 午餐: "Lunch", 晚餐: "Dinner", 加餐: "Snacks" };
+const MEAL_META = { 早餐: { icon: "sunrise", tone: "dawn" }, 午餐: { icon: "sun", tone: "day" }, 晚餐: { icon: "moon", tone: "night" }, 加餐: { icon: "coffee", tone: "snack" } };
+const UNIT_LABELS = {
+  grams: "克",
+  kg: "千克",
+  ml: "毫升",
+  cup: "杯",
+  bowl: "碗",
+  piece: "个/只/根",
+  slice: "片",
+  chunk: "块",
+  serving: "份",
+  can: "罐/听",
+  pack: "盒/瓶/包",
+  tbsp: "汤匙",
+  tsp: "茶匙",
+  oz: "盎司",
+  kernel: "粒/颗"
+};
+function localDate(d = /* @__PURE__ */ new Date()) {
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+function uid(p = "id") {
+  var _a, _b;
+  const v = ((_b = (_a = globalThis.crypto) == null ? void 0 : _a.randomUUID) == null ? void 0 : _b.call(_a)) || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${p}-${v}`;
+}
+function finiteNumber(v) {
+  if (v === "" || v === null || v === void 0) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const round = (v, d = 2) => {
+  const f = 10 ** d;
+  return Math.round((Number(v) + Number.EPSILON) * f) / f;
+};
+function formatNumber(v, d = 1) {
+  return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: d }).format(Number(v) || 0);
+}
+function escapeHTML(v) {
+  return String(v != null ? v : "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[c]);
+}
+function icon(name, cls = "") {
+  return `<svg${cls ? ` class="${cls}"` : ""} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.info}</svg>`;
+}
+function hydrateIcons(root = document) {
+  $$("i[data-icon]", root).forEach((el) => {
+    el.innerHTML = icon(el.dataset.icon);
+  });
+}
+function weekdayCN(dateStr) {
+  return ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][(/* @__PURE__ */ new Date(`${dateStr}T12:00:00`)).getDay()];
+}
+function shiftDateStr(dateStr, days) {
+  const d = /* @__PURE__ */ new Date(`${dateStr}T12:00:00`);
+  d.setDate(d.getDate() + days);
+  return localDate(d);
+}
+function defaultData() {
+  return { entries: [], customFoods: [], settings: { dailyTarget: "", recognitionEndpoint: "" } };
+}
+function loadData() {
+  var _a, _b;
+  const fb = defaultData();
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return fb;
+    const p = JSON.parse(raw);
+    const entries = Array.isArray(p.entries) ? p.entries.filter(
+      (e) => e && typeof e.id === "string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && MEALS.includes(e.meal) && Number.isFinite(Number(e.kcal)) && Number.isFinite(Number(e.grams))
+    ) : [];
+    const customFoods = Array.isArray(p.customFoods) ? p.customFoods.filter(
+      (f) => f && typeof f.id === "string" && typeof f.name === "string" && f.name.trim() && (finiteNumber(f.kcal) !== null || finiteNumber(f.kj) !== null)
+    ).map((f) => ({ ...f, aliases: Array.isArray(f.aliases) ? f.aliases : [f.name], portions: f.portions || {} })) : [];
+    return {
+      entries,
+      customFoods,
+      settings: {
+        dailyTarget: finiteNumber((_a = p.settings) == null ? void 0 : _a.dailyTarget) || "",
+        recognitionEndpoint: typeof ((_b = p.settings) == null ? void 0 : _b.recognitionEndpoint) === "string" ? p.settings.recognitionEndpoint : ""
+      }
+    };
+  } catch (e) {
+    return fb;
+  }
+}
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries: state.data.entries, customFoods: state.data.customFoods, settings: state.data.settings }));
+    state.storageOK = true;
+  } catch (e) {
+    state.storageOK = false;
+  }
+}
+function allFoods() {
+  return [...LOCAL_FOODS, ...state.data.customFoods];
+}
+function getFood(id) {
+  return allFoods().find((f) => f.id === id) || null;
+}
+function energyPer100(food) {
+  if (!food) return { kcal: 0, kj: 0 };
+  const kjV = finiteNumber(food.kj), kcalV = finiteNumber(food.kcal);
+  const kcal = kcalV !== null ? kcalV : kjV !== null ? kjV / 4.184 : 0;
+  const kj = kjV !== null ? kjV : kcal * 4.184;
+  return { kcal, kj };
+}
+function energyFor(food, grams) {
+  const p = energyPer100(food), r = (Number(grams) || 0) / 100;
+  return { kcal: p.kcal * r, kj: p.kj * r };
+}
+function nutrientFor(food, key, grams) {
+  const v = finiteNumber(food == null ? void 0 : food[key]);
+  return v === null ? null : v * (Number(grams) || 0) / 100;
+}
+function sourceLabel(food) {
+  if (!food) return "尚未匹配食物";
+  if (food.source === "USDA FoodData Central") return `USDA · FDC ${food.fdcId}`;
+  return food.source || "用户自定义";
+}
+function normalizeText(v) {
+  return String(v || "").replace(/[０-９]/g, (c) => String(c.charCodeAt(0) - 65296)).replace(/．/g, ".").toLowerCase().replace(/\s+/g, "");
+}
+function chineseNumber(t) {
+  if (t === void 0 || t === null || t === "") return null;
+  const n = String(t);
+  if (/^\d+(?:\.\d+)?$/.test(n)) return Number(n);
+  if (n === "半") return 0.5;
+  const dg = { 零: 0, "〇": 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+  const un = { 十: 10, 百: 100, 千: 1e3 };
+  let total = 0, cur = 0;
+  for (const ch of n) {
+    if (ch in dg) cur = dg[ch];
+    else if (ch in un) {
+      if (cur === 0) cur = 1;
+      total += cur * un[ch];
+      cur = 0;
+    } else return null;
+  }
+  return total + cur;
+}
+function unitFromText(text) {
+  var _a;
+  const units = [
+    [/千克|公斤|\d(?:\.\d+)?kg(?![a-z])/, "kg"],
+    [/毫升|\d(?:\.\d+)?ml(?![a-z])/, "ml"],
+    [/盎司|\d(?:\.\d+)?oz(?![a-z])/, "oz"],
+    [/茶匙|\d(?:\.\d+)?tsp(?![a-z])/, "tsp"],
+    [/汤匙|大勺|\d(?:\.\d+)?tbsp(?![a-z])/, "tbsp"],
+    [/杯|cups?/, "cup"],
+    [/碗/, "bowl"],
+    [/罐|听/, "can"],
+    [/盒|瓶|包/, "pack"],
+    [/汤匙|勺/, "tbsp"],
+    [/个|只|根/, "piece"],
+    [/片/, "slice"],
+    [/块/, "chunk"],
+    [/份/, "serving"],
+    [/粒|颗/, "kernel"],
+    [/克|\d(?:\.\d+)?g(?![a-z])/, "grams"]
+  ];
+  return ((_a = units.find(([re]) => re.test(text))) == null ? void 0 : _a[1]) || null;
+}
+function resolvePortion(food, quantity, unit) {
+  var _a;
+  let qty = finiteNumber(quantity);
+  let unitKey = unit || "grams";
+  let assumption = "";
+  if (qty === null) {
+    if (quantity === null || quantity === void 0) {
+      if ((_a = food == null ? void 0 : food.portions) == null ? void 0 : _a.piece) {
+        qty = 1;
+        unitKey = "piece";
+        assumption = "未识别数量，暂按 1 个/只/根；请按实际调整";
+      } else {
+        qty = 100;
+        unitKey = "grams";
+        assumption = "未识别份量，暂按 100 g；请按实际调整";
+      }
+    } else {
+      qty = 0;
+      assumption = "数量为空或无效，请填写大于 0 的数值";
+    }
+  }
+  if (!(qty > 0)) return { grams: 0, quantity: qty, unit: unitKey, portionLabel: "份量无效", portionSource: "待修正", assumption: assumption || "数量必须大于 0" };
+  if (!food) return { grams: 0, quantity: qty, unit: unitKey, portionLabel: "待匹配", portionSource: "待匹配", assumption };
+  const portions = food.portions || {};
+  const usePortion = (key, extra = "") => {
+    const p = portions[key];
+    if (!p) return null;
+    return {
+      grams: qty * p.grams,
+      quantity: qty,
+      unit: unitKey,
+      portionLabel: `${formatNumber(qty, 2)} ${UNIT_LABELS[unitKey]} · ${p.label}（${formatNumber(p.grams, 2)} g）`,
+      portionSource: "USDA 份量记录",
+      assumption: extra
+    };
+  };
+  if (unitKey === "grams") return { grams: qty, quantity: qty, unit: unitKey, portionLabel: `${formatNumber(qty, 2)} g 可食部`, portionSource: "实际重量", assumption };
+  if (unitKey === "kg") return { grams: qty * 1e3, quantity: qty, unit: unitKey, portionLabel: `${formatNumber(qty, 2)} kg 可食部`, portionSource: "单位换算", assumption };
+  if (unitKey === "ml") return { grams: qty, quantity: qty, unit: unitKey, portionLabel: `${formatNumber(qty, 2)} ml · 按 1 ml ≈ 1 g`, portionSource: "应用密度假设", assumption: assumption || "液体按 1 ml ≈ 1 g 估算；称重更可靠" };
+  if (unitKey === "oz") {
+    const d = usePortion("oz");
+    if (d) return d;
+    return { grams: qty * 28.3495, quantity: qty, unit: unitKey, portionLabel: `${formatNumber(qty, 2)} oz × 28.3495 g`, portionSource: "质量单位换算", assumption };
+  }
+  const cand = {
+    cup: ["cup", "container"],
+    piece: ["piece"],
+    slice: ["slice", "fillet"],
+    chunk: ["block", "patty", "piece"],
+    serving: ["serving"],
+    can: ["can", "container"],
+    pack: ["container", "can", "block"],
+    tbsp: ["tbsp"],
+    tsp: ["tsp"],
+    kernel: ["almond"]
+  };
+  for (const k of cand[unitKey] || []) {
+    const r = usePortion(k);
+    if (r) return { ...r, assumption: assumption || r.assumption };
+  }
+  const fb = {
+    cup: [240, "1 杯 = 240 g"],
+    bowl: [150, "1 碗 = 150 g"],
+    piece: [100, "1 个/只/根 = 100 g"],
+    slice: [30, "1 片 = 30 g"],
+    chunk: [100, "1 块 = 100 g"],
+    serving: [100, "1 份 = 100 g"],
+    can: [250, "1 罐 = 250 g"],
+    pack: [100, "1 盒/瓶/包 = 100 g"],
+    tbsp: [15, "1 汤匙 = 15 g"],
+    tsp: [5, "1 茶匙 = 5 g"],
+    kernel: [1, "1 粒 = 1 g"]
+  }[unitKey] || [100, "未写单位的数量按 100 g"];
+  return {
+    grams: qty * fb[0],
+    quantity: qty,
+    unit: unitKey,
+    portionLabel: `${formatNumber(qty, 2)} ${UNIT_LABELS[unitKey] || unitKey} · ${fb[1]}`,
+    portionSource: "应用假设（非国际标准）",
+    assumption: [assumption, `应用假设：${fb[1]}，不是国际标准，请按实际调整`].filter(Boolean).join("；")
+  };
+}
+function aliasTable() {
+  const rows = [];
+  allFoods().forEach((food) => {
+    [.../* @__PURE__ */ new Set([food.name, ...food.aliases || []])].forEach((a) => {
+      const n = normalizeText(a);
+      if (n) rows.push({ food, alias: n });
+    });
+  });
+  return rows.sort((a, b) => b.alias.length - a.alias.length);
+}
+function createReviewRow(food, clause, quantity, unit, opt = {}) {
+  const p = resolvePortion(food, quantity, unit);
+  return {
+    reviewId: uid("review"),
+    foodId: (food == null ? void 0 : food.id) || "",
+    rawName: opt.rawName || clause || (food == null ? void 0 : food.name) || "",
+    originalText: opt.originalText || clause || "",
+    meal: opt.meal || state.defaultMeal,
+    quantity: p.quantity,
+    unit: p.unit,
+    assumption: [p.assumption, opt.assumption].filter(Boolean).join("；"),
+    confidence: finiteNumber(opt.confidence),
+    inputMode: opt.inputMode || "text"
+  };
+}
+function parseDescription(description, inputMode = "text") {
+  const normalized = normalizeText(description).replace(/(?:和|及|与|加)(?=[\d零〇一二两三四五六七八九十半])/g, "、");
+  const aliases = aliasTable();
+  const segments = normalized.split(/[，,；;、。\n！!？?]+/).map((s) => s.trim()).filter(Boolean);
+  const rows = [];
+  segments.forEach((segment) => {
+    const found = [];
+    aliases.forEach((item) => {
+      let i = segment.indexOf(item.alias);
+      while (i !== -1) {
+        found.push({ ...item, start: i, end: i + item.alias.length });
+        i = segment.indexOf(item.alias, i + item.alias.length);
+      }
+    });
+    found.sort((a, b) => a.start - b.start || b.alias.length - a.alias.length);
+    const matches = [];
+    let cur = 0;
+    found.forEach((m) => {
+      if (m.start >= cur) {
+        matches.push(m);
+        cur = m.end;
+      }
+    });
+    if (!matches.length) {
+      rows.push(createReviewRow(null, segment, 100, "grams", { rawName: segment, assumption: "未在参考库匹配到食物，请选择或添加", inputMode }));
+      return;
+    }
+    matches.forEach((m, idx) => {
+      var _a, _b, _c;
+      const clauseStart = idx === 0 ? 0 : matches[idx - 1].end;
+      const clauseEnd = matches[idx + 1] ? m.end : segment.length;
+      const before = segment.slice(clauseStart, m.start);
+      const after = segment.slice(m.end, clauseEnd);
+      const re = /\d+(?:\.\d+)?|[零〇一二两三四五六七八九十百千]+|半/g;
+      const prefixes = [...before.matchAll(re)];
+      const tok = ((_a = prefixes.at(-1)) == null ? void 0 : _a[0]) || ((_b = after.match(re)) == null ? void 0 : _b[0]);
+      const qty = chineseNumber(tok);
+      const unit = unitFromText(`${before}${after}`);
+      let fUnit = unit, fQty = qty, assumption = "";
+      if (!unit && qty !== null) {
+        if ((_c = m.food.portions) == null ? void 0 : _c.piece) {
+          fUnit = "piece";
+          assumption = "数量后未写单位，暂按个/只/根理解，请核对";
+        } else {
+          fUnit = "grams";
+          assumption = "数量后未写单位，暂按克理解，请核对";
+        }
+      }
+      rows.push(createReviewRow(m.food, segment.slice(m.start, clauseEnd), fQty, fUnit, { rawName: m.alias, assumption, inputMode }));
+    });
+  });
+  return rows;
+}
+const state = {
+  selectedDate: localDate(),
+  defaultMeal: "早餐",
+  review: [],
+  editingEntryId: null,
+  addTab: "text",
+  usdaTarget: null,
+  customTarget: null,
+  photo: null,
+  photoBusy: false,
+  usdaResults: [],
+  session: { recognitionKey: "", usdaKey: "", photoConsent: false },
+  storageOK: true,
+  toastTimer: null,
+  toastCb: null,
+  trendRange: 7,
+  deferredPrompt: null,
+  data: loadData()
+};
+function entriesOn(date) {
+  return state.data.entries.filter((e) => e.date === date).sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+function totals(entries) {
+  const s = (k) => entries.reduce((t, e) => t + (Number(e[k]) || 0), 0);
+  return {
+    kcal: s("kcal"),
+    kj: entries.reduce((t, e) => t + (Number(e.kj) || Number(e.kcal) * 4.184 || 0), 0),
+    protein: s("protein"),
+    carb: s("carb"),
+    fat: s("fat"),
+    fiber: s("fiber"),
+    grams: s("grams")
+  };
+}
+function renderWeek() {
+  const today = localDate();
+  const start = shiftDateStr(today, -(((/* @__PURE__ */ new Date(`${today}T12:00:00`)).getDay() + 6) % 7));
+  $("#weekstrip").innerHTML = Array.from({ length: 7 }, (_, i) => {
+    const d = shiftDateStr(start, i);
+    const has = state.data.entries.some((e) => e.date === d);
+    const cls = ["day", d === today ? "today" : "", d === state.selectedDate ? "sel" : "", has ? "has" : ""].filter(Boolean).join(" ");
+    return `<button class="${cls}" type="button" data-date="${d}" aria-label="${d} ${weekdayCN(d)}${has ? "，有记录" : ""}"><span>${weekdayCN(d).replace("周", "")}</span><strong>${Number(d.slice(8))}</strong><i class="dot"></i></button>`;
+  }).join("");
+}
+function renderToday() {
+  renderWeek();
+  const entries = entriesOn(state.selectedDate);
+  const t = totals(entries);
+  const target = finiteNumber(state.data.settings.dailyTarget);
+  const hasTarget = target !== null && target > 0;
+  const pct = hasTarget ? clamp(t.kcal / target * 100, 0, 100) : clamp(t.kcal / 2e3 * 100, 0, 100);
+  const C = 2 * Math.PI * 55;
+  const fg = $("#ring-fg");
+  fg.setAttribute("stroke-dasharray", String(C));
+  fg.setAttribute("stroke-dashoffset", String(C * (1 - pct / 100)));
+  $("#ring-kcal").textContent = formatNumber(t.kcal, 0);
+  const heroDate = $("#hero-date-label");
+  if (heroDate) heroDate.textContent = state.selectedDate === localDate() ? "今天" : `${Number(state.selectedDate.slice(5, 7))}月${Number(state.selectedDate.slice(8))}日`;
+  $("#hero-consumed").innerHTML = `<strong>${formatNumber(t.kj, 0)}</strong> kJ 总能量`;
+  $("#hero-sub").textContent = hasTarget ? `${formatNumber(Math.max(target - t.kcal, 0), 0)} kcal ${t.kcal > target ? "已超出参考目标" : "距参考目标"}` : "未设置参考目标 · 仅记录，不做推荐";
+  $("#hero-target-btn").innerHTML = `${icon("target")}${hasTarget ? `目标 ${formatNumber(target, 0)}` : "设置参考目标"}`;
+  const me = t.protein * 4 + t.carb * 4 + t.fat * 9;
+  const parts = me > 0 ? [t.protein * 4 / me * 100, t.carb * 4 / me * 100, t.fat * 9 / me * 100] : [0, 0, 0];
+  [["#bar-p", parts[0]], ["#bar-c", parts[1]], ["#bar-f", parts[2]]].forEach(([sel, w]) => {
+    $(sel).style.width = `${w}%`;
+  });
+  $("#mv-p").textContent = `${formatNumber(t.protein, 0)} g`;
+  $("#mv-c").textContent = `${formatNumber(t.carb, 0)} g`;
+  $("#mv-f").textContent = `${formatNumber(t.fat, 0)} g`;
+  $("#meal-grid").innerHTML = MEALS.map((meal) => {
+    const list = entries.filter((e) => e.meal === meal);
+    const k = list.reduce((s, e) => s + Number(e.kcal || 0), 0);
+    return `<button class="meal-card tone-${MEAL_META[meal].tone}" type="button" data-add-meal="${meal}"><span class="m-top"><span class="m-title"><i class="meal-symbol">${icon(MEAL_META[meal].icon)}</i><span>${meal}<small>${MEAL_EN[meal]}</small></span></span><span class="m-add">${icon("plus")}</span></span><b>${list.length ? formatNumber(k, 0) : "—"}<small>${list.length ? "kcal" : ""}</small></b><span class="m-items">${list.length ? `${list.length} 项已记录` : "点按记录这一餐"}</span></button>`;
+  }).join("");
+  const box = $("#today-list");
+  if (!entries.length) {
+    box.innerHTML = `<div class="empty">${icon("utensils")}<h3>${state.selectedDate === localDate() ? "今天" : "这一天"}还没有记录</h3><p>拍一张照片或用一句话描述，确认份量后才会计入。</p><div class="mt14"><button class="btn btn-soft btn-sm" type="button" data-goto-add>现在记录</button></div></div>`;
+  } else {
+    box.innerHTML = MEALS.map((meal) => {
+      const list = entries.filter((e) => e.meal === meal);
+      if (!list.length) return "";
+      const k = list.reduce((s, e) => s + Number(e.kcal || 0), 0);
+      return `<section class="meal-group"><div class="meal-title"><span class="meal-heading"><i class="meal-mini tone-${MEAL_META[meal].tone}">${icon(MEAL_META[meal].icon)}</i>${meal}</span><span class="ln"></span><span class="k">${formatNumber(k, 0)} kcal</span></div>${list.map((e) => {
+        var _a;
+        return `
+        <article class="entry" data-entry="${escapeHTML(e.id)}">
+          <div class="entry-main">
+            <div class="entry-title"><strong>${escapeHTML(e.name)}</strong><em>${escapeHTML(e.fdcId ? `FDC ${e.fdcId}` : e.source === "USDA FoodData Central" ? "USDA" : "自定义")}</em></div>
+            <div class="entry-sub">${formatNumber(e.grams, 0)} g · ${escapeHTML(e.portionLabel || "")}${e.assumption ? ` · <span class="warn">${escapeHTML(e.assumption)}</span>` : ""}</div>
+          </div>
+          <div class="entry-right">
+            <div class="entry-kcal"><b>${formatNumber(e.kcal, 0)}</b><small>${formatNumber((_a = e.kj) != null ? _a : e.kcal * 4.184, 0)} kJ</small></div>
+            <div class="entry-act"><button type="button" data-edit="${escapeHTML(e.id)}" aria-label="编辑 ${escapeHTML(e.name)}">${icon("square-pen")}</button><button class="del" type="button" data-del="${escapeHTML(e.id)}" aria-label="删除 ${escapeHTML(e.name)}">${icon("trash-2")}</button></div>
+          </div>
+        </article>`;
+      }).join("")}</section>`;
+    }).join("");
+  }
+}
+function foodOptions(sel) {
+  const g = (label, foods) => foods.length ? `<optgroup label="${label}">${foods.map((f) => `<option value="${escapeHTML(f.id)}"${f.id === sel ? " selected" : ""}>${escapeHTML(f.name)}</option>`).join("")}</optgroup>` : "";
+  const custom = state.data.customFoods.filter((f) => f.source !== "USDA FoodData Central");
+  const online = state.data.customFoods.filter((f) => f.source === "USDA FoodData Central");
+  return `${g("USDA 参考库", LOCAL_FOODS)}${g("在线 USDA 食物", online)}${g("我的自定义", custom)}`;
+}
+function unitOptions(row, food) {
+  return Object.entries(UNIT_LABELS).map(([k, label]) => {
+    var _a;
+    const mk = { piece: "piece", slice: "slice", chunk: "block", cup: "cup", can: "can", tbsp: "tbsp", tsp: "tsp", oz: "oz", kernel: "almond" }[k];
+    const p = (_a = food == null ? void 0 : food.portions) == null ? void 0 : _a[mk];
+    return `<option value="${k}"${row.unit === k ? " selected" : ""}>${label}${p ? ` · ${formatNumber(p.grams, 1)}g` : ""}</option>`;
+  }).join("");
+}
+function reviewCalc(row) {
+  const food = getFood(row.foodId);
+  if (!food) return { food: null, grams: 0, kcal: 0, kj: 0, portionLabel: "待匹配", portionSource: "待匹配", assumption: row.assumption || "" };
+  const p = resolvePortion(food, row.quantity, row.unit);
+  return { food, ...p, ...energyFor(food, p.grams), assumption: [p.assumption, row.assumption].filter((v, i, a) => v && a.indexOf(v) === i).join("；") };
+}
+function renderReview() {
+  const area = $("#review-area");
+  area.hidden = state.review.length === 0;
+  if (!state.review.length) {
+    area.innerHTML = "";
+    return;
+  }
+  const confirmButton = $("#confirm-btn");
+  if (confirmButton) confirmButton.innerHTML = state.editingEntryId ? `${icon("check")}保存修改` : `${icon("check")}确认计入`;
+  area.innerHTML = `<div class="review-head"><div><h3>待确认 · 尚未计入</h3><p>核对食物、餐次和份量；克数才是热量计算依据。</p></div><button class="inline-link" type="button" data-cancel-review>取消</button></div>
+    ${state.review.map((row) => {
+    const c = reviewCalc(row);
+    const conf = row.confidence !== null ? ` · 服务置信度 ${Math.round(clamp(row.confidence, 0, 1) * 100)}%` : "";
+    const src = c.food ? `${escapeHTML(sourceLabel(c.food))} · ${escapeHTML(c.portionSource)}` : "未匹配，不能计入";
+    return `<article class="rcard${c.food ? "" : " unmatched"}" data-review="${row.reviewId}">
+        <div class="rcard-top">
+          <select class="select review-food" aria-label="选择食物"><option value="">${c.food ? "请选择食物" : `待匹配：${escapeHTML(row.rawName || "请补充名称")}`}</option>${foodOptions(row.foodId)}</select>
+          <button class="del-row" type="button" data-del-review aria-label="移除此项">${icon("x")}</button>
+        </div>
+        <div class="rcard-grid">
+          <select class="select review-meal" aria-label="餐次">${MEALS.map((m) => `<option${row.meal === m ? " selected" : ""}>${m}</option>`).join("")}</select>
+          <input class="input review-qty" type="number" min="0.01" step="0.01" inputmode="decimal" value="${escapeHTML(row.quantity)}" aria-label="数量">
+          <div style="display:grid;grid-template-columns:1fr;gap:6px">
+            <select class="select review-unit" aria-label="单位">${unitOptions(row, c.food)}</select>
+          </div>
+        </div>
+        <div class="row mt10" style="justify-content:space-between">
+          <div class="rcard-meta">${icon(c.food ? "database" : "info")}<span>${src}${conf}${c.assumption ? ` · ${escapeHTML(c.assumption)}` : ""} <button class="usda-link" type="button" data-usda-open>搜索 USDA</button></span></div>
+          <div class="rcard-kcal"><b data-rkcal>${formatNumber(c.kcal, 0)}</b><small data-rgrams>${formatNumber(c.grams, 0)} g · kcal</small></div>
+        </div>
+      </article>`;
+  }).join("")}
+    <div class="review-foot"><button class="btn btn-ghost btn-sm" type="button" data-add-row style="flex:0 0 auto">${icon("plus")}再加一项</button><button class="btn btn-primary" id="confirm-btn" type="button">${icon("check")}${state.editingEntryId ? "保存修改" : "确认计入"}</button></div>`;
+}
+function addRows(rows) {
+  if (!rows.length) return;
+  state.review.push(...rows);
+  state.editingEntryId = null;
+  renderReview();
+  if (state.screen !== "add") goScreen("add");
+  setTimeout(() => $("#review-area").scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+}
+function clearReview() {
+  state.review = [];
+  state.editingEntryId = null;
+  renderReview();
+}
+function confirmReview() {
+  const calcs = state.review.map((row) => ({ row, c: reviewCalc(row) }));
+  if (!calcs.length) return;
+  const bad = calcs.filter(({ row, c }) => !c.food || !(finiteNumber(row.quantity) > 0) || !(c.grams > 0) || !Number.isFinite(c.kcal));
+  if (bad.length) {
+    toast(`${bad.length} 项未匹配食物或份量无效`);
+    return;
+  }
+  if (state.editingEntryId) state.data.entries = state.data.entries.filter((e) => e.id !== state.editingEntryId);
+  const ts = (/* @__PURE__ */ new Date()).toISOString();
+  const newEntries = calcs.map(({ row, c }) => {
+    var _a, _b, _c, _d;
+    return {
+      id: uid("entry"),
+      date: state.selectedDate,
+      meal: MEALS.includes(row.meal) ? row.meal : state.defaultMeal,
+      foodId: c.food.id,
+      name: c.food.name,
+      grams: round(c.grams, 4),
+      quantity: round(c.quantity, 4),
+      unit: c.unit,
+      kcal: round(c.kcal, 4),
+      kj: round(c.kj, 4),
+      protein: round((_a = nutrientFor(c.food, "protein", c.grams)) != null ? _a : 0, 4),
+      carb: round((_b = nutrientFor(c.food, "carb", c.grams)) != null ? _b : 0, 4),
+      fat: round((_c = nutrientFor(c.food, "fat", c.grams)) != null ? _c : 0, 4),
+      fiber: round((_d = nutrientFor(c.food, "fiber", c.grams)) != null ? _d : 0, 4),
+      source: c.food.source || "用户自定义",
+      fdcId: c.food.fdcId || null,
+      sourceDescription: c.food.description || c.food.name,
+      portionLabel: c.portionLabel,
+      portionSource: c.portionSource,
+      assumption: c.assumption || "",
+      originalText: row.originalText || row.rawName || "",
+      inputMode: row.inputMode,
+      confidence: row.confidence,
+      createdAt: ts
+    };
+  });
+  state.data.entries.push(...newEntries);
+  const total = newEntries.reduce((s, e) => s + e.kcal, 0);
+  const wasEdit = Boolean(state.editingEntryId);
+  clearReview();
+  saveData();
+  renderToday();
+  renderTrend();
+  $("#food-notes").value = "";
+  $("#photo-note").value = "";
+  clearPhoto();
+  goScreen("today");
+  toast(`${wasEdit ? "已保存修改" : `已计入 ${newEntries.length} 项`} · ${formatNumber(total, 0)} kcal`);
+}
+function removeEntry(id) {
+  const i = state.data.entries.findIndex((e) => e.id === id);
+  if (i < 0) return;
+  const [del] = state.data.entries.splice(i, 1);
+  saveData();
+  renderToday();
+  renderTrend();
+  toast(`已删除「${del.name}」`, "撤销", () => {
+    state.data.entries.splice(Math.min(i, state.data.entries.length), 0, del);
+    saveData();
+    renderToday();
+    renderTrend();
+    toast("已恢复");
+  });
+}
+function editEntry(id) {
+  var _a;
+  if (state.review.length) {
+    toast("请先确认或取消当前待确认内容");
+    return;
+  }
+  const e = state.data.entries.find((x) => x.id === id);
+  if (!e) return;
+  state.selectedDate = e.date;
+  state.editingEntryId = e.id;
+  state.review = [{
+    reviewId: uid("review"),
+    foodId: e.foodId,
+    rawName: e.name,
+    originalText: e.originalText || e.name,
+    meal: e.meal,
+    quantity: e.quantity || e.grams,
+    unit: e.unit || "grams",
+    assumption: e.assumption || "",
+    confidence: (_a = e.confidence) != null ? _a : null,
+    inputMode: e.inputMode || "text"
+  }];
+  setAddTab("text");
+  renderToday();
+  renderReview();
+  goScreen("add");
+}
+function renderTrend() {
+  const n = state.trendRange;
+  const dates = Array.from({ length: n }, (_, i) => shiftDateStr(localDate(), -(n - 1 - i)));
+  const data = dates.map((d) => ({ d, kcal: totals(entriesOn(d)).kcal, has: entriesOn(d).length > 0 }));
+  const max = Math.max(...data.map((x) => x.kcal), 1);
+  const target = finiteNumber(state.data.settings.dailyTarget);
+  $("#trend-chart").innerHTML = data.map((x) => {
+    const h = x.kcal > 0 ? Math.max(6, Math.round(x.kcal / max * 100)) : 3;
+    const over2 = target ? x.kcal > target : false;
+    const cls = ["bar-col", x.kcal > 0 ? "" : "empty", over2 ? "over" : "", x.d === localDate() ? "today" : ""].filter(Boolean).join(" ");
+    const lab = n <= 7 ? weekdayCN(x.d).replace("周", "") : `${Number(x.d.slice(5, 7))}/${Number(x.d.slice(8))}`;
+    return `<div class="${cls}" title="${x.d}：${formatNumber(x.kcal, 0)} kcal"><span class="bar-val">${x.kcal > 0 ? formatNumber(x.kcal, 0) : ""}</span><div class="bar-stick" style="height:${h}%"></div><span class="bar-lab">${lab}</span></div>`;
+  }).join("");
+  const logged = data.filter((x) => x.has);
+  const avg = logged.length ? logged.reduce((s, x) => s + x.kcal, 0) / logged.length : 0;
+  $("#stat-avg").innerHTML = `${formatNumber(avg, 0)}<small> kcal</small>`;
+  $("#stat-days").innerHTML = `${logged.length}<small> / ${n} 天</small>`;
+  const over = target ? data.filter((x) => x.kcal > target).length : 0;
+  $("#stat-over").innerHTML = target ? `${over}<small> 天</small>` : `—<small> 需设目标</small>`;
+  const tgtCell = $("#stat-target-me");
+  if (tgtCell) tgtCell.innerHTML = target ? `${formatNumber(target, 0)}<small> kcal</small>` : `—<small> 未设置</small>`;
+  const all = totals(state.data.entries);
+  $("#stat-all").innerHTML = `${formatNumber(all.kcal, 0)}<small> kcal</small>`;
+  const cnt = state.data.entries.length;
+  $("#stat-items").innerHTML = `${cnt}<small> 项</small>`;
+  const firstDate = state.data.entries.map((e) => e.date).sort()[0];
+  $("#stat-since").textContent = firstDate ? `记录始于 ${firstDate}` : "还没有历史记录";
+}
+function renderMe() {
+  const target = finiteNumber(state.data.settings.dailyTarget);
+  $("#target-value").textContent = target ? `${formatNumber(target, 0)} kcal / 天` : "未设置";
+  const nativeApp = window.SHIKE_NATIVE_ANDROID === true;
+  const sw = nativeApp || location.protocol !== "file:" && "serviceWorker" in navigator;
+  $("#sw-state").textContent = nativeApp ? "应用资源已内置，可离线使用" : sw ? "已注册离线缓存" : "当前环境不支持离线缓存";
+  $("#sw-badge").textContent = nativeApp ? "离线已内置" : sw ? "离线可用" : "仅在线";
+  $("#sw-badge").className = `li-badge${sw ? " on" : ""}`;
+  $("#store-count").textContent = `${state.data.entries.length} 条记录 · ${state.data.customFoods.length} 个自定义食物`;
+  $("#storage-note").textContent = state.storageOK ? "记录保存在本机，不上传服务器" : "本机存储不可用，请及时导出";
+}
+function goScreen(name) {
+  state.screen = name;
+  $$(".screen").forEach((s) => s.classList.toggle("active", s.id === `screen-${name}`));
+  $$(".tabbar button[data-screen]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.screen === name)));
+  if (name === "today") {
+    renderToday();
+    $("#appbar-title").textContent = "今日";
+    $("#appbar-sub").textContent = `${state.selectedDate} · ${weekdayCN(state.selectedDate)}`;
+  }
+  if (name === "add") {
+    $("#appbar-title").textContent = "记一笔";
+    $("#appbar-sub").textContent = "文字或照片，确认后才计入";
+  }
+  if (name === "trend") {
+    renderTrend();
+    $("#appbar-title").textContent = "趋势";
+    $("#appbar-sub").textContent = "基于已确认记录";
+  }
+  if (name === "me") {
+    renderMe();
+    $("#appbar-title").textContent = "我的";
+    $("#appbar-sub").textContent = "数据、目标与来源";
+  }
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+}
+function setAddTab(tab) {
+  state.addTab = tab;
+  $$("[data-addtab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.addtab === tab)));
+  $("#panel-text").hidden = tab !== "text";
+  $("#panel-photo").hidden = tab !== "photo";
+}
+function openDlg(id) {
+  const d = document.getElementById(id);
+  if (d && !d.open) d.showModal();
+}
+function closeDlg(id) {
+  var _a;
+  (_a = document.getElementById(id)) == null ? void 0 : _a.close();
+}
+function openGoal() {
+  $("#goal-input").value = state.data.settings.dailyTarget || "";
+  openDlg("dlg-goal");
+}
+function saveGoal(e) {
+  e.preventDefault();
+  const raw = $("#goal-input").value.trim();
+  if (raw) {
+    const v = Number(raw);
+    if (!(v > 0) || v > 5e4) {
+      $("#goal-err").textContent = "请输入 1–50000 之间的数值，或留空取消目标。";
+      $("#goal-err").hidden = false;
+      return;
+    }
+  }
+  state.data.settings.dailyTarget = raw ? Number(raw) : "";
+  saveData();
+  closeDlg("dlg-goal");
+  renderToday();
+  renderTrend();
+  renderMe();
+  toast(raw ? `参考目标已设为 ${formatNumber(raw, 0)} kcal` : "已取消参考目标");
+}
+function openSettings() {
+  $("#set-target").value = state.data.settings.dailyTarget || "";
+  $("#set-endpoint").value = state.data.settings.recognitionEndpoint || "";
+  $("#set-reckey").value = state.session.recognitionKey;
+  $("#set-usdakey").value = state.session.usdaKey;
+  $("#set-consent").checked = state.session.photoConsent;
+  $("#set-status").hidden = true;
+  openDlg("dlg-settings");
+}
+function saveSettings(e) {
+  e.preventDefault();
+  const endpoint = $("#set-endpoint").value.trim();
+  const target = $("#set-target").value.trim();
+  const err = $("#set-status");
+  if (endpoint) {
+    try {
+      const u = new URL(endpoint);
+      if (u.protocol !== "https:") throw 0;
+    } catch (_) {
+      err.className = "note warn";
+      err.innerHTML = "识别接口必须是有效的 HTTPS 地址，避免照片与密钥被不安全传输。";
+      err.hidden = false;
+      return;
+    }
+  }
+  if (target && (!(Number(target) > 0) || Number(target) > 5e4)) {
+    err.className = "note warn";
+    err.innerHTML = "参考目标需在 1–50000 kcal 之间，或留空。";
+    err.hidden = false;
+    return;
+  }
+  state.data.settings.dailyTarget = target ? Number(target) : "";
+  state.data.settings.recognitionEndpoint = endpoint;
+  state.session.recognitionKey = $("#set-reckey").value;
+  state.session.usdaKey = $("#set-usdakey").value.trim();
+  state.session.photoConsent = Boolean(endpoint && $("#set-consent").checked);
+  saveData();
+  updateRecog();
+  closeDlg("dlg-settings");
+  renderToday();
+  renderTrend();
+  renderMe();
+  toast("设置已保存 · 密钥仅保留本次会话");
+}
+function updateRecog() {
+  const endpoint = state.data.settings.recognitionEndpoint;
+  const ready = Boolean(endpoint && state.session.photoConsent);
+  const el = $("#recog-state");
+  if (!el) return;
+  el.innerHTML = ready ? `${icon("wifi")}<span>识别服务已授权，可用</span>` : endpoint ? `${icon("shield-check")}<span>需确认照片上传授权</span>` : `${icon("cloud-off")}<span>未配置照片识别服务</span>`;
+  $("#manual-photo").disabled = !state.photo || state.photoBusy;
+  $("#recog-btn").disabled = !state.photo || !ready || state.photoBusy;
+  const me = $("#me-recog");
+  if (me) me.textContent = ready ? "已配置并授权" : endpoint ? "已配置，待授权" : "未配置";
+}
+function openCustom(targetId = null) {
+  state.customTarget = targetId;
+  $("#custom-form").reset();
+  $("#custom-err").hidden = true;
+  if (targetId) {
+    const r = state.review.find((x) => x.reviewId === targetId);
+    $("#c-name").value = (r == null ? void 0 : r.rawName) || "";
+  }
+  openDlg("dlg-custom");
+  setTimeout(() => $("#c-name").focus(), 50);
+}
+function saveCustom(e) {
+  e.preventDefault();
+  const name = $("#c-name").value.trim();
+  const kcalIn = finiteNumber($("#c-kcal").value);
+  const p = finiteNumber($("#c-p").value), f = finiteNumber($("#c-f").value), c = finiteNumber($("#c-carb").value);
+  let msg = "";
+  if (!name) msg = "请填写食物名称。";
+  else if (kcalIn === null && [p, f, c].some((v) => v === null)) msg = "未填能量时，蛋白质、脂肪、碳水三项都要填。";
+  else if ([kcalIn, p, f, c].some((v) => v !== null && v < 0)) msg = "营养数值不能为负。";
+  else if (kcalIn !== null && kcalIn > 1e3) msg = "每 100 g 超过 1000 kcal，请检查是否误填了整包数值。";
+  if (msg) {
+    $("#custom-err").textContent = msg;
+    $("#custom-err").hidden = false;
+    return;
+  }
+  const derived = kcalIn === null;
+  const kcal = derived ? p * 4 + f * 9 + c * 4 : kcalIn;
+  const food = {
+    id: uid("custom"),
+    name,
+    group: "自定义",
+    aliases: [name],
+    description: derived ? "用户输入宏量营养素，按 FAO 4/9/4 折算" : "用户输入的包装/标签能量",
+    dataType: "Custom",
+    kcal: round(kcal, 4),
+    kj: null,
+    protein: p != null ? p : 0,
+    fat: f != null ? f : 0,
+    carb: c != null ? c : 0,
+    fiber: 0,
+    source: derived ? "用户输入 · FAO 4/9/4 折算" : "用户输入（包装/标签）",
+    portions: {},
+    allowMl: false
+  };
+  state.data.customFoods.push(food);
+  saveData();
+  const row = createReviewRow(food, name, 100, "grams", { originalText: name });
+  if (state.customTarget) {
+    const i = state.review.findIndex((x) => x.reviewId === state.customTarget);
+    if (i >= 0) {
+      row.meal = state.review[i].meal;
+      row.quantity = state.review[i].quantity;
+      row.unit = state.review[i].unit;
+      state.review[i] = row;
+    }
+    renderReview();
+  } else {
+    addRows([row]);
+  }
+  closeDlg("dlg-custom");
+  setAddTab("text");
+  toast(`已保存「${name}」· 待确认份量`);
+}
+function openUsda(reviewId) {
+  var _a;
+  const r = state.review.find((x) => x.reviewId === reviewId);
+  if (!r) return;
+  state.usdaTarget = reviewId;
+  const f = getFood(r.foodId);
+  $("#usda-q").value = ((_a = f == null ? void 0 : f.aliases) == null ? void 0 : _a.find((a) => /[a-z]/i.test(a))) || r.rawName || "";
+  $("#usda-results").innerHTML = "";
+  openDlg("dlg-usda");
+}
+async function searchUsda(e) {
+  e.preventDefault();
+  const q = $("#usda-q").value.trim();
+  if (!q) return;
+  const btn = $("#usda-go");
+  btn.disabled = true;
+  btn.innerHTML = `${icon("loader-circle", "spin")}查询`;
+  $("#usda-results").innerHTML = `<p class="hint">正在查询 USDA FoodData Central…</p>`;
+  try {
+    const key = encodeURIComponent(state.session.usdaKey || "DEMO_KEY");
+    const res = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: q, pageSize: 8, dataType: ["Foundation", "SR Legacy"] })
+    });
+    if (!res.ok) throw new Error(res.status === 429 ? "超过 DEMO_KEY 限额，请稍后或填写自己的密钥" : `HTTP ${res.status}`);
+    const p = await res.json();
+    const foods = Array.isArray(p.foods) ? p.foods : [];
+    state.usdaResults = foods;
+    if (!foods.length) {
+      $("#usda-results").innerHTML = `<div class="note">没有匹配记录，试试更具体的英文名，或添加自定义食物。</div>`;
+      return;
+    }
+    $("#usda-results").innerHTML = foods.map((f) => {
+      const e2 = (f.foodNutrients || []).find((n) => Number(n.nutrientId) === 1008 && String(n.unitName).toLowerCase() === "kcal");
+      const kcal = finiteNumber(e2 == null ? void 0 : e2.value);
+      return `<div class="res"><div><b>${escapeHTML(f.description)}</b><small>FDC ${f.fdcId} · ${escapeHTML(f.dataType || "")}</small></div><div class="k">${kcal === null ? "—" : `${formatNumber(kcal, 0)}<small> kcal</small>`}<br><button class="btn btn-soft btn-sm" type="button" data-pick-usda="${f.fdcId}"${kcal === null ? " disabled" : ""}>选用</button></div></div>`;
+    }).join("");
+  } catch (err) {
+    $("#usda-results").innerHTML = `<div class="note warn">查询失败：${escapeHTML(err.message || "网络错误")}。本地记录不受影响。</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `${icon("search")}查询`;
+  }
+}
+function pickUsda(id) {
+  const raw = state.usdaResults.find((f) => String(f.fdcId) === String(id));
+  const i = state.review.findIndex((x) => x.reviewId === state.usdaTarget);
+  if (!raw || i < 0) return;
+  const nut = (nid) => {
+    var _a, _b;
+    return (_b = finiteNumber((_a = (raw.foodNutrients || []).find((n) => Number(n.nutrientId) === nid)) == null ? void 0 : _a.value)) != null ? _b : 0;
+  };
+  let food = allFoods().find((f) => String(f.fdcId) === String(raw.fdcId));
+  if (!food) {
+    food = {
+      id: `usda-${raw.fdcId}`,
+      fdcId: raw.fdcId,
+      name: raw.description,
+      group: "USDA 在线",
+      aliases: [raw.description],
+      description: raw.description,
+      dataType: raw.dataType || "",
+      kcal: nut(1008),
+      kj: null,
+      protein: nut(1003),
+      fat: nut(1004),
+      carb: nut(1005),
+      fiber: nut(1079),
+      source: "USDA FoodData Central",
+      portions: {},
+      allowMl: false
+    };
+    state.data.customFoods.push(food);
+    saveData();
+  }
+  const old = state.review[i];
+  state.review[i] = { ...old, foodId: food.id, rawName: raw.description, assumption: old.assumption || "在线记录未附份量，请核对单位与克数" };
+  closeDlg("dlg-usda");
+  renderReview();
+  toast("已选用 USDA 记录");
+}
+function handlePhoto(file) {
+  if (!file) return;
+  const st = $("#photo-status");
+  if (!file.type.startsWith("image/")) {
+    st.className = "hint danger-text";
+    st.textContent = "请选择 JPG、PNG、WebP 等图片。";
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    st.className = "hint danger-text";
+    st.textContent = "图片超过 10 MB，请压缩后再试。";
+    return;
+  }
+  clearPhoto();
+  state.photo = { file, url: URL.createObjectURL(file) };
+  $("#photo-img").src = state.photo.url;
+  $("#photo-box").classList.add("has-photo");
+  $("#photo-rm").hidden = false;
+  st.className = "hint";
+  st.textContent = `已选择 ${file.name}（${formatNumber(file.size / 1048576, 1)} MB）· 尚未上传`;
+  updateRecog();
+}
+function clearPhoto() {
+  var _a, _b;
+  if ((_a = state.photo) == null ? void 0 : _a.url) URL.revokeObjectURL(state.photo.url);
+  state.photo = null;
+  const img = $("#photo-img");
+  if (img) img.removeAttribute("src");
+  (_b = $("#photo-box")) == null ? void 0 : _b.classList.remove("has-photo");
+  if ($("#photo-rm")) $("#photo-rm").hidden = true;
+  if ($("#file-cam")) $("#file-cam").value = "";
+  if ($("#file-up")) $("#file-up").value = "";
+  const st = $("#photo-status");
+  if (st) {
+    st.className = "hint";
+    st.textContent = "照片只在本机预览；识别前需要你主动配置并授权服务。";
+  }
+  updateRecog();
+}
+function manualPhoto() {
+  if (!state.photo) return;
+  const note = $("#photo-note").value.trim();
+  const rows = note ? parseDescription(note, "photo-manual") : [createReviewRow(null, "", 100, "grams", { rawName: "", originalText: "照片手动标注", inputMode: "photo-manual", assumption: "请选择食物并填写实际份量" })];
+  addRows(rows);
+  toast("照片未上传 · 请手动核对食物与份量");
+}
+function matchFood(item) {
+  var _a, _b;
+  if (item.fdcId) {
+    const f = allFoods().find((x) => String(x.fdcId) === String(item.fdcId));
+    if (f) return f;
+  }
+  const n = normalizeText(item.name);
+  if (!n) return null;
+  const t = aliasTable();
+  return ((_a = t.find((r) => r.alias === n)) == null ? void 0 : _a.food) || ((_b = t.find((r) => n.includes(r.alias) || r.alias.includes(n))) == null ? void 0 : _b.food) || null;
+}
+async function recognize() {
+  const endpoint = state.data.settings.recognitionEndpoint;
+  if (!state.photo || !endpoint || !state.session.photoConsent || state.photoBusy) {
+    openSettings();
+    return;
+  }
+  state.photoBusy = true;
+  updateRecog();
+  const btn = $("#recog-btn");
+  btn.innerHTML = `${icon("loader-circle", "spin")}识别中`;
+  const st = $("#photo-status");
+  st.className = "hint";
+  st.textContent = "正在把当前照片发送到你配置的服务…";
+  try {
+    const body = new FormData();
+    body.append("image", state.photo.file, state.photo.file.name);
+    body.append("note", $("#photo-note").value.trim());
+    const headers = state.session.recognitionKey ? { Authorization: `Bearer ${state.session.recognitionKey}` } : {};
+    const res = await fetch(endpoint, { method: "POST", headers, body });
+    if (!res.ok) throw new Error(`接口返回 HTTP ${res.status}`);
+    const p = await res.json();
+    if (!Array.isArray(p.items)) throw new Error("响应缺少 items 数组");
+    if (!p.items.length) throw new Error("服务未返回食物，请手动标注");
+    const rows = p.items.slice(0, 30).map((it) => {
+      const food = matchFood(it);
+      const g = finiteNumber(it.grams);
+      const has = g !== null && g > 0;
+      return createReviewRow(food, it.name || "", has ? g : finiteNumber(it.quantity), has ? "grams" : it.unit && UNIT_LABELS[it.unit] ? it.unit : null, {
+        rawName: it.name || "",
+        originalText: $("#photo-note").value.trim() || "照片识别",
+        confidence: it.confidence,
+        inputMode: "photo-service",
+        assumption: has ? "重量由识别服务估计，建议用称重值替换" : "服务未提供可靠克数，请核对份量"
+      });
+    });
+    addRows(rows);
+    st.className = "hint";
+    st.textContent = `服务返回 ${rows.length} 项，已放入待确认；识别完成不等于计入。`;
+  } catch (err) {
+    st.className = "hint danger-text";
+    st.textContent = `识别失败：${err.message || "网络或接口错误"}。请检查接口/CORS，或改用手动标注。`;
+  } finally {
+    state.photoBusy = false;
+    btn.innerHTML = `${icon("scan-line")}识别并核对`;
+    updateRecog();
+  }
+}
+function csvCell(v) {
+  let t = String(v != null ? v : "");
+  if (/^\s*[=+\-@]/.test(t)) t = `'${t}`;
+  return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+}
+function exportData(format) {
+  const entries = entriesOn(state.selectedDate).length ? entriesOn(state.selectedDate) : state.data.entries;
+  if (!entries.length) {
+    toast("还没有可导出的记录");
+    return;
+  }
+  let blob;
+  if (format === "csv") {
+    const head = ["日期", "餐次", "食物", "数量", "单位", "可食部克数", "热量_kcal", "能量_kJ", "蛋白质_g", "碳水_g", "脂肪_g", "膳食纤维_g", "来源", "FDC_ID", "份量依据", "份量假设", "原始描述"];
+    const rows = entries.map((e) => [e.date, e.meal, e.name, e.quantity, UNIT_LABELS[e.unit] || e.unit, e.grams, e.kcal, e.kj, e.protein, e.carb, e.fat, e.fiber, e.source, e.fdcId || "", e.portionSource, e.assumption, e.originalText]);
+    blob = new Blob(["\uFEFF" + [head, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+  } else {
+    blob = new Blob([JSON.stringify({
+      tool: "食刻 Food Energy Ledger",
+      format: "android-apk",
+      exportedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      energyBasis: {
+        primary: "优先采用食物记录能量；实际能量 = 每100g能量 × 可食部克数 / 100",
+        atwaterGeneral: { protein: 4, fat: 9, carbohydrate: 4, alcohol: 7 },
+        kcalToKj: 4.184,
+        source: "FAO Food Energy: Methods of Analysis and Conversion Factors, Ch.3",
+        sourceUrl: "https://www.fao.org/4/y5022e/y5022e04.htm"
+      },
+      foodDataSource: "USDA FoodData Central; custom entries see source field",
+      dailyReferenceTargetKcal: state.data.settings.dailyTarget || null,
+      disclaimer: "饮食能量估算记录，不用于医疗诊断；识别结果与份量假设见各条记录。",
+      entries: state.data.entries
+    }, null, 2)], { type: "application/json;charset=utf-8" });
+  }
+  const fileName = `食刻_${localDate()}.${format}`;
+  if (window.SHIKE_NATIVE_ANDROID && window.ShikeAndroid && typeof window.ShikeAndroid.saveTextFile === "function") {
+    const reader = new FileReader();
+    reader.onload = () => {
+      let saved = false;
+      try {
+        saved = window.ShikeAndroid.saveTextFile(fileName, blob.type, String(reader.result || ""));
+      } catch (_) {
+        saved = false;
+      }
+      toast(saved ? `已保存到系统“下载/食刻”：${fileName}` : "导出失败，请检查系统存储后重试");
+    };
+    reader.onerror = () => toast("无法读取导出内容，请重试");
+    reader.readAsText(blob, "UTF-8");
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1e3);
+  toast(`已导出 ${format === "csv" ? "CSV" : "JSON"} 备份`);
+}
+function toast(msg, actionLabel = "", cb = null) {
+  clearTimeout(state.toastTimer);
+  state.toastCb = cb;
+  $("#toast-msg").textContent = msg;
+  const b = $("#toast-act");
+  b.hidden = !actionLabel;
+  b.textContent = actionLabel || "撤销";
+  const el = $("#toast");
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add("show"));
+  state.toastTimer = setTimeout(() => {
+    el.classList.remove("show");
+    state.toastCb = null;
+    setTimeout(() => {
+      el.hidden = true;
+    }, 220);
+  }, actionLabel ? 6500 : 3600);
+}
+function setupPWA() {
+  if (window.SHIKE_NATIVE_ANDROID) {
+    const dlg = $("#dlg-install");
+    if (dlg) {
+      $("#dlg-install-title").textContent = "Android 应用信息";
+      const subtitle = $("#dlg-install-title").nextElementSibling;
+      if (subtitle) subtitle.textContent = "原生 WebView 外壳，页面资源已内置。";
+      $(".dlg-body", dlg).innerHTML = `
+        <section class="dlg-sec"><h3>食刻 Android 1.1.0</h3><p>包名：app.shike.diet.fixed<br>支持 Android 10 及以上版本。可覆盖安装食刻修复版 1.0.1，正常情况下沿用其本机记录，升级前仍建议导出备份；最早 1.0.0 使用不同包名，记录不会自动迁移。</p></section>
+        <section class="dlg-sec"><h3>离线与记录</h3><p>页面、食物数据与计算逻辑均随应用内置；记录保存在本应用本机存储中，无需账号。清除应用数据会删除记录，请定期导出备份。</p></section>
+        <section class="dlg-sec"><h3>需要网络的可选功能</h3><p>USDA 在线搜索、你自行配置的照片识别服务，以及打开 FAO / USDA 来源链接需要网络。其余记录、汇总、趋势与导出功能可离线使用。</p></section>
+        <div class="dlg-actions"><button class="btn btn-primary btn-block" type="button" data-close="dlg-install">知道了</button></div>`;
+    }
+    const entry = $('[data-open="dlg-install"] .li-text b');
+    if (entry) entry.textContent = "Android 应用信息";
+    return;
+  }
+  if (location.protocol !== "file:" && "serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+    });
+  }
+  window.addEventListener("beforeinstallprompt", (ev) => {
+    ev.preventDefault();
+    state.deferredPrompt = ev;
+    const btn = $("#install-btn");
+    if (btn) {
+      btn.hidden = false;
+      btn.textContent = "安装到主屏幕";
+    }
+  });
+  window.addEventListener("appinstalled", () => {
+    state.deferredPrompt = null;
+    $("#install-btn").hidden = true;
+    toast("已安装到主屏幕");
+  });
+}
+async function installApp() {
+  if (state.deferredPrompt) {
+    state.deferredPrompt.prompt();
+    const res = await state.deferredPrompt.userChoice;
+    if (res.outcome === "accepted") state.deferredPrompt = null;
+    return;
+  }
+  openDlg("dlg-install");
+}
+function bind() {
+  $$(".tabbar button[data-screen]").forEach((b) => b.addEventListener("click", () => goScreen(b.dataset.screen)));
+  $("#fab-add").addEventListener("click", () => goScreen("add"));
+  $("#screen-today").addEventListener("click", (ev) => {
+    const d = ev.target.closest("[data-date]");
+    if (d) {
+      state.selectedDate = d.dataset.date;
+      renderToday();
+      $("#appbar-sub").textContent = `${state.selectedDate} · ${weekdayCN(state.selectedDate)}`;
+      return;
+    }
+    const meal = ev.target.closest("[data-add-meal]");
+    if (meal) {
+      state.defaultMeal = meal.dataset.addMeal;
+      setMeal(meal.dataset.addMeal);
+      renderToday();
+      goScreen("add");
+      return;
+    }
+    if (ev.target.closest("[data-goto-add]")) {
+      goScreen("add");
+      return;
+    }
+    const del = ev.target.closest("[data-del]");
+    if (del) {
+      removeEntry(del.dataset.del);
+      return;
+    }
+    const ed = ev.target.closest("[data-edit]");
+    if (ed) editEntry(ed.dataset.edit);
+  });
+  $$("[data-addtab]").forEach((b) => b.addEventListener("click", () => setAddTab(b.dataset.addtab)));
+  $$("[data-example]").forEach((b) => b.addEventListener("click", () => {
+    $("#food-notes").value = b.dataset.example;
+    $("#food-notes").focus();
+  }));
+  $$("#meal-pick [data-meal]").forEach((b) => b.addEventListener("click", () => {
+    state.defaultMeal = b.dataset.meal;
+    setMeal(b.dataset.meal);
+  }));
+  $("#parse-btn").addEventListener("click", () => {
+    const d = $("#food-notes").value.trim();
+    if (!d) {
+      toast("先描述一下吃了什么");
+      $("#food-notes").focus();
+      return;
+    }
+    const rows = parseDescription(d);
+    const un = rows.filter((r) => !r.foodId).length;
+    addRows(rows);
+    toast(un ? `已解析 ${rows.length} 项，${un} 项需手动匹配` : `已解析 ${rows.length} 项，请核对份量`);
+  });
+  $("#food-notes").addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      $("#parse-btn").click();
+    }
+  });
+  $("#custom-add").addEventListener("click", () => openCustom());
+  $("#review-area").addEventListener("change", (ev) => {
+    const card = ev.target.closest("[data-review]");
+    const row = state.review.find((r) => r.reviewId === (card == null ? void 0 : card.dataset.review));
+    if (!row) return;
+    if (ev.target.matches(".review-food")) row.foodId = ev.target.value;
+    if (ev.target.matches(".review-meal")) row.meal = ev.target.value;
+    if (ev.target.matches(".review-unit")) row.unit = ev.target.value;
+    if (ev.target.matches(".review-qty")) row.quantity = finiteNumber(ev.target.value);
+    renderReview();
+  });
+  $("#review-area").addEventListener("input", (ev) => {
+    if (!ev.target.matches(".review-qty")) return;
+    const card = ev.target.closest("[data-review]");
+    const row = state.review.find((r) => r.reviewId === (card == null ? void 0 : card.dataset.review));
+    if (!row) return;
+    row.quantity = finiteNumber(ev.target.value);
+    const c = reviewCalc(row);
+    const k = card.querySelector("[data-rkcal]");
+    if (k) k.textContent = formatNumber(c.kcal, 0);
+    const g = card.querySelector("[data-rgrams]");
+    if (g) g.textContent = `${formatNumber(c.grams, 0)} g · kcal`;
+  });
+  $("#review-area").addEventListener("click", (ev) => {
+    const card = ev.target.closest("[data-review]");
+    if (ev.target.closest("[data-cancel-review]")) {
+      clearReview();
+      return;
+    }
+    if (ev.target.closest("[data-add-row]")) {
+      addRows([createReviewRow(null, "", 100, "grams", { rawName: "", originalText: "手动添加", assumption: "请选择食物并填写份量" })]);
+      return;
+    }
+    if (ev.target.closest("#confirm-btn")) {
+      confirmReview();
+      return;
+    }
+    if (!card) return;
+    const id = card.dataset.review;
+    if (ev.target.closest("[data-del-review]")) {
+      state.review = state.review.filter((r) => r.reviewId !== id);
+      if (!state.review.length) state.editingEntryId = null;
+      renderReview();
+    }
+    if (ev.target.closest("[data-usda-open]")) openUsda(id);
+  });
+  $("#file-cam").addEventListener("change", (e) => handlePhoto(e.target.files[0]));
+  $("#file-up").addEventListener("change", (e) => handlePhoto(e.target.files[0]));
+  $("#photo-rm").addEventListener("click", clearPhoto);
+  $("#manual-photo").addEventListener("click", manualPhoto);
+  $("#recog-btn").addEventListener("click", recognize);
+  $("#recog-config").addEventListener("click", openSettings);
+  $("#hero-target-btn").addEventListener("click", openGoal);
+  $("#goal-form").addEventListener("submit", saveGoal);
+  $$("[data-close]").forEach((b) => b.addEventListener("click", () => closeDlg(b.dataset.close)));
+  $$("[data-open]").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.open === "dlg-settings") openSettings();
+    else openDlg(b.dataset.open);
+  }));
+  $("#settings-form").addEventListener("submit", saveSettings);
+  $("#custom-form").addEventListener("submit", saveCustom);
+  $("#usda-form").addEventListener("submit", searchUsda);
+  $("#usda-results").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-pick-usda]");
+    if (b) pickUsda(b.dataset.pickUsda);
+  });
+  $("#install-btn").addEventListener("click", installApp);
+  $("#export-csv").addEventListener("click", () => exportData("csv"));
+  $("#export-json").addEventListener("click", () => exportData("json"));
+  $$("#trend-range button").forEach((b) => b.addEventListener("click", () => {
+    state.trendRange = Number(b.dataset.range);
+    $$("#trend-range button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    renderTrend();
+  }));
+  $("#clear-all").addEventListener("click", () => {
+    if (!state.data.entries.length) {
+      toast("没有可清除的记录");
+      return;
+    }
+    if (!confirm(`将删除全部 ${state.data.entries.length} 条记录，建议先导出备份。确定继续？`)) return;
+    state.data.entries = [];
+    saveData();
+    renderToday();
+    renderTrend();
+    renderMe();
+    toast("已清除全部记录");
+  });
+  $("#toast-act").addEventListener("click", () => {
+    const cb = state.toastCb;
+    clearTimeout(state.toastTimer);
+    $("#toast").classList.remove("show");
+    state.toastCb = null;
+    setTimeout(() => {
+      $("#toast").hidden = true;
+    }, 220);
+    cb == null ? void 0 : cb();
+  });
+  window.addEventListener("scroll", () => {
+    $("#appbar").classList.toggle("scrolled", window.scrollY > 4);
+  }, { passive: true });
+  $$("dialog").forEach((d) => d.addEventListener("click", (ev) => {
+    if (ev.target !== d) return;
+    const r = d.getBoundingClientRect();
+    if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) d.close();
+  }));
+}
+function setMeal(meal) {
+  $$("#meal-pick [data-meal]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.meal === meal)));
+}
+hydrateIcons();
+bind();
+goScreen("today");
+setAddTab("text");
+renderToday();
+renderTrend();
+renderMe();
+updateRecog();
+setupPWA();
+window.__shikeBootOK = true;
+
+</script>
+</body>
+</html>
