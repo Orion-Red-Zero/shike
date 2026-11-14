@@ -1,0 +1,179 @@
+{
+  "app": "食刻 Android",
+  "version": "2.0.0",
+  "scope": "static source/package preflight; not runtime or device evidence",
+  "passed": 34,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "DOM IDs unique",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "four original screens retained",
+      "pass": true,
+      "detail": "['screen-today', 'screen-add', 'screen-trend', 'screen-me']"
+    },
+    {
+      "name": "all dialog open targets exist",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "all dialog close targets exist",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "2.0.0 mount points complete",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "name": "four inline scripts and no script dependency",
+      "pass": true,
+      "detail": "{'scripts': 4, 'external': []}"
+    },
+    {
+      "name": "original storage key retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "schema 2 migration before final startup render",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "new fields survive loadData",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: FITNESS_SCHEMA_VERSION = 2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function estimateEnergy130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function workoutVolume130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function movingAverageDetail130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function weeklySummary130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function parseImport130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function buildWorkoutCSV130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: function buildBodyCSV130",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: 不抵扣饮食热量",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "feature token: Mifflin–St Jeor",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no server/login dependency added",
+      "pass": true,
+      "detail": "offline core; existing optional USDA/recognition code retained"
+    },
+    {
+      "name": "no secrets in HTML",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "package unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Android version 6 / 2.0.0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no contacts/SMS/location permissions",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "PWA identity 2.0.0",
+      "pass": true,
+      "detail": "{'id': '/shike-app/', 'name': '食刻 · 饮食与健身目标', 'short_name': '食刻', 'version': '2.0.0', 'description': '本地优先、无需登录的饮食、训练与身体数据记录工具；支持个人目标与公式估算。', 'lang': 'zh-CN', 'dir': 'ltr', 'start_url': './index.html', 'scope': './', 'display': 'standalone', 'display_override': ['standalone', 'minimal-ui'], 'orientation': 'portrait-primary', 'background_color': '#f4f6f1', 'theme_color': '#173f35', 'categories': ['health', 'food', 'lifestyle', 'utilities'], 'icons': [{'src': './icons/icon-192.png', 'sizes': '192x192', 'type': 'image/png', 'purpose': 'any'}, {'src': './icons/icon-512.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'any'}, {'src': './icons/icon-maskable-512.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'maskable'}, {'src': './icons/apple-touch-icon.png', 'sizes': '180x180', 'type': 'image/png', 'purpose': 'any'}], 'shortcuts': [{'name': '记一笔', 'short_name': '记录', 'url': './index.html?screen=add', 'description': '记录饮食、训练或身体数据'}, {'name': '今日汇总', 'short_name': '今日', 'url': './index.html?screen=today', 'description': '查看今日摄入、营养目标与训练'}, {'name': '趋势与周总结', 'short_name': '趋势', 'url': './index.html?screen=trend', 'description': '查看饮食、训练、身体趋势与每周总结'}]}"
+    },
+    {
+      "name": "PWA cache version 2.0.0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "build output/version updated",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "keystore excluded from source",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "bundled USDA food dataset byte-identical",
+      "pass": true,
+      "detail": "16749 chars"
+    },
+    {
+      "name": "bundled Lucide icon script byte-identical",
+      "pass": true,
+      "detail": "15931 chars"
+    },
+    {
+      "name": "native Android bridge preserved except 2.0.0 label",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "legacy FAO conversion factors retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "legacy diet CSV header byte-identical",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "old food parser retained",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

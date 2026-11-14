@@ -1,0 +1,36 @@
+Scope: original Shike 1.2.0 baseline only; this version-pinned preflight is not applicable to 1.3.0 source.
+Command: python3 tests/preflight_1_2_0.py
+Working directory: original recovered 1.2.0 baseline
+Baseline source ZIP SHA-256: 966d4927c55fd8bae612ad59b65c6a62d56296bf15bab695de769a1d18642822
+Unchanged test SHA-256: f29b212e6b57596568b80df1e8cd304535e95a41e1a090bd7d6fe0ca9b3fdaaa
+Exit code: 0
+
+{
+  "status": "PASS",
+  "dom_ids": 113,
+  "duplicate_ids": [],
+  "navigation": [
+    "today",
+    "add",
+    "trend",
+    "me"
+  ],
+  "meals": [
+    "早餐",
+    "午餐",
+    "晚餐",
+    "加餐"
+  ],
+  "dialog_open_targets": 6,
+  "dialog_close_targets": 10,
+  "dynamic_photo_controls": [
+    "photo-add-all",
+    "data-photo-add",
+    "data-photo-usda"
+  ],
+  "icons": 56,
+  "missing_icons": [],
+  "food_data_unchanged_from_1_1_0": true,
+  "early_bootstrap_unchanged": true,
+  "build_script_bash_syntax": "PASS"
+}

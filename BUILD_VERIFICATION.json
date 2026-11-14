@@ -1,21 +1,184 @@
 {
+  "app": "食刻 Android",
+  "version": "2.0.0",
+  "verification_date": "2026-11-14",
   "status": "PASS",
-  "source_version": "食刻 1.2.0",
-  "runtime_test_groups_passed": 15,
-  "static_preflight": "PASS",
-  "full_apk_rebuild_from_source": "PASS",
-  "official_apk": {
-    "filename": "shike-android-1.2.0.apk",
-    "sha256": "2fb54e1d58c2ec289977ba871b4472c302cbf2fe0889fdf0786018417c87203b",
-    "assets_match_source": true,
-    "certificate_sha256": "df2e3ce99ba4cd1ea31ec94adecb4e1877c7cc9ad8159ff33733a39535bd75b3"
+  "scope": "版本标识升级、源码、Chromium、模拟原生桥和 APK 包级验证；不包含 Android 设备运行时验收",
+  "change_summary": {
+    "project_version": "1.3.0 → 2.0.0",
+    "versionCode": "5 → 6",
+    "app_name": "食刻（不变）",
+    "package": "app.shike.diet.fixed（不变）",
+    "storage_key": "shike-food-energy-ledger-v1（不变）",
+    "schemaVersion": 2,
+    "functional_changes": "无功能性需求变更；保留 1.3.0 饮食与健身功能"
   },
-  "rebuilt_apk": {
-    "filename": "shike-android-1.2.0.apk (not included)",
-    "sha256": "881961d35c819c43ee5ebb55a7bcddd86a8f746c7074426f9058c8f0bf3e222e",
-    "assets_match_source": true,
-    "certificate_matches_official": true
+  "baseline": {
+    "source_archive": "Shike_1.3.0_Source.zip",
+    "sha256": "c01919f39faddd2f0f8325e49ec26b521c7d615351380fa39a73437c59c96155"
   },
-  "source_asset_count": 8,
-  "note": "APK 文件哈希可因 ZIP 时间戳和签名块而不同；本核验要求应用资源逐字节一致且签名证书一致。"
+  "apk": {
+    "file_name": "shike-android-2.0.0.apk",
+    "bytes": 248046,
+    "sha256": "4a1ad83da4d579d3cfe3cce27c002e18f1ebb1c1b81a3182ea741842bdeb47ec",
+    "package": "app.shike.diet.fixed",
+    "versionCode": 6,
+    "versionName": "2.0.0",
+    "minSdk": 29,
+    "targetSdk": 35,
+    "compileSdk": 35,
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.ACCESS_NETWORK_STATE"
+    ]
+  },
+  "package_checks": {
+    "classes_dex_present": true,
+    "zip_crc": "PASS",
+    "zipalign": "PASS",
+    "assets": {
+      "status": "PASS",
+      "apk": "/mnt/work/shike-2.0.0-work/final-build/shike-android-2.0.0.apk",
+      "apk_sha256": "4a1ad83da4d579d3cfe3cce27c002e18f1ebb1c1b81a3182ea741842bdeb47ec",
+      "zip_crc": "PASS",
+      "classes_dex_present": true,
+      "source_asset_count": 8,
+      "missing_or_mismatched_assets": [],
+      "unexpected_extra_assets": [],
+      "files": [
+        {
+          "asset": "assets/icons/apple-touch-icon.png",
+          "source_sha256": "9fb858171d71c3d53c2a4749c98c26a08d6b43bce7fdb5c80308b116295e0581",
+          "apk_sha256": "9fb858171d71c3d53c2a4749c98c26a08d6b43bce7fdb5c80308b116295e0581",
+          "match": true
+        },
+        {
+          "asset": "assets/icons/icon-192.png",
+          "source_sha256": "c63d057e0643dc584a7d47aace70f6b5d8924d4a8a94779cdf4be78aa030bb4f",
+          "apk_sha256": "c63d057e0643dc584a7d47aace70f6b5d8924d4a8a94779cdf4be78aa030bb4f",
+          "match": true
+        },
+        {
+          "asset": "assets/icons/icon-512.png",
+          "source_sha256": "f4954c5c6ddf66df5e5f8ce50992825716e80787c3d054d73b470beb73fa899a",
+          "apk_sha256": "f4954c5c6ddf66df5e5f8ce50992825716e80787c3d054d73b470beb73fa899a",
+          "match": true
+        },
+        {
+          "asset": "assets/icons/icon-maskable-512.png",
+          "source_sha256": "5fb44333d91408473da6a0076e41e7b15c017a35fd17ec379525712517049e68",
+          "apk_sha256": "5fb44333d91408473da6a0076e41e7b15c017a35fd17ec379525712517049e68",
+          "match": true
+        },
+        {
+          "asset": "assets/index.html",
+          "source_sha256": "6fd4b18f9ce0d02b802c4e57ade57f221e4bca43e950bce8346e5ac226d64179",
+          "apk_sha256": "6fd4b18f9ce0d02b802c4e57ade57f221e4bca43e950bce8346e5ac226d64179",
+          "match": true
+        },
+        {
+          "asset": "assets/lucide-LICENSE.txt",
+          "source_sha256": "b5a68e977892ce54fcc16ae6c2eef587438ff9a7d8b9607f29f8635c5d33d76d",
+          "apk_sha256": "b5a68e977892ce54fcc16ae6c2eef587438ff9a7d8b9607f29f8635c5d33d76d",
+          "match": true
+        },
+        {
+          "asset": "assets/manifest.json",
+          "source_sha256": "f8603e26ba44b43258b496390a716538c90195d8fc007c10d4c33fccc0194cb0",
+          "apk_sha256": "f8603e26ba44b43258b496390a716538c90195d8fc007c10d4c33fccc0194cb0",
+          "match": true
+        },
+        {
+          "asset": "assets/sw.js",
+          "source_sha256": "299f1ed34b96239c54293e60005a287df198b2a0ec2ef3c5879f20cc3bdff650",
+          "apk_sha256": "299f1ed34b96239c54293e60005a287df198b2a0ec2ef3c5879f20cc3bdff650",
+          "match": true
+        }
+      ]
+    }
+  },
+  "signature": {
+    "verified": true,
+    "signers": 1,
+    "v1": false,
+    "v2": false,
+    "v3": true,
+    "v3_1": false,
+    "v4": false,
+    "certificate_sha256": "8eb57a53d5bff24a558fa8db3552971fc2f41c43686569daee0b6339d6357776",
+    "key_algorithm": "RSA",
+    "key_size_bits": 3072,
+    "previous_1_3_0_certificate_sha256": "127a9af3e2c0042f2c00c621b3bda438eeff2b9ca215525cc9c2fb8afc28002d",
+    "certificate_matches_previous": false,
+    "upgrade_warning": "本次 2.0.0 使用新签名，不能覆盖此前交付的签名不同的 1.3.0。必须先在旧版导出 JSON；卸载会清除未备份的应用私有数据；安装本包后再导入并核对。",
+    "private_key_or_password_in_delivery": false
+  },
+  "tests": {
+    "original_1_2_0_baseline_preflight": {
+      "status": "PASS",
+      "scope": "原始 1.2.0 基线；原测试未修改",
+      "evidence": "reference/Shike_2.0.0_legacy-baseline-preflight.txt"
+    },
+    "legacy_vm_on_2_0_0_source": {
+      "passed": 15,
+      "failed": 0,
+      "evidence": "reference/Shike_2.0.0_legacy-vm-tests.json"
+    },
+    "preflight_2_0_0": {
+      "passed": 34,
+      "failed": 0,
+      "evidence": "reference/Shike_2.0.0_preflight.json"
+    },
+    "vm_2_0_0": {
+      "passed": 10,
+      "failed": 0,
+      "evidence": "reference/Shike_2.0.0_runtime-tests.json"
+    },
+    "chromium": {
+      "passed": 14,
+      "failed": 0,
+      "browser": "Chrome/154.0.8037.92",
+      "mobile_viewports": [
+        320,
+        390
+      ],
+      "console_errors": 0,
+      "page_errors": 0,
+      "external_requests": 0,
+      "evidence": "reference/Shike_2.0.0_browser-tests.json",
+      "note": "移动视口与模拟 ShikeAndroid 不是 Android 真机或真实 WebView 桥测试"
+    }
+  },
+  "build_tools": {
+    "android_platform": "android-35",
+    "build_tools": "35.0.0",
+    "jdk": "25.0.2",
+    "official_archives": [
+      {
+        "url": "https://dl.google.com/android/repository/build-tools_r35_linux.zip",
+        "bytes": 61958799,
+        "sha1": "2cfaa0bbb2336e9ec18ed3ecea84fa2e2af607bc"
+      },
+      {
+        "url": "https://dl.google.com/android/repository/platform-35_r02.zip",
+        "bytes": 64273788,
+        "sha1": "0bb560a90a7a2cbd0dd8348224d518b638fe7949"
+      }
+    ],
+    "archive_integrity": "大小、SHA-1 与 ZIP CRC 均已校验"
+  },
+  "visual_review": {
+    "status": "PASS",
+    "sampled_current_screenshot": "reference/browser/01-migrated-today.png",
+    "automated_layout": "Chromium 对 320/390 px 四页共 8 个组合检查横向溢出、顶栏和主要触控尺寸",
+    "note": "仅抽读当前首页截图并结合自动布局检查，不宣称真机视觉验收"
+  },
+  "not_tested": [
+    "Android 真机或模拟器启动、WebView 版本兼容、系统返回与后台恢复",
+    "真实相机拍摄、相册选择和 Android 权限弹窗",
+    "真实 Android 原生保存对话框及分享目录写入",
+    "USDA 与用户自定义识别端点的真实网络服务、准确率和限额",
+    "旧签名 APK 覆盖升级、Android 离线首次安装启动",
+    "照片识别准确率、单目照片绝对克重及任何医疗或营养效果"
+  ]
 }

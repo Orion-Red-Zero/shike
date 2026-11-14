@@ -1,5 +1,5 @@
 /* 食刻 PWA service worker：缓存应用外壳，支持离线打开。 */
-const VERSION = 'shike-v1.2.0';
+const VERSION = 'shike-v2.0.0';
 const SHELL = [
   './', './index.html', './manifest.json',
   './icons/icon-192.png', './icons/icon-512.png',

@@ -1,0 +1,61 @@
+{
+  "app": "食刻 Android",
+  "version": "2.0.0",
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-14T01:43:12.602Z",
+  "scope": "Node VM + legacy 1.2.0 DOM/localStorage stubs; not an Android device test",
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "1.2 data migrates in place and survives reload",
+      "pass": true,
+      "detail": "旧饮食、食物库和 1800 kcal 目标保留；训练、模板、身体数据重载后仍在原键中"
+    },
+    {
+      "name": "BMR, activity and goal adjustments are explicit estimates",
+      "pass": true,
+      "detail": "Mifflin–St Jeor BMR=1649，久坐 TDEE=1979；维持/减脂/增肌分别 1980/1680/2180 kcal（公式估算）"
+    },
+    {
+      "name": "training and rest nutrition targets switch by recorded workout",
+      "pass": true,
+      "detail": "有训练记录的日期采用 150 g 蛋白质目标，无训练日期采用 120 g"
+    },
+    {
+      "name": "strength volume and cardio/strength calorie estimates",
+      "pass": true,
+      "detail": "60×10×3 + 20×12×2 + 自重 0 = 2280 kg；45 分钟力量约 276、30 分钟跑步约 294 kcal"
+    },
+    {
+      "name": "incomplete exercise is blocked and valid workout saves without calorie deduction",
+      "pass": true,
+      "detail": "缺次数时拒绝保存；有效训练容量 1800 kg，估算消耗未进入饮食 entries 或抵扣热量"
+    },
+    {
+      "name": "seven-day moving average uses actual samples only",
+      "pass": true,
+      "detail": "11/07–11/13 仅取 70、71、72 三次有效测量，平均 71 kg；窗口外与空值不补入"
+    },
+    {
+      "name": "same-day body metric updates instead of duplicating",
+      "pass": true,
+      "detail": "同日第二次保存更新原 ID：70.2→70.6 kg，并补入体脂率，不产生重复记录"
+    },
+    {
+      "name": "weekly summary counts goal days, training and average-weight change",
+      "pass": true,
+      "detail": "周一至周日：3 个有记录日中热量/蛋白质各达标 2 天，训练 2 次 90 分钟，7 日均重 69→71 kg"
+    },
+    {
+      "name": "legacy/current JSON import validates and complete CSV/JSON exports retain new data",
+      "pass": true,
+      "detail": "旧 JSON 的 1900 kcal 目标可迁移；坏 JSON/未来版本/坏记录被拒绝；新 JSON 与两个 CSV 含完整新增数据且防公式注入"
+    },
+    {
+      "name": "new UI has no duplicate IDs and all static selectors resolve",
+      "pass": true,
+      "detail": "214 个 ID 无重复；三类记录/趋势、目标与周总结挂载点完整；无外部脚本依赖"
+    }
+  ]
+}

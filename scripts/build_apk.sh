@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ $# -gt 1 ]]; then
+  echo "用法：bash scripts/build_apk.sh [输出 APK 路径]" >&2
+  exit 2
+fi
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MAIN="$ROOT/project/app/src/main"
 BUILD="${BUILD_DIR:-$ROOT/build}"
-SIGNED="$BUILD/shike-android-1.2.0.apk"
+SIGNED="${1:-$BUILD/shike-android-2.0.0.apk}"
 ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
 BUILD_TOOLS_VERSION="${ANDROID_BUILD_TOOLS_VERSION:-35.0.0}"
 BT="${ANDROID_BUILD_TOOLS_DIR:-${ANDROID_SDK_ROOT}/build-tools/${BUILD_TOOLS_VERSION}}"
@@ -36,6 +41,8 @@ case "$BUILD" in
     exit 1
     ;;
 esac
+
+mkdir -p "$(dirname "$SIGNED")"
 
 # A newly generated key cannot cover-upgrade an APK signed by another key.
 if [[ ! -f "$KEYSTORE" && "${SHIKE_GENERATE_KEYSTORE:-0}" == "1" && -z "${SHIKE_KS_PASS:-}" && ! -f "$PASS_FILE" ]]; then
@@ -81,8 +88,8 @@ import os
 import re
 html = Path(os.environ['HTML']).read_text(encoding='utf-8')
 for token in [
-    'window.SHIKE_NATIVE_ANDROID = true', 'window.__shikeBootOK = true',
-    'app.shike.diet.fixed', '食刻 Android 1.2.0', 'ShikeAndroid.saveTextFile'
+    'window.SHIKE_NATIVE_ANDROID = Boolean(window.ShikeAndroid)', 'window.__shikeBootOK = true',
+    'app.shike.diet.fixed', '食刻 Android 2.0.0', 'ShikeAndroid.saveTextFile'
 ]:
     assert token in html, token
 scripts = re.findall(r'<script[^>]*>(.*?)</script>', html, re.S | re.I)
@@ -102,8 +109,8 @@ for script in "$BUILD"/jscheck/*.js; do node --check "$script"; done
   --java "$BUILD/gen" \
   --min-sdk-version 29 \
   --target-sdk-version 35 \
-  --version-code 4 \
-  --version-name 1.2.0 \
+  --version-code 6 \
+  --version-name 2.0.0 \
   "$BUILD/compiled/resources.zip"
 
 mapfile -t SOURCES < <(find "$MAIN/java" "$BUILD/gen" -name '*.java' -type f | sort)

@@ -1,0 +1,138 @@
+{
+  "version": "1.2.0",
+  "source": "project/app/src/main/assets/index.html（验证时从最终签名 APK 解出）",
+  "method": "Node VM + deterministic DOM/canvas/fetch fixtures; no rendered browser preview",
+  "fixtureNotice": "识别与 USDA 在线响应均为协议测试夹具，不代表真实识别准确率或实时 USDA 查询结果。",
+  "passed": 15,
+  "failed": 0,
+  "results": [
+    {
+      "name": "旧版记录与自定义食物原键加载、别名匹配和计数",
+      "status": "PASS",
+      "details": {
+        "storageKey": "shike-food-energy-ledger-v1",
+        "legacyEntries": 1
+      }
+    },
+    {
+      "name": "同一旧自定义食物跨四餐、跨日期直接复用并持久化",
+      "status": "PASS",
+      "details": {
+        "entries": 5,
+        "eachNewEntryKcal": 144
+      }
+    },
+    {
+      "name": "新建全局食物、别名搜索、常用碗份量与能量/kJ 计算",
+      "status": "PASS",
+      "details": {
+        "grams": 180,
+        "kcal": 450,
+        "kjPer100g": 1046
+      }
+    },
+    {
+      "name": "编辑仅影响后续记录；删除需确认且不改写历史快照",
+      "status": "PASS",
+      "details": {
+        "historicalName": "高纤燕麦碗",
+        "historicalKcal": 450
+      }
+    },
+    {
+      "name": "清空、无效与负数数量不按 100g 默认入账",
+      "status": "PASS",
+      "details": {
+        "emptyGrams": 0,
+        "negativeGrams": 0,
+        "omittedParserDefaultGrams": 100
+      }
+    },
+    {
+      "name": "照片在本机缩放并转码为 JPEG",
+      "status": "PASS",
+      "details": {
+        "source": "3200x2400",
+        "output": "1600x1200",
+        "originalBytes": 100000,
+        "uploadBytes": 20000
+      }
+    },
+    {
+      "name": "模拟识别候选显示双置信度/范围/参考物，热量由本地/USDA 食物与确认克数重算",
+      "status": "PASS",
+      "details": {
+        "grams": 150,
+        "expectedKcal": 195,
+        "serviceReportedKcalIgnored": 999999
+      }
+    },
+    {
+      "name": "动态“全部加入”一次加入多项候选，重复点击不会重复添加",
+      "status": "PASS",
+      "details": {
+        "candidates": 2,
+        "reviewRows": 2,
+        "duplicateRowsAfterSecondClick": 0
+      }
+    },
+    {
+      "name": "照片缺少克重时保留待确认并阻止入账，不默认 100g",
+      "status": "PASS",
+      "details": {
+        "grams": 0,
+        "entriesUnchanged": true
+      }
+    },
+    {
+      "name": "识别服务失败时不生成虚假食物或热量",
+      "status": "PASS",
+      "details": {
+        "status": 503,
+        "candidates": 0,
+        "reviewRows": 0
+      }
+    },
+    {
+      "name": "未配置或未授权识别服务时不发起上传",
+      "status": "PASS",
+      "details": {
+        "fetchCalls": 0,
+        "settingsOpened": true
+      }
+    },
+    {
+      "name": "真实请求适配层发送压缩图/说明/协议版本，响应仍不自动入账",
+      "status": "PASS",
+      "details": {
+        "schema": "shike.food-vision.v2",
+        "autoAdded": false,
+        "fixture": true
+      }
+    },
+    {
+      "name": "照片候选手动匹配 USDA 后按确认克数重算，不自动入账",
+      "status": "PASS",
+      "details": {
+        "grams": 80,
+        "kcal": 27.2,
+        "fixtureFdcId": 999001
+      }
+    },
+    {
+      "name": "既有文字解析、标准示例热量与 CSV 公式转义回归",
+      "status": "PASS",
+      "details": {
+        "breakfastKcal": 304.4,
+        "lunchKcal": 477.5
+      }
+    },
+    {
+      "name": "重新加载后旧记录、全局食物与照片估算审计字段仍在",
+      "status": "PASS",
+      "details": {
+        "entries": 7
+      }
+    }
+  ]
+}

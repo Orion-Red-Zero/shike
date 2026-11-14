@@ -1,0 +1,141 @@
+{
+  "app": "食刻 Android",
+  "version": "1.3.0",
+  "generatedAt": "2026-11-13T15:18:28.207Z",
+  "engine": "Chrome/154.0.8037.92",
+  "viewport": "390×844 and 320×740/844, touch-enabled mobile emulation",
+  "scope": "Real headless Chromium with HTTP localhost, actual DOM clicks/forms/downloads/reload/service worker; not an Android emulator or physical-device test",
+  "status": "PASS",
+  "passed": 14,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Chromium starts and migrates a real 1.2.0 localStorage value",
+      "pass": true,
+      "detail": "旧饮食与食物库保留，1 条饮食；内存迁移为 schemaVersion=2，首次保存前不重写原 JSON"
+    },
+    {
+      "name": "fitness goal dialog calculates and saves an explicit estimate",
+      "pass": true,
+      "detail": "男性/30 岁/175 cm/70 kg，BMR 1649、TDEE 1979、维持目标 1980 kcal（公式估算）"
+    },
+    {
+      "name": "training/rest nutrition targets save through the real dialog",
+      "pass": true,
+      "detail": "训练日 150/250/60 g，休息日 120/200/50 g"
+    },
+    {
+      "name": "strength workout and reusable template save by touch-style UI actions",
+      "pass": true,
+      "detail": "深蹲 60×10×3，容量 1800 kg，45 分钟估算 276 kcal，模板 1 个"
+    },
+    {
+      "name": "cardio workout saves separately and never deducts food calories",
+      "pass": true,
+      "detail": "跑步 30 分钟/5 km，估算 294 kcal；饮食仍为 380 kcal，无抵扣"
+    },
+    {
+      "name": "body metrics save and same-day update without duplicate rows",
+      "pass": true,
+      "detail": "同日原 ID 更新为 70.6 kg / 79.5 cm / 20%，记录数仍为 1"
+    },
+    {
+      "name": "today, workout/body trends and weekly summary render recorded data",
+      "pass": true,
+      "detail": "首页训练日/双训练/150 g 目标、训练与身体趋势、周总结 2 次 75 分钟均可见"
+    },
+    {
+      "name": "full JSON and all three CSV exports are real downloaded files",
+      "pass": true,
+      "detail": "JSON/训练 CSV/身体 CSV/旧饮食 CSV 均实际下载；完整备份含 1/2/1/1（饮食/训练/身体/模板）"
+    },
+    {
+      "name": "invalid import preserves data; legacy and current backups import after confirmation",
+      "pass": true,
+      "detail": "坏 JSON 未覆盖；1.2 JSON 的 1900 kcal 可导入；1.3 完整备份恢复 1/2/1/1 条数据"
+    },
+    {
+      "name": "reload persists all data in the original key",
+      "pass": true,
+      "detail": "重载后饮食/训练/身体/模板 = 1/2/1/1，目标与营养设置仍在原键"
+    },
+    {
+      "name": "service-worker offline reload starts the complete app without a server connection",
+      "pass": true,
+      "detail": "Chromium 离线重载成功，缓存 shike-v1.3.0，数据完整；仅证明 PWA 离线，不替代 Android WebView 验证"
+    },
+    {
+      "name": "Android environment detection and native export branch work with a simulated bridge",
+      "pass": true,
+      "detail": "模拟 ShikeAndroid 注入时识别为 Android，信息页与原生导出分支正确；未宣称真机桥接已验证"
+    },
+    {
+      "name": "320/390 px layouts have no horizontal overflow and new primary taps are at least 44 px",
+      "pass": true,
+      "detail": "8 个页面/宽度组合无横向溢出；记录类型按钮 89×44, 89×44, 89×44 px"
+    },
+    {
+      "name": "no runtime exceptions, console errors or external network requests",
+      "pass": true,
+      "detail": "0 page exception、0 console error、0 外部请求"
+    }
+  ],
+  "screenshots": [
+    "reference/browser/01-migrated-today.png",
+    "reference/browser/02-fitness-goal-dialog.png",
+    "reference/browser/03-today-with-fitness-data.png",
+    "reference/browser/04-workout-trend.png",
+    "reference/browser/05-body-trend.png",
+    "reference/browser/06-weekly-summary.png",
+    "reference/browser/07-offline-reload.png",
+    "reference/browser/07-mobile-320.png"
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFailures": [],
+  "externalRequests": [],
+  "confirmationDialogs": [
+    "导入将替换本机数据：1 条饮食、0 次训练、0 次测量。建议先导出当前备份。继续？",
+    "导入将替换本机数据：1 条饮食、2 次训练、1 次测量。建议先导出当前备份。继续？"
+  ],
+  "downloadFiles": [
+    {
+      "selector": "#export-json",
+      "expectedExtension": ".json",
+      "suggestedFilename": "download",
+      "savedName": "6a0ca550-b378-49ca-ae09-a4a68610b606",
+      "bytes": 3694
+    },
+    {
+      "selector": "#export-workouts",
+      "expectedExtension": ".csv",
+      "suggestedFilename": "download",
+      "savedName": "476109fa-6b4a-4b6e-a355-d7e807b61a3c",
+      "bytes": 286
+    },
+    {
+      "selector": "#export-body",
+      "expectedExtension": ".csv",
+      "suggestedFilename": "download",
+      "savedName": "75c00819-4b3a-46ef-887c-707f615951d3",
+      "bytes": 74
+    },
+    {
+      "selector": "#export-csv",
+      "expectedExtension": ".csv",
+      "suggestedFilename": "download",
+      "savedName": "6d1a2653-cd4c-4e88-96bb-eae9c73ecd0d",
+      "bytes": 238
+    }
+  ],
+  "downloadEnvironmentNote": "本容器 Chromium 154 对中文 Blob 下载名可能报告为 download；测试按唯一下载标识读取实际完成文件并校验内容，不将此环境行为记为 Android 文件名验证。",
+  "notRun": [
+    "Android 真机或模拟器启动",
+    "Android WebView 原生桥导出",
+    "相机拍摄与相册权限",
+    "USDA/自定义识别端点真实网络",
+    "旧签名 APK 覆盖升级",
+    "Android 离线首次安装启动"
+  ],
+  "fatal": null
+}

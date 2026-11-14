@@ -30,7 +30,7 @@ if (!String.prototype.matchAll) Object.defineProperty(String.prototype, "matchAl
     }();
   }
 });
-window.SHIKE_NATIVE_ANDROID = true;
+window.SHIKE_NATIVE_ANDROID = Boolean(window.ShikeAndroid);
 window.__shikeBootOK = false;
 window.__shikeErrors = [];
 window.addEventListener("error", function(e) {
@@ -89,6 +89,9 @@ i[data-icon]{display:inline-flex;align-items:center;justify-content:center;font-
 .appbar-sub{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:1px;letter-spacing:.02em}
 .appbar-spacer{flex:1}
 .icon-btn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);background:transparent}
+#install-btn{width:auto;min-width:48px;padding:0 8px;white-space:nowrap;flex:none;font-size:12px;font-weight:650}
+@media(max-width:400px){.appbar{gap:6px}}
+@media(max-width:360px){#install-btn{display:none!important}.appbar{gap:8px;padding-left:14px;padding-right:14px}}
 .icon-btn:active{background:var(--soft)}
 .icon-btn svg{width:21px;height:21px}
 
@@ -458,6 +461,44 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
 .photo-grams{width:105px;flex:none}.photo-candidate-actions{display:flex;align-items:center;gap:8px;margin-top:10px}.photo-candidate-actions .inline-link{margin-left:auto}.estimate-audit{margin-top:9px;padding:9px 10px;background:#f4f6ef;border-radius:10px;font-size:10.5px;color:var(--muted);line-height:1.6}.estimate-audit b{color:var(--ink)}
 @media(max-width:350px){.quick-tools{grid-template-columns:1fr}.confidence-grid{grid-template-columns:1fr}.library-toolbar{grid-template-columns:1fr}.photo-grams{width:88px}}
 
+
+/* 2.0.0 — local fitness goals, workouts and body metrics. */
+[hidden]{display:none!important}
+.record-kind,.trend-kind{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 14px;padding:4px;background:#e9eee4;border-radius:15px}
+.record-kind button,.trend-kind button{min-height:44px;padding:8px 6px;border-radius:11px;color:var(--muted);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+.record-kind button svg,.trend-kind button svg{width:17px;height:17px}
+.record-kind button[aria-pressed="true"],.trend-kind button[aria-pressed="true"]{background:var(--card);color:var(--forest);box-shadow:0 2px 8px rgba(23,63,53,.09)}
+.fitness-goal-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:12px 14px;background:#edf3e7;border:1px solid #dce7d2;border-radius:15px;font-size:11.5px;color:var(--muted)}
+.fitness-goal-strip b{font-size:12px;color:var(--forest);text-align:right}
+.fitness-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:15px;box-shadow:var(--shadow);margin-bottom:16px}
+.fitness-card h3{font-size:14px;margin:0;display:flex;align-items:center;gap:7px}.fitness-card h3 svg{width:17px;height:17px;color:var(--forest)}
+.fitness-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}.fitness-card-head p{font-size:10.5px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+.goal-rings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.fitness-ring{text-align:center;min-width:0}.fitness-ring-visual{width:64px;height:64px;margin:0 auto 6px;position:relative}.fitness-ring-visual svg{width:64px;height:64px;transform:rotate(-90deg)}
+.fitness-ring-bg,.fitness-ring-fg{fill:none;stroke-width:5}.fitness-ring-bg{stroke:#edf0e9}.fitness-ring-fg{stroke-linecap:round;transition:stroke-dasharray .25s ease}
+.fitness-ring-visual>span{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-2)}.fitness-ring-visual>span svg{width:17px;height:17px;transform:none}
+.fitness-ring>b{display:block;font-size:12px;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap}.fitness-ring>b small{font-size:9px;color:var(--muted);font-weight:550}.fitness-ring>span{display:block;font-size:9.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.fitness-record{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.fitness-record:last-child{border-bottom:0;padding-bottom:0}.fitness-record:first-child{padding-top:0}
+.fitness-record-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--soft);color:var(--forest);flex:none}.fitness-record-icon svg{width:17px;height:17px}
+.fitness-record-main{flex:1;min-width:0}.fitness-record-main b{display:block;font-size:12.5px;overflow-wrap:anywhere}.fitness-record-main span,.fitness-record-main small{display:block;font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:3px;overflow-wrap:anywhere}.fitness-record-main small{color:var(--faint)}
+.fitness-record-actions{display:flex;gap:1px;flex:none;margin:-6px -7px -6px 0}.fitness-record-actions .icon-btn{width:44px;height:44px}.fitness-record-actions svg{width:15px;height:15px}
+.fitness-empty{padding:15px 8px;text-align:center;color:var(--muted);font-size:11.5px;line-height:1.7;border:1px dashed var(--line);border-radius:12px}.fitness-empty .inline-link{margin-left:5px}
+.fitness-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fitness-summary-grid>div{background:var(--soft);border-radius:12px;padding:11px}.fitness-summary-grid b{display:block;font-size:18px;line-height:1.25;color:var(--forest);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.fitness-summary-grid b small{font-size:10px;font-weight:600}.fitness-summary-grid span{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}
+.fitness-summary-grid.weekly{grid-template-columns:repeat(2,minmax(0,1fr))}.fitness-summary-grid.weekly b{font-size:16px;min-height:40px;display:flex;align-items:center}
+.fitness-method{font-size:10.5px;color:var(--muted);line-height:1.65;margin:11px 0 0}.fitness-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.fitness-actions .btn{flex:1;min-width:110px}
+.fitness-form-section{padding:0 0 15px;margin:0 0 15px;border-bottom:1px solid var(--line)}.fitness-form-section:last-child{border:0;margin-bottom:0}.fitness-form-section h3{font-size:13px;margin:0 0 10px;display:flex;align-items:center;gap:6px}.fitness-form-section h3 svg{width:16px;height:16px;color:var(--forest)}
+.fitness-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fitness-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.fitness-two .field,.fitness-three .field{margin-bottom:10px}
+.template-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:10px}.template-bar .select{min-width:0}.template-actions{display:flex;gap:7px;flex-wrap:wrap}.template-actions .btn{min-height:44px;font-size:11.5px;padding:8px 11px}
+.exercise-draft{padding:12px;margin-bottom:10px;border:1px solid var(--line);border-radius:14px;background:#fbfcf9}.exercise-draft-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.exercise-draft-head b{font-size:12px}.exercise-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 9px}.exercise-grid .field{margin-bottom:8px}
+.volume-preview{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--soft);border-radius:11px;font-size:11px;color:var(--muted);margin:8px 0 12px}.volume-preview b{font-size:15px;color:var(--forest)}
+.estimate-box{padding:12px;border-radius:13px;background:#edf3e7;border:1px solid #dce7d2;margin:10px 0}.estimate-box b{display:block;font-size:12px;color:var(--forest);line-height:1.55}.estimate-box span{display:block;font-size:10.5px;color:var(--muted);line-height:1.6;margin-top:4px}
+.trend-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.trend-toolbar .seg{flex:none}.trend-toolbar .seg button{min-height:44px;min-width:52px}.trend-toolbar .inline-link{white-space:nowrap}.fitness-card .inline-link,.trend-toolbar .inline-link{min-height:44px;min-width:44px}
+.body-line-chart{display:block;width:100%;height:auto;max-height:190px;margin-top:5px}.trend-panel-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}.trend-panel-title h2{font-size:15px;margin:0}.trend-panel-title p{font-size:10.5px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+.export-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 16px}.export-grid .quick-tool{min-height:64px;padding:11px}.export-grid .quick-tool small{font-size:9.5px}
+.store-audit{display:flex;align-items:flex-start;gap:8px;padding:11px 12px;background:#f4f7f0;border-radius:12px;font-size:10.5px;color:var(--muted);line-height:1.6;margin-bottom:14px}.store-audit svg{width:16px;height:16px;flex:none;color:var(--forest);margin-top:1px}.store-audit b{display:block;color:var(--ink);font-size:11.5px;margin-bottom:2px}
+@media(max-width:350px){.fitness-ring-visual,.fitness-ring-visual svg{width:56px;height:56px}.fitness-ring>b{font-size:11px}.fitness-ring>b small{font-size:8px}.fitness-three{grid-template-columns:1fr}.fitness-two{grid-template-columns:1fr}.export-grid{grid-template-columns:1fr}.record-kind button,.trend-kind button{font-size:12px;gap:4px}.fitness-record-actions{flex-direction:column}.fitness-summary-grid.weekly{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.fitness-ring-fg{transition:none}}
+
 </style>
 </head>
 <body>
@@ -503,6 +544,17 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
         </div>
       </div>
 
+      <div class="fitness-goal-strip" id="today-goal-summary"><span>维持目标 · 休息日</span><b>未设能量目标</b></div>
+      <section class="fitness-card" aria-labelledby="goal-rings-title">
+        <div class="fitness-card-head"><div><h3 id="goal-rings-title"><i data-icon="target"></i>营养素目标</h3><p>按当天是否有训练记录，采用训练日或休息日目标</p></div><button class="inline-link" type="button" data-open="dlg-nutrition">设置目标</button></div>
+        <div class="goal-rings" id="goal-rings"></div>
+      </section>
+      <section class="fitness-card" aria-labelledby="today-workouts-title">
+        <div class="fitness-card-head"><div><h3 id="today-workouts-title"><i data-icon="dumbbell"></i>今日训练</h3><p>消耗为估算，只作展示，不抵扣饮食热量</p></div><button class="inline-link" type="button" data-start-workout>记训练</button></div>
+        <div id="today-workouts"></div>
+      </section>
+      <section class="fitness-card" id="today-week-summary" aria-label="每周总结概览"></section>
+
       <div class="section-head"><h2><i data-icon="utensils"></i>各餐</h2><span class="meta">点按某一餐开始记录</span></div>
       <div class="meal-grid" id="meal-grid"></div>
 
@@ -514,6 +566,12 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
 
     <!-- ============ ADD ============ -->
     <section class="screen" id="screen-add" aria-label="记一笔">
+      <div class="record-kind" role="group" aria-label="记录类型">
+        <button type="button" data-record-type="diet" aria-pressed="true"><i data-icon="utensils"></i>饮食</button>
+        <button type="button" data-record-type="workout" aria-pressed="false"><i data-icon="dumbbell"></i>训练</button>
+        <button type="button" data-record-type="body" aria-pressed="false"><i data-icon="scale"></i>身体数据</button>
+      </div>
+      <div id="record-diet-panel">
       <div class="tabline" role="tablist" aria-label="记录方式">
         <button type="button" role="tab" aria-selected="true" aria-controls="panel-text" data-addtab="text"><i data-icon="pen-line"></i>文字</button>
         <button type="button" role="tab" aria-selected="false" aria-controls="panel-photo" data-addtab="photo"><i data-icon="camera"></i>拍照</button>
@@ -585,10 +643,63 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
       <div class="note mt20" style="margin-bottom:8px">
         <b>计算依据：</b>优先使用食物成分记录的能量值（每 100 g），自建食物可用 FAO 通用系数 4/9/4 kcal/g 折算，1 kcal = 4.184 kJ。结果用于日常记录，不构成医疗建议。
       </div>
+      </div>
+      <div id="record-workout-panel" hidden>
+        <form id="workout-form" class="fitness-card">
+          <div class="fitness-card-head"><div><h3><i data-icon="dumbbell"></i>记录训练</h3><p>力量容量 = 重量 × 次数 × 组数；自重训练重量可填 0</p></div><span class="li-badge">本机保存</span></div>
+          <div class="fitness-form-section">
+            <div class="template-bar"><select class="select" id="template-select" aria-label="训练模板"><option value="">选择训练模板</option></select><button class="btn btn-ghost" id="template-apply" type="button">套用</button></div>
+            <div class="template-actions"><button class="btn btn-ghost" id="template-save" type="button"><i data-icon="save"></i>将当前内容存为模板</button><button class="btn btn-ghost danger-text" id="template-delete" type="button">删除所选模板</button></div>
+          </div>
+          <div class="fitness-two">
+            <label class="field"><span class="field-label">日期</span><input class="input" id="workout-date" type="date" required></label>
+            <label class="field"><span class="field-label">训练类型</span><select class="select" id="workout-type"><option value="strength">力量训练</option><option value="cardio">有氧训练</option></select></label>
+          </div>
+          <label class="field"><span class="field-label">训练名称</span><input class="input" id="workout-name" maxlength="100" placeholder="例如：上肢力量"></label>
+          <div id="strength-fields">
+            <div id="exercise-list"></div>
+            <button class="btn btn-ghost" id="exercise-add" type="button"><i data-icon="plus"></i>添加动作</button>
+            <div class="volume-preview"><span>当前动作容量合计</span><b id="draft-volume">0 kg</b></div>
+          </div>
+          <div id="cardio-fields" hidden>
+            <div class="fitness-two">
+              <label class="field"><span class="field-label">有氧项目</span><select class="select" id="cardio-activity"><option value="running">跑步</option><option value="cycling">骑行</option><option value="swimming">游泳</option><option value="walking">步行</option><option value="hiit">间歇训练</option><option value="other">其他</option></select></label>
+              <label class="field"><span class="field-label">距离 km（可选）</span><input class="input" id="cardio-distance" type="number" min="0" max="2000" step="0.01" inputmode="decimal"></label>
+            </div>
+          </div>
+          <label class="field"><span class="field-label">时长（分钟）</span><input class="input" id="workout-duration" type="number" min="0" max="1440" step="1" inputmode="numeric" placeholder="力量可留空；有氧必填"></label>
+          <label class="field"><span class="field-label">备注</span><textarea class="textarea" id="workout-notes" maxlength="500" placeholder="训练感受、器械或其他说明"></textarea></label>
+          <div class="estimate-box"><span id="workout-calorie-preview">填写时长且有可用体重后显示消耗估算；不抵扣饮食热量。</span></div>
+          <p class="hint danger-text" id="workout-err" hidden></p>
+          <div class="fitness-actions"><button class="btn btn-ghost" id="workout-cancel-edit" type="button" hidden>取消编辑</button><button class="btn btn-primary" id="workout-submit" type="submit">保存训练</button></div>
+        </form>
+      </div>
+      <div id="record-body-panel" hidden>
+        <form id="body-form" class="fitness-card">
+          <div class="fitness-card-head"><div><h3><i data-icon="scale"></i>记录身体数据</h3><p>至少填写一项；同日再次保存会更新该日测量</p></div></div>
+          <label class="field"><span class="field-label">日期</span><input class="input" id="body-date" type="date" required></label>
+          <div class="fitness-three">
+            <label class="field"><span class="field-label">体重 kg</span><input class="input" id="body-weight" type="number" min="20" max="500" step="0.01" inputmode="decimal"></label>
+            <label class="field"><span class="field-label">腰围 cm</span><input class="input" id="body-waist" type="number" min="20" max="300" step="0.1" inputmode="decimal"></label>
+            <label class="field"><span class="field-label">体脂率 %</span><input class="input" id="body-fat" type="number" min="1" max="80" step="0.1" inputmode="decimal"></label>
+          </div>
+          <label class="field"><span class="field-label">备注（可选）</span><input class="input" id="body-notes" maxlength="300" placeholder="测量时间或条件"></label>
+          <p class="hint danger-text" id="body-err" hidden></p>
+          <button class="btn btn-primary" type="submit" style="width:100%">保存身体数据</button>
+        </form>
+        <section class="fitness-card"><div class="fitness-card-head"><div><h3>最近测量</h3><p id="body-average">暂无体重记录</p></div></div><div id="body-list"></div></section>
+      </div>
     </section>
 
     <!-- ============ TREND ============ -->
     <section class="screen" id="screen-trend" aria-label="趋势">
+      <div class="trend-kind" role="group" aria-label="趋势类型">
+        <button type="button" data-trend-kind="diet" aria-pressed="true"><i data-icon="utensils"></i>饮食</button>
+        <button type="button" data-trend-kind="workout" aria-pressed="false"><i data-icon="dumbbell"></i>训练</button>
+        <button type="button" data-trend-kind="body" aria-pressed="false"><i data-icon="scale"></i>身体</button>
+      </div>
+      <div class="trend-toolbar"><div class="seg" role="group" aria-label="健身数据时间范围"><button type="button" data-fitness-range="7" aria-pressed="true">7 天</button><button type="button" data-fitness-range="14" aria-pressed="false">14 天</button></div><button class="inline-link" id="trend-weekly" type="button"><i data-icon="calendar-range"></i>每周总结</button></div>
+      <div id="trend-diet-panel">
       <div class="row" style="justify-content:space-between;margin:6px 0 12px">
         <h2 style="font-size:16px;margin:0">摄入趋势</h2>
         <div class="seg" id="trend-range" role="group" aria-label="时间范围">
@@ -614,10 +725,29 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
         <div class="stat stat-mint"><span class="stat-label"><i data-icon="target"></i>参考目标</span><b id="stat-target-me">—</b></div>
       </div>
       <p class="hint" style="margin:14px 4px 0">趋势仅反映已确认记录。目标为个人参考值，不代表推荐摄入量；单日波动通常比平均值更有意义。</p>
+      </div>
+      <div id="trend-workout-panel" hidden>
+        <section class="fitness-card"><div class="trend-panel-title"><div><h2>训练时长</h2><p>截至首页所选日期；无记录日期不补值</p></div><i data-icon="activity"></i></div><div id="workout-chart"></div></section>
+        <div class="stat-grid"><div class="stat"><span class="stat-label">训练次数</span><b id="workout-stat-count">0</b></div><div class="stat"><span class="stat-label">总时长</span><b id="workout-stat-minutes">0</b></div><div class="stat"><span class="stat-label">力量容量</span><b id="workout-stat-volume">0</b></div></div>
+        <div class="section-head"><h2><i data-icon="list"></i>训练明细</h2><span class="meta">可编辑或删除</span></div><section class="fitness-card" id="workout-history"></section>
+      </div>
+      <div id="trend-body-panel" hidden>
+        <section class="fitness-card"><div class="trend-panel-title"><div><h2>体重趋势</h2><p>展示最近测量，不用直线变化代替健康判断</p></div><i data-icon="scale"></i></div><div id="body-chart"></div></section>
+        <div class="stat-grid"><div class="stat"><span class="stat-label">最新体重</span><b id="body-stat-latest">—</b></div><div class="stat"><span class="stat-label">7 日移动平均</span><b id="body-stat-average">—</b></div><div class="stat"><span class="stat-label">最新腰围</span><b id="body-stat-waist">—</b></div></div>
+        <div class="note"><span id="body-trend-note"></span><br><span id="body-fat-latest"></span></div>
+        <div class="fitness-actions"><button class="btn btn-primary" id="me-body-add" type="button"><i data-icon="plus"></i>记录身体数据</button></div>
+      </div>
     </section>
 
     <!-- ============ ME ============ -->
     <section class="screen" id="screen-me" aria-label="我的">
+      <div class="section-head"><h2>健身管理</h2><span class="meta">个人记录与估算</span></div>
+      <div class="list">
+        <button class="list-item" id="me-fitness-goals" type="button" data-open="dlg-fitness"><span class="li-icon"><i data-icon="target"></i></span><span class="li-text"><b>健身与能量目标</b><span>减脂 / 维持 / 增肌 · Mifflin–St Jeor 估算</span></span><span class="li-badge on" id="fitness-goal-badge">维持</span></button>
+        <button class="list-item" id="me-nutrition-goals" type="button" data-open="dlg-nutrition"><span class="li-icon"><i data-icon="beef"></i></span><span class="li-text"><b>营养素目标</b><span>分别设置训练日与休息日</span></span><span class="li-badge" id="nutrition-badge">未设置</span></button>
+        <button class="list-item" type="button" id="me-workout-add"><span class="li-icon"><i data-icon="dumbbell"></i></span><span class="li-text"><b>记录训练与模板</b><span>力量 / 有氧 · 容量与消耗估算</span></span><span class="li-badge" id="template-count-badge">0 个模板</span></button>
+        <button class="list-item" type="button" id="me-weekly"><span class="li-icon"><i data-icon="calendar-range"></i></span><span class="li-text"><b>每周总结</b><span>训练、目标达标和 7 日平均体重</span></span><span class="li-badge" id="body-count-badge">0 次测量</span><span class="li-chev"><i data-icon="chevron-right"></i></span></button>
+      </div>
       <div class="section-head"><h2>我的目标</h2></div>
       <div class="list">
         <button class="list-item" type="button" data-open="dlg-goal">
@@ -661,6 +791,14 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
         </button>
       </div>
 
+      <div class="section-head"><h2>更多备份</h2><span class="meta">训练和身体数据单独成表</span></div>
+      <div class="export-grid">
+        <button class="quick-tool" id="export-workouts" type="button"><i data-icon="dumbbell"></i><span><b>训练 CSV</b><small>含动作、组次、容量与估算消耗</small></span></button>
+        <button class="quick-tool" id="export-body" type="button"><i data-icon="scale"></i><span><b>身体数据 CSV</b><small>体重、腰围与体脂率</small></span></button>
+        <button class="quick-tool" id="import-json" type="button"><i data-icon="upload"></i><span><b>导入 JSON 备份</b><small>兼容 1.2.0；校验确认后才替换</small></span></button>
+      </div>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+      <div class="store-audit"><i data-icon="shield-check"></i><div><b>同一份本地数据，升级不换存储键</b><span id="fitness-store-count">0 次训练 · 0 次身体测量</span><br>完整 JSON 包含饮食、食物库、目标、训练模板与身体数据；识别密钥和 USDA 会话密钥不导出。</div></div>
       <div class="section-head"><h2>能力与来源</h2></div>
       <div class="list">
         <button class="list-item" type="button" data-open="dlg-settings">
@@ -679,7 +817,7 @@ pre.code{background:#10251f;color:#d6e6d8;border-radius:10px;padding:11px;font-s
           <span class="li-chev"><i data-icon="chevron-right"></i></span>
         </button>
       </div>
-      <p class="about">食刻 1.2.0 · 每日饮食能量账本<br>本地优先 · 无账号 · 不采集健康数据<br><span style="color:var(--faint)">估算记录，不用于医疗诊断或处方</span></p>
+      <p class="about">食刻 2.0.0 · 饮食与健身目标管理<br>本地优先 · 无账号 · 身体与训练数据仅存本机<br><span style="color:var(--faint)">估算记录，不用于医疗诊断或处方</span></p>
     </section>
   </main>
 
@@ -836,6 +974,41 @@ gramsMin/Max、参考物与重量置信度缺失时显示“未提供”。</pre
   </div>
 </dialog>
 
+<dialog id="dlg-fitness" aria-labelledby="dlg-fitness-title">
+  <div class="dlg-head"><div><h2 id="dlg-fitness-title">健身与能量目标</h2><p>公式结果仅作个人记录参考，不是摄入建议。</p></div><button class="icon-btn" type="button" data-close="dlg-fitness" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <form class="dlg-body" id="fitness-form">
+    <section class="dlg-sec"><h3><i data-icon="target"></i>目标与活动水平</h3>
+      <div class="fitness-two"><label class="field"><span class="field-label">健身目标</span><select class="select" id="fitness-goal"><option value="lose">减脂</option><option value="maintain">维持</option><option value="gain">增肌</option></select></label><label class="field"><span class="field-label">日常活动水平</span><select class="select" id="fitness-activity"><option value="sedentary">久坐 · 1.2</option><option value="light">轻度 · 1.375</option><option value="moderate">中度 · 1.55</option><option value="high">较高 · 1.725</option><option value="athlete">高活动量 · 1.9</option></select></label></div>
+      <p>自动估算采用 Mifflin–St Jeor：BMR 再乘活动系数；减脂 ×0.85、维持 ×1、增肌 ×1.10。活动系数包含日常与训练活动，不再把训练消耗加回能量目标。</p>
+    </section>
+    <section class="dlg-sec"><h3><i data-icon="ruler"></i>估算所需身体参数</h3>
+      <div class="fitness-two"><label class="field"><span class="field-label">生理性别（公式参数）</span><select class="select" id="profile-sex"><option value="female">女</option><option value="male">男</option></select></label><label class="field"><span class="field-label">年龄</span><input class="input" id="profile-age" type="number" min="14" max="100" step="1" inputmode="numeric"></label><label class="field"><span class="field-label">身高 cm</span><input class="input" id="profile-height" type="number" min="100" max="250" step="0.1" inputmode="decimal"></label><label class="field"><span class="field-label">体重 kg</span><input class="input" id="profile-weight" type="number" min="20" max="500" step="0.01" inputmode="decimal"></label></div>
+      <button class="btn btn-ghost" id="fitness-estimate-btn" type="button">重新计算估算</button><div class="estimate-box" id="fitness-estimate"></div>
+    </section>
+    <section class="dlg-sec"><h3><i data-icon="flame"></i>每日能量目标</h3>
+      <label class="field"><span class="field-label">目标方式</span><select class="select" id="fitness-calorie-mode"><option value="auto">使用上述公式估算</option><option value="manual">手动填写个人参考目标</option></select></label>
+      <label class="field" id="fitness-manual-row"><span class="field-label">手动目标 kcal / 日</span><input class="input" id="fitness-manual-target" type="number" min="1" max="50000" step="1" inputmode="numeric"></label>
+      <p>保存后同步旧的“每日参考目标”，首页仍显示同一热量进度。减脂或增肌公式只是估算规则，不代表医疗或营养处方。</p>
+    </section>
+    <p class="hint danger-text" id="fitness-goal-err" hidden></p><div class="dlg-actions"><button class="btn btn-ghost" type="button" data-close="dlg-fitness">取消</button><button class="btn btn-primary" type="submit">保存目标</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-nutrition" aria-labelledby="dlg-nutrition-title">
+  <div class="dlg-head"><div><h2 id="dlg-nutrition-title">营养素目标</h2><p>留空表示不设置；当天有训练记录即采用训练日目标。</p></div><button class="icon-btn" type="button" data-close="dlg-nutrition" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <form class="dlg-body" id="nutrition-form">
+    <section class="dlg-sec"><h3><i data-icon="dumbbell"></i>训练日（g / 日）</h3><div class="fitness-three"><label class="field"><span class="field-label">蛋白质</span><input class="input" id="nt-training-protein" type="number" min="0" max="2000" step="0.1" inputmode="decimal"></label><label class="field"><span class="field-label">碳水</span><input class="input" id="nt-training-carb" type="number" min="0" max="2000" step="0.1" inputmode="decimal"></label><label class="field"><span class="field-label">脂肪</span><input class="input" id="nt-training-fat" type="number" min="0" max="2000" step="0.1" inputmode="decimal"></label></div></section>
+    <section class="dlg-sec"><h3><i data-icon="coffee"></i>休息日（g / 日）</h3><div class="fitness-three"><label class="field"><span class="field-label">蛋白质</span><input class="input" id="nt-rest-protein" type="number" min="0" max="2000" step="0.1" inputmode="decimal"></label><label class="field"><span class="field-label">碳水</span><input class="input" id="nt-rest-carb" type="number" min="0" max="2000" step="0.1" inputmode="decimal"></label><label class="field"><span class="field-label">脂肪</span><input class="input" id="nt-rest-fat" type="number" min="0" max="2000" step="0.1" inputmode="decimal"></label></div></section>
+    <div class="note">首页进度环显示“当日摄入 / 个人目标”。三大营养素来自食物成分记录；空白或缺失营养数据按旧版逻辑记为 0，不代表实际不含。</div>
+    <p class="hint danger-text" id="nutrition-err" hidden></p><div class="dlg-actions"><button class="btn btn-ghost" type="button" data-close="dlg-nutrition">取消</button><button class="btn btn-primary" type="submit">保存营养目标</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-weekly" aria-labelledby="dlg-weekly-title">
+  <div class="dlg-head"><div><h2 id="dlg-weekly-title">每周总结</h2><p id="weekly-range">周一至周日</p></div><button class="icon-btn" type="button" data-close="dlg-weekly" aria-label="关闭"><i data-icon="x"></i></button></div>
+  <div class="dlg-body"><div class="trend-toolbar"><button class="btn btn-ghost" id="week-prev" type="button">上一周</button><button class="btn btn-ghost" id="week-current" type="button">后一周</button></div><div id="weekly-content"></div></div>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toast-msg"></span><button id="toast-act" type="button" hidden>撤销</button></div>
 
 <script>
@@ -929,6 +1102,7 @@ function loadData() {
       (f) => f && typeof f.id === "string" && typeof f.name === "string" && f.name.trim() && (finiteNumber(f.kcal) !== null || finiteNumber(f.kj) !== null)
     ).map((f) => ({ ...f, aliases: Array.isArray(f.aliases) ? f.aliases : [f.name], portions: f.portions || {} })) : [];
     return {
+      ...p,
       entries,
       customFoods,
       settings: {
@@ -942,7 +1116,7 @@ function loadData() {
 }
 function saveData() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries: state.data.entries, customFoods: state.data.customFoods, settings: state.data.settings }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataForStorage130()));
     state.storageOK = true;
   } catch (e) {
     state.storageOK = false;
@@ -1550,6 +1724,7 @@ function saveGoal(e) {
     }
   }
   state.data.settings.dailyTarget = raw ? Number(raw) : "";
+  markManualGoal130();
   saveData();
   closeDlg("dlg-goal");
   renderToday();
@@ -1589,6 +1764,7 @@ function saveSettings(e) {
     return;
   }
   state.data.settings.dailyTarget = target ? Number(target) : "";
+  markManualGoal130();
   state.data.settings.recognitionEndpoint = endpoint;
   state.session.recognitionKey = $("#set-reckey").value;
   state.session.usdaKey = $("#set-usdakey").value.trim();
@@ -2174,7 +2350,7 @@ function csvCell(v) {
 }
 function exportData(format) {
   const entries = entriesOn(state.selectedDate).length ? entriesOn(state.selectedDate) : state.data.entries;
-  if (!entries.length) {
+  if (format !== "json" && !entries.length) {
     toast("还没有可导出的记录");
     return;
   }
@@ -2185,9 +2361,10 @@ function exportData(format) {
     blob = new Blob(["\uFEFF" + [head, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
   } else {
     blob = new Blob([JSON.stringify({
+      ...buildExportPayload130(),
       tool: "食刻 Food Energy Ledger",
       format: "android-apk",
-      exportedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      exportedAt: new Date().toISOString(),
       energyBasis: {
         primary: "优先采用食物记录能量；实际能量 = 每100g能量 × 可食部克数 / 100",
         atwaterGeneral: { protein: 4, fat: 9, carbohydrate: 4, alcohol: 7 },
@@ -2196,9 +2373,10 @@ function exportData(format) {
         sourceUrl: "https://www.fao.org/4/y5022e/y5022e04.htm"
       },
       foodDataSource: "USDA FoodData Central; custom entries see source field",
-      dailyReferenceTargetKcal: state.data.settings.dailyTarget || null,
-      disclaimer: "饮食能量估算记录，不用于医疗诊断；识别结果与份量假设见各条记录。",
-      entries: state.data.entries
+      dailyReferenceTargetKcal: calorieTarget130() || null,
+      disclaimer: "饮食与健身数据仅作个人记录；BMR、能量目标与运动消耗均为估算，不用于医疗诊断。",
+      entries: state.data.entries,
+      customFoods: state.data.customFoods
     }, null, 2)], { type: "application/json;charset=utf-8" });
   }
   const fileName = `食刻_${localDate()}.${format}`;
@@ -2253,7 +2431,7 @@ function setupPWA() {
       const subtitle = $("#dlg-install-title").nextElementSibling;
       if (subtitle) subtitle.textContent = "原生 WebView 外壳，页面资源已内置。";
       $(".dlg-body", dlg).innerHTML = `
-        <section class="dlg-sec"><h3>食刻 Android 1.2.0</h3><p>包名：app.shike.diet.fixed<br>支持 Android 10 及以上版本。可覆盖安装食刻修复版 1.0.1 / 食刻 1.1.0，正常情况下沿用其本机记录，升级前仍建议导出备份；最早 1.0.0 使用不同包名，记录不会自动迁移。</p></section>
+        <section class="dlg-sec"><h3>食刻 Android 2.0.0</h3><p>包名：app.shike.diet.fixed<br>支持 Android 10 及以上版本。安装与升级请以随附验证报告中的证书为准；若系统提示签名不一致，请先在旧版导出 JSON，再卸载旧版并安装本包，然后导入备份。卸载会清除未备份的应用数据；最早 1.0.0 使用不同包名，记录不会自动迁移。</p></section>
         <section class="dlg-sec"><h3>离线与记录</h3><p>页面、食物数据与计算逻辑均随应用内置；记录保存在本应用本机存储中，无需账号。清除应用数据会删除记录，请定期导出备份。</p></section>
         <section class="dlg-sec"><h3>需要网络的可选功能</h3><p>USDA 在线搜索、你自行配置的照片识别服务，以及打开 FAO / USDA 来源链接需要网络。其余记录、汇总、趋势与导出功能可离线使用。</p></section>
         <div class="dlg-actions"><button class="btn btn-primary btn-block" type="button" data-close="dlg-install">知道了</button></div>`;
@@ -2272,7 +2450,7 @@ function setupPWA() {
     const btn = $("#install-btn");
     if (btn) {
       btn.hidden = false;
-      btn.textContent = "安装到主屏幕";
+      btn.textContent = "安装";
     }
   });
   window.addEventListener("appinstalled", () => {
@@ -2443,7 +2621,7 @@ function bind() {
   $("#manual-photo").addEventListener("click", manualPhoto);
   $("#recog-btn").addEventListener("click", recognize);
   $("#recog-config").addEventListener("click", openSettings);
-  $("#hero-target-btn").addEventListener("click", openGoal);
+  // 2.0.0 在 initFitness130 中绑定完整健身目标。
   $("#goal-form").addEventListener("submit", saveGoal);
   $$("[data-close]").forEach((b) => b.addEventListener("click", () => closeDlg(b.dataset.close)));
   $$("[data-open]").forEach((b) => b.addEventListener("click", () => {
@@ -2466,12 +2644,15 @@ function bind() {
     renderTrend();
   }));
   $("#clear-all").addEventListener("click", () => {
-    if (!state.data.entries.length) {
+    const recordCount = state.data.entries.length + state.data.workouts.length + state.data.bodyMetrics.length;
+    if (!recordCount) {
       toast("没有可清除的记录");
       return;
     }
-    if (!confirm(`将删除全部 ${state.data.entries.length} 条记录，建议先导出备份。确定继续？`)) return;
+    if (!confirm(`将删除 ${state.data.entries.length} 条饮食、${state.data.workouts.length} 次训练和 ${state.data.bodyMetrics.length} 次身体测量；食物库、模板与目标保留。建议先导出备份。确定继续？`)) return;
     state.data.entries = [];
+    state.data.workouts = [];
+    state.data.bodyMetrics = [];
     saveData();
     renderToday();
     renderTrend();
@@ -2500,6 +2681,726 @@ function bind() {
 function setMeal(meal) {
   $$("#meal-pick [data-meal]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.meal === meal)));
 }
+/* 食刻 2.0.0：本地健身目标、训练与身体数据。无网络依赖。 */
+const fmt = (value, digits = 1) => formatNumber(value, digits);
+const dayTotals = date => totals(entriesOn(date));
+const esc = escapeHTML;
+const FITNESS_SCHEMA_VERSION = 2;
+const FITNESS_GOALS = { lose: "减脂", maintain: "维持", gain: "增肌" };
+const ACTIVITY_LEVELS = {
+  sedentary: { label: "久坐（日常活动较少）", factor: 1.2 },
+  light: { label: "轻度活动（每周 1–3 次）", factor: 1.375 },
+  moderate: { label: "中度活动（每周 3–5 次）", factor: 1.55 },
+  high: { label: "较高活动（每周 6–7 次）", factor: 1.725 },
+  athlete: { label: "高活动量（体力劳动或高频训练）", factor: 1.9 }
+};
+const WORKOUT_MET = { running: 8, cycling: 6.8, swimming: 6, walking: 3.5, hiit: 8, other: 5, strength: 5 };
+const MACRO_FIELDS = [
+  { key: "protein", label: "蛋白质", color: "#72a9d6", icon: "beef" },
+  { key: "carb", label: "碳水", color: "#d3a44f", icon: "wheat" },
+  { key: "fat", label: "脂肪", color: "#d88770", icon: "droplets" }
+];
+Object.assign(ICONS, {
+  dumbbell: '<path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l1.767-1.768a2 2 0 1 1 2.829 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.096a2 2 0 1 1-2.829-2.829l1.768 1.768a2 2 0 1 1-2.828-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l1.767-1.768a2 2 0 1 1 2.829 2.829z"/>',
+  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  ruler: '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
+  "calendar-range": '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M17 14h-6"/><path d="M13 18H7"/><path d="M7 14h.01"/><path d="M17 18h.01"/>',
+  save: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h8"/>'
+});
+
+function fitnessNumber130(value, min = 0, max = Number.MAX_SAFE_INTEGER) {
+  if (value === "" || value === null || value === undefined) return null;
+  const n = Number(value);
+  return Number.isFinite(n) && n >= min && n <= max ? n : null;
+}
+function validDate130(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return false;
+  const [y, m, d] = String(value).split("-").map(Number);
+  const dt = new Date(y, m - 1, d, 12);
+  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+}
+function addDays130(dateText, amount) {
+  const [y, m, d] = String(dateText).split("-").map(Number);
+  const dt = new Date(y, m - 1, d + amount, 12);
+  return localDate(dt);
+}
+function weekStart130(dateText) {
+  const [y, m, d] = String(dateText).split("-").map(Number);
+  const dt = new Date(y, m - 1, d, 12);
+  const offset = (dt.getDay() + 6) % 7;
+  return addDays130(dateText, -offset);
+}
+function blankNutrition130() {
+  return { protein: "", carb: "", fat: "" };
+}
+function defaultGoals130(legacyTarget) {
+  const target = fitnessNumber130(legacyTarget, 1, 50000);
+  return {
+    fitnessGoal: "maintain", activityLevel: "moderate",
+    calorieMode: target === null ? "auto" : "manual",
+    calorieTarget: target, bmr: null, tdee: null, estimatedCalories: null,
+    updatedAt: null
+  };
+}
+function normalizeNutrition130(raw) {
+  const source = raw && typeof raw === "object" ? raw : {};
+  const result = {};
+  for (const key of ["protein", "carb", "fat"]) {
+    const n = fitnessNumber130(source[key], 0, 2000);
+    result[key] = n === null ? "" : n;
+  }
+  return result;
+}
+function normalizeExercise130(raw) {
+  const e = raw && typeof raw === "object" ? raw : {};
+  const name = String(e.name || "").trim().slice(0, 80);
+  if (!name) return null;
+  const weightKg = fitnessNumber130(e.weightKg, 0, 2000);
+  const reps = fitnessNumber130(e.reps, 0, 1000);
+  const sets = fitnessNumber130(e.sets, 1, 100);
+  if (weightKg === null || reps === null || sets === null) return null;
+  return {
+    name, weightKg, reps, sets,
+    rpe: fitnessNumber130(e.rpe, 0, 10),
+    volumeKg: Math.round(weightKg * reps * sets * 100) / 100
+  };
+}
+function normalizeWorkout130(raw, keepId = true) {
+  const w = raw && typeof raw === "object" ? raw : {};
+  if (!validDate130(w.date) || !["strength", "cardio"].includes(w.type)) return null;
+  const exercises = Array.isArray(w.exercises) ? w.exercises.map(normalizeExercise130).filter(Boolean).slice(0, 50) : [];
+  return {
+    id: keepId && w.id ? String(w.id) : uid("workout"),
+    date: w.date, type: w.type,
+    name: String(w.name || (w.type === "strength" ? "力量训练" : "有氧训练")).trim().slice(0, 100),
+    activity: String(w.activity || (w.type === "strength" ? "strength" : "other")),
+    durationMin: fitnessNumber130(w.durationMin, 0, 1440),
+    distanceKm: fitnessNumber130(w.distanceKm, 0, 2000),
+    exercises,
+    volumeKg: Math.round(exercises.reduce((sum, e) => sum + e.volumeKg, 0) * 100) / 100,
+    estimatedKcal: fitnessNumber130(w.estimatedKcal, 0, 10000),
+    notes: String(w.notes || "").slice(0, 500),
+    createdAt: w.createdAt || new Date().toISOString()
+  };
+}
+function normalizeTemplate130(raw) {
+  const t = raw && typeof raw === "object" ? raw : {};
+  if (!["strength", "cardio"].includes(t.type)) return null;
+  return {
+    id: t.id ? String(t.id) : uid("template"),
+    name: String(t.name || "训练模板").trim().slice(0, 100),
+    type: t.type, activity: String(t.activity || (t.type === "strength" ? "strength" : "other")),
+    durationMin: fitnessNumber130(t.durationMin, 0, 1440),
+    distanceKm: fitnessNumber130(t.distanceKm, 0, 2000),
+    exercises: Array.isArray(t.exercises) ? t.exercises.map(normalizeExercise130).filter(Boolean).slice(0, 50) : [],
+    notes: String(t.notes || "").slice(0, 500), createdAt: t.createdAt || new Date().toISOString()
+  };
+}
+function normalizeBodyMetric130(raw) {
+  const b = raw && typeof raw === "object" ? raw : {};
+  if (!validDate130(b.date)) return null;
+  const weightKg = fitnessNumber130(b.weightKg, 20, 500);
+  const waistCm = fitnessNumber130(b.waistCm, 20, 300);
+  const bodyFatPct = fitnessNumber130(b.bodyFatPct, 1, 80);
+  if (weightKg === null && waistCm === null && bodyFatPct === null) return null;
+  return {
+    id: b.id ? String(b.id) : uid("body"), date: b.date,
+    weightKg, waistCm, bodyFatPct,
+    notes: String(b.notes || "").slice(0, 300), createdAt: b.createdAt || new Date().toISOString()
+  };
+}
+function migrateData130(input) {
+  const p = input && typeof input === "object" && !Array.isArray(input) ? input : {};
+  const settings = p.settings && typeof p.settings === "object" ? { ...p.settings } : {};
+  const goalsRaw = p.goals && typeof p.goals === "object" ? p.goals : {};
+  const goals = { ...defaultGoals130(settings.dailyTarget), ...goalsRaw };
+  if (!Object.keys(FITNESS_GOALS).includes(goals.fitnessGoal)) goals.fitnessGoal = "maintain";
+  if (!Object.keys(ACTIVITY_LEVELS).includes(goals.activityLevel)) goals.activityLevel = "moderate";
+  if (!["auto", "manual"].includes(goals.calorieMode)) goals.calorieMode = "auto";
+  for (const key of ["calorieTarget", "bmr", "tdee", "estimatedCalories"]) goals[key] = fitnessNumber130(goals[key], 0, 50000);
+  if (!p.goals && fitnessNumber130(settings.dailyTarget, 1, 50000) !== null) {
+    goals.calorieMode = "manual";
+    goals.calorieTarget = fitnessNumber130(settings.dailyTarget, 1, 50000);
+  }
+  const profileRaw = p.profile && typeof p.profile === "object" ? p.profile : {};
+  const profile = {
+    sex: ["female", "male"].includes(profileRaw.sex) ? profileRaw.sex : "female",
+    age: fitnessNumber130(profileRaw.age, 14, 100),
+    heightCm: fitnessNumber130(profileRaw.heightCm, 100, 250),
+    weightKg: fitnessNumber130(profileRaw.weightKg, 20, 500)
+  };
+  const nutritionRaw = p.nutritionTargets && typeof p.nutritionTargets === "object" ? p.nutritionTargets : {};
+  return {
+    ...p, schemaVersion: FITNESS_SCHEMA_VERSION,
+    entries: Array.isArray(p.entries) ? p.entries : [],
+    customFoods: Array.isArray(p.customFoods) ? p.customFoods : [], settings,
+    goals, profile,
+    nutritionTargets: {
+      training: normalizeNutrition130(nutritionRaw.training),
+      rest: normalizeNutrition130(nutritionRaw.rest)
+    },
+    workouts: Array.isArray(p.workouts) ? p.workouts.map(w => normalizeWorkout130(w)).filter(Boolean) : [],
+    workoutTemplates: Array.isArray(p.workoutTemplates) ? p.workoutTemplates.map(normalizeTemplate130).filter(Boolean) : [],
+    bodyMetrics: Array.isArray(p.bodyMetrics) ? p.bodyMetrics.map(normalizeBodyMetric130).filter(Boolean) : []
+  };
+}
+function dataForStorage130() {
+  const d = state.data;
+  return {
+    schemaVersion: FITNESS_SCHEMA_VERSION,
+    entries: d.entries, customFoods: d.customFoods, settings: d.settings,
+    goals: d.goals, profile: d.profile, nutritionTargets: d.nutritionTargets,
+    workouts: d.workouts, workoutTemplates: d.workoutTemplates, bodyMetrics: d.bodyMetrics
+  };
+}
+function calorieTarget130(data = state.data) {
+  const g = data.goals || defaultGoals130(data.settings && data.settings.dailyTarget);
+  const primary = g.calorieMode === "auto" ? g.estimatedCalories : g.calorieTarget;
+  return fitnessNumber130(primary, 1, 50000) ?? fitnessNumber130(data.settings && data.settings.dailyTarget, 1, 50000);
+}
+function dayType130(date, data = state.data) {
+  return (data.workouts || []).some(w => w.date === date) ? "training" : "rest";
+}
+function nutritionTarget130(date, data = state.data) {
+  return (data.nutritionTargets || {})[dayType130(date, data)] || blankNutrition130();
+}
+function estimateEnergy130(profile, goal = "maintain", activity = "moderate") {
+  const w = fitnessNumber130(profile.weightKg, 20, 500);
+  const h = fitnessNumber130(profile.heightCm, 100, 250);
+  const a = fitnessNumber130(profile.age, 14, 100);
+  if (w === null || h === null || a === null || !["female", "male"].includes(profile.sex)) return null;
+  const bmr = 10 * w + 6.25 * h - 5 * a + (profile.sex === "male" ? 5 : -161);
+  const tdee = bmr * (ACTIVITY_LEVELS[activity] || ACTIVITY_LEVELS.moderate).factor;
+  const factor = goal === "lose" ? 0.85 : goal === "gain" ? 1.1 : 1;
+  return { bmr: Math.round(bmr), tdee: Math.round(tdee), target: Math.round(tdee * factor / 10) * 10 };
+}
+function workoutVolume130(workout) {
+  return Math.round((workout.exercises || []).reduce((total, e) => {
+    return total + (Number(e.weightKg) || 0) * (Number(e.reps) || 0) * (Number(e.sets) || 0);
+  }, 0) * 100) / 100;
+}
+function estimateWorkoutKcal130(type, activity, durationMin, weightKg) {
+  const minutes = fitnessNumber130(durationMin, 0.01, 1440);
+  const weight = fitnessNumber130(weightKg, 20, 500);
+  if (minutes === null || weight === null) return null;
+  const met = type === "strength" ? WORKOUT_MET.strength : (WORKOUT_MET[activity] || WORKOUT_MET.other);
+  return Math.round(met * 3.5 * weight / 200 * minutes);
+}
+function movingAverageDetail130(metrics, endDate, field = "weightKg", days = 7) {
+  const start = addDays130(endDate, -(days - 1));
+  const values = (metrics || []).filter(m => m.date >= start && m.date <= endDate && fitnessNumber130(m[field], 0, 1000) !== null)
+    .map(m => ({ date: m.date, value: Number(m[field]) })).sort((a, b) => a.date.localeCompare(b.date));
+  if (!values.length) return { value: null, count: 0, start, end: endDate };
+  return { value: Math.round(values.reduce((s, x) => s + x.value, 0) / values.length * 100) / 100, count: values.length, start, end: endDate };
+}
+function movingAverage130(metrics, endDate, field = "weightKg", days = 7) {
+  return movingAverageDetail130(metrics, endDate, field, days).value;
+}
+function latestBodyMetric130(date, data = state.data) {
+  return (data.bodyMetrics || []).filter(b => !date || b.date <= date).sort((a, b) => b.date.localeCompare(a.date))[0] || null;
+}
+function weeklySummary130(data, dateInWeek) {
+  const start = weekStart130(dateInWeek), end = addDays130(start, 6);
+  const target = calorieTarget130(data);
+  let calorieGoalDays = 0, proteinGoalDays = 0, foodDays = 0;
+  for (let i = 0; i < 7; i++) {
+    const date = addDays130(start, i);
+    const entries = (data.entries || []).filter(e => e.date === date);
+    if (!entries.length) continue;
+    foodDays++;
+    const kcal = entries.reduce((s, e) => s + (Number(e.kcal) || 0), 0);
+    const protein = entries.reduce((s, e) => s + (Number(e.protein) || 0), 0);
+    if (target !== null && Math.abs(kcal - target) <= target * 0.1) calorieGoalDays++;
+    const proteinTarget = Number(nutritionTarget130(date, data).protein) || 0;
+    if (proteinTarget > 0 && protein >= proteinTarget) proteinGoalDays++;
+  }
+  const workouts = (data.workouts || []).filter(w => w.date >= start && w.date <= end);
+  const current = movingAverageDetail130(data.bodyMetrics || [], end, "weightKg", 7);
+  const previous = movingAverageDetail130(data.bodyMetrics || [], addDays130(end, -7), "weightKg", 7);
+  return {
+    start, end, foodDays, calorieGoalDays, proteinGoalDays,
+    trainingCount: workouts.length,
+    trainingMinutes: Math.round(workouts.reduce((s, w) => s + (Number(w.durationMin) || 0), 0)),
+    volumeKg: Math.round(workouts.reduce((s, w) => s + (Number(w.volumeKg) || workoutVolume130(w)), 0) * 100) / 100,
+    currentAverage: current.value, previousAverage: previous.value,
+    averageSamples: current.count + previous.count,
+    averageChange: current.value !== null && previous.value !== null ? Math.round((current.value - previous.value) * 100) / 100 : null
+  };
+}
+function buildExportPayload130() {
+  return {
+    app: "食刻 Android", version: "2.0.0", exportedAt: new Date().toISOString(),
+    ...dataForStorage130()
+  };
+}
+function normalizeImportedEntry130(raw, index) {
+  const e = raw && typeof raw === "object" ? raw : {};
+  if (!validDate130(e.date) || !String(e.name || "").trim() || fitnessNumber130(e.kcal, 0, 100000) === null) throw new Error(`第 ${index + 1} 条饮食记录缺少有效日期、名称或热量`);
+  return {
+    ...e, id: e.id ? String(e.id) : uid("import"), date: e.date,
+    meal: MEALS.includes(e.meal) ? e.meal : "加餐", name: String(e.name).slice(0, 160),
+    kcal: Number(e.kcal), kj: fitnessNumber130(e.kj, 0, 500000),
+    grams: fitnessNumber130(e.grams, 0, 100000),
+    protein: fitnessNumber130(e.protein, 0, 10000) ?? 0,
+    fat: fitnessNumber130(e.fat, 0, 10000) ?? 0,
+    carb: fitnessNumber130(e.carb, 0, 10000) ?? 0,
+    originalText: String(e.originalText || e.name || "").slice(0, 1000)
+  };
+}
+function normalizeImportedFood130(raw, index) {
+  const f = raw && typeof raw === "object" ? raw : {};
+  if (!String(f.name || "").trim() || fitnessNumber130(f.kcal, 0, 2000) === null) throw new Error(`第 ${index + 1} 个自定义食物缺少有效名称或能量`);
+  return {
+    ...f, id: f.id ? String(f.id) : uid("food"), name: String(f.name).trim().slice(0, 100), kcal: Number(f.kcal),
+    kj: fitnessNumber130(f.kj, 0, 10000), protein: fitnessNumber130(f.protein, 0, 100) ?? 0,
+    fat: fitnessNumber130(f.fat, 0, 100) ?? 0, carb: fitnessNumber130(f.carb, 0, 100) ?? 0,
+    fiber: fitnessNumber130(f.fiber, 0, 100), aliases: Array.isArray(f.aliases) ? f.aliases.map(String).slice(0, 30) : [],
+    portions: f.portions && typeof f.portions === "object" && !Array.isArray(f.portions) ? f.portions : {}
+  };
+}
+function parseImport130(text) {
+  let p;
+  try { p = JSON.parse(text); } catch (_) { throw new Error("文件不是有效的 JSON"); }
+  if (!p || typeof p !== "object" || Array.isArray(p)) throw new Error("备份顶层必须是对象");
+  if (p.schemaVersion !== undefined && Number(p.schemaVersion) > FITNESS_SCHEMA_VERSION) throw new Error("备份来自更新版本，当前版本不能安全导入");
+  if (p.entries !== undefined && !Array.isArray(p.entries)) throw new Error("entries 必须是数组");
+  if (p.customFoods !== undefined && !Array.isArray(p.customFoods)) throw new Error("customFoods 必须是数组");
+  for (const key of ["workouts", "workoutTemplates", "bodyMetrics"]) if (p[key] !== undefined && !Array.isArray(p[key])) throw new Error(`${key} 必须是数组`);
+  const normalized = {
+    ...p,
+    entries: (p.entries || []).map(normalizeImportedEntry130),
+    customFoods: (p.customFoods || []).map(normalizeImportedFood130),
+    settings: {
+      dailyTarget: p.settings && p.settings.dailyTarget !== undefined ? p.settings.dailyTarget : (p.dailyReferenceTargetKcal ?? ""),
+      recognitionEndpoint: p.settings && typeof p.settings.recognitionEndpoint === "string" ? p.settings.recognitionEndpoint : ""
+    }
+  };
+  const validators = [
+    ["workouts", normalizeWorkout130, "训练"],
+    ["workoutTemplates", normalizeTemplate130, "训练模板"],
+    ["bodyMetrics", normalizeBodyMetric130, "身体测量"]
+  ];
+  for (const [key, validator, label] of validators) {
+    normalized[key] = (p[key] || []).map((raw, index) => {
+      const value = validator(raw);
+      if (!value) throw new Error(`第 ${index + 1} 条${label}记录无效；未导入任何数据`);
+      return value;
+    });
+  }
+  return migrateData130(normalized);
+}
+function buildWorkoutCSV130() {
+  const rows = [["日期", "类型", "名称", "项目", "时长_分钟", "距离_公里", "动作", "重量_kg", "次数", "组数", "RPE", "动作容量_kg", "训练总容量_kg", "估算消耗_kcal", "备注"]];
+  for (const w of state.data.workouts) {
+    const common = [w.date, w.type === "strength" ? "力量" : "有氧", w.name, w.activity, w.durationMin ?? "", w.distanceKm ?? ""];
+    if (w.exercises.length) {
+      for (const e of w.exercises) rows.push([...common, e.name, e.weightKg, e.reps, e.sets, e.rpe ?? "", e.volumeKg, w.volumeKg, w.estimatedKcal ?? "", w.notes]);
+    } else rows.push([...common, "", "", "", "", "", 0, w.volumeKg, w.estimatedKcal ?? "", w.notes]);
+  }
+  return "\uFEFF" + rows.map(r => r.map(csvCell).join(",")).join("\r\n");
+}
+function buildBodyCSV130() {
+  const rows = [["日期", "体重_kg", "腰围_cm", "体脂率_%", "备注"]];
+  for (const b of state.data.bodyMetrics) rows.push([b.date, b.weightKg ?? "", b.waistCm ?? "", b.bodyFatPct ?? "", b.notes]);
+  return "\uFEFF" + rows.map(r => r.map(csvCell).join(",")).join("\r\n");
+}
+function saveText130(fileName, mime, content) {
+  const blob = new Blob([content], { type: mime });
+  if (window.SHIKE_NATIVE_ANDROID && window.ShikeAndroid && typeof window.ShikeAndroid.saveTextFile === "function") {
+    const reader = new FileReader();
+    reader.onload = () => {
+      let saved = false;
+      try { saved = window.ShikeAndroid.saveTextFile(fileName, mime, String(reader.result || "")); } catch (_) { saved = false; }
+      toast(saved ? `已保存到系统“下载/食刻”：${fileName}` : "导出失败，请检查系统存储后重试");
+    };
+    reader.onerror = () => toast("无法读取导出内容，请重试");
+    reader.readAsText(blob, "UTF-8");
+    return;
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function macroRing130(label, value, target, color, iconName) {
+  const hasTarget = target !== null && target > 0;
+  const ratio = hasTarget ? value / target : 0;
+  const pct = hasTarget ? Math.round(ratio * 100) : null;
+  const dash = Math.min(ratio, 1) * 157.08;
+  return `<div class="fitness-ring"><div class="fitness-ring-visual"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="25" class="fitness-ring-bg"/><circle cx="32" cy="32" r="25" class="fitness-ring-fg" style="stroke:${color};stroke-dasharray:${dash.toFixed(2)} 157.08"/></svg><span>${icon(iconName)}</span></div><b>${fmt(value)}<small> / ${hasTarget ? fmt(target) : "—"} g</small></b><span>${label}${pct === null ? " · 未设目标" : ` · ${pct}%`}</span></div>`;
+}
+function renderFitnessToday130() {
+  const date = state.selectedDate, totals = dayTotals(date), targets = nutritionTarget130(date);
+  const goalName = FITNESS_GOALS[state.data.goals.fitnessGoal] || "维持";
+  const target = calorieTarget130();
+  $("#today-goal-summary").innerHTML = `<span>${esc(goalName)}目标 · ${dayType130(date) === "training" ? "训练日" : "休息日"}</span><b>${target === null ? "未设能量目标" : `${fmt(target)} kcal 个人参考`}</b>`;
+  $("#goal-rings").innerHTML = MACRO_FIELDS.map(m => macroRing130(m.label, totals[m.key], fitnessNumber130(targets[m.key], 0, 2000), m.color, m.icon)).join("");
+  const workouts = state.data.workouts.filter(w => w.date === date).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  $("#today-workouts").innerHTML = workouts.length ? workouts.map(workoutRow130).join("") : `<div class="fitness-empty">这一天还没有训练记录。<button type="button" class="inline-link" data-start-workout>记训练</button></div>`;
+  renderWeekCard130();
+}
+function workoutDetail130(w) {
+  const bits = [];
+  if (w.durationMin) bits.push(`${fmt(w.durationMin)} 分钟`);
+  if (w.distanceKm) bits.push(`${fmt(w.distanceKm)} km`);
+  if (w.type === "strength") bits.push(`${w.exercises.length} 个动作 · 容量 ${fmt(w.volumeKg)} kg`);
+  if (w.estimatedKcal !== null) bits.push(`约 ${fmt(w.estimatedKcal)} kcal（估算）`);
+  return bits.join(" · ") || "已记录";
+}
+function workoutRow130(w) {
+  return `<div class="fitness-record"><span class="fitness-record-icon">${icon(w.type === "strength" ? "dumbbell" : "activity")}</span><div class="fitness-record-main"><b>${esc(w.name)}</b><span>${esc(workoutDetail130(w))}</span>${w.notes ? `<small>${esc(w.notes)}</small>` : ""}</div><div class="fitness-record-actions"><button class="icon-btn" type="button" data-edit-workout="${esc(w.id)}" aria-label="编辑 ${esc(w.name)}">${icon("square-pen")}</button><button class="icon-btn danger-text" type="button" data-delete-workout="${esc(w.id)}" aria-label="删除 ${esc(w.name)}">${icon("trash-2")}</button></div></div>`;
+}
+function renderWeekCard130() {
+  const s = weeklySummary130(state.data, state.selectedDate);
+  $("#today-week-summary").innerHTML = `<div class="fitness-card-head"><div><h3>${icon("calendar-range")}本周概览</h3><p>${s.start.slice(5).replace("-", "/")}–${s.end.slice(5).replace("-", "/")} · 截至所选日期所在周</p></div><button class="inline-link" type="button" data-open-week>详细总结</button></div><div class="fitness-summary-grid"><div><b>${s.trainingCount}</b><span>训练次数</span></div><div><b>${s.calorieGoalDays}</b><span>热量达标天数</span></div><div><b>${s.proteinGoalDays}</b><span>蛋白质达标天数</span></div><div><b>${s.averageChange === null ? "—" : `${s.averageChange > 0 ? "+" : ""}${fmt(s.averageChange)}`}<small>${s.averageChange === null ? "" : " kg"}</small></b><span>体重 7 日均值变化</span></div></div><p class="fitness-method">热量达标 = 当日记录热量在个人目标 ±10% 内；只统计有饮食记录的日期。周均体重对比本周与前 7 日窗口，无记录日期不补值。</p>`;
+}
+function refreshFitnessViews130() {
+  renderToday();
+  renderTrend();
+  renderMe();
+}
+function renderFitnessMe130() {
+  const g = state.data.goals, target = calorieTarget130();
+  $("#fitness-goal-badge").textContent = `${FITNESS_GOALS[g.fitnessGoal]}${target === null ? "" : ` · ${fmt(target)} kcal`}`;
+  $("#nutrition-badge").textContent = `${fmt(state.data.nutritionTargets.training.protein || 0)} / ${fmt(state.data.nutritionTargets.rest.protein || 0)} g 蛋白质`;
+  $("#body-count-badge").textContent = `${state.data.bodyMetrics.length} 次测量`;
+  $("#template-count-badge").textContent = `${state.data.workoutTemplates.length} 个模板`;
+  $("#fitness-store-count").textContent = `${state.data.workouts.length} 次训练 · ${state.data.bodyMetrics.length} 次身体测量 · 均只保存在本机`;
+}
+function setRecordType130(type) {
+  if (!["diet", "workout", "body"].includes(type)) type = "diet";
+  state.fitness.recordType = type;
+  $$('[data-record-type]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.recordType === type)));
+  $("#record-diet-panel").hidden = type !== "diet";
+  $("#record-workout-panel").hidden = type !== "workout";
+  $("#record-body-panel").hidden = type !== "body";
+  if (type === "workout") {
+    if (!$("#workout-date").value) $("#workout-date").value = state.selectedDate;
+    renderTemplateOptions130(); updateWorkoutEstimate130();
+  }
+  if (type === "body") {
+    if (!$("#body-date").value) $("#body-date").value = state.selectedDate;
+    renderBodyList130();
+  }
+}
+function setWorkoutType130(type) {
+  if (!["strength", "cardio"].includes(type)) type = "strength";
+  $("#workout-type").value = type;
+  $("#strength-fields").hidden = type !== "strength";
+  $("#cardio-fields").hidden = type !== "cardio";
+  $("#workout-name").placeholder = type === "strength" ? "例如：上肢力量" : "例如：轻松跑";
+  updateWorkoutEstimate130();
+}
+function blankExercise130() { return { name: "", weightKg: "", reps: "", sets: 3, rpe: "" }; }
+function renderExerciseDraft130() {
+  $("#exercise-list").innerHTML = state.fitness.draftExercises.map((e, i) => `<div class="exercise-draft" data-exercise="${i}"><div class="exercise-draft-head"><b>动作 ${i + 1}</b>${state.fitness.draftExercises.length > 1 ? `<button class="inline-link danger-text" type="button" data-remove-exercise="${i}">移除</button>` : ""}</div><label class="field"><span class="field-label">动作名称</span><input class="input" data-ex-field="name" data-index="${i}" value="${esc(e.name)}" maxlength="80" placeholder="例如：深蹲"></label><div class="exercise-grid"><label class="field"><span class="field-label">重量 kg</span><input class="input" type="number" min="0" max="2000" step="0.25" data-ex-field="weightKg" data-index="${i}" value="${esc(e.weightKg)}" inputmode="decimal"></label><label class="field"><span class="field-label">次数</span><input class="input" type="number" min="0" max="1000" step="1" data-ex-field="reps" data-index="${i}" value="${esc(e.reps)}" inputmode="numeric"></label><label class="field"><span class="field-label">组数</span><input class="input" type="number" min="1" max="100" step="1" data-ex-field="sets" data-index="${i}" value="${esc(e.sets)}" inputmode="numeric"></label><label class="field"><span class="field-label">RPE（可选）</span><input class="input" type="number" min="0" max="10" step="0.5" data-ex-field="rpe" data-index="${i}" value="${esc(e.rpe)}" inputmode="decimal" placeholder="0–10"></label></div></div>`).join("");
+  const volume = workoutVolume130({ exercises: state.fitness.draftExercises.map(normalizeExercise130).filter(Boolean) });
+  $("#draft-volume").textContent = `${fmt(volume)} kg`;
+}
+function workoutDraft130() {
+  const type = $("#workout-type").value || "strength";
+  const durationMin = fitnessNumber130($("#workout-duration").value, 0, 1440);
+  const weight = latestBodyMetric130($("#workout-date").value)?.weightKg ?? state.data.profile.weightKg;
+  return {
+    id: state.fitness.editWorkoutId || uid("workout"), date: $("#workout-date").value, type,
+    name: $("#workout-name").value.trim() || (type === "strength" ? "力量训练" : "有氧训练"),
+    activity: type === "strength" ? "strength" : $("#cardio-activity").value,
+    durationMin, distanceKm: type === "cardio" ? fitnessNumber130($("#cardio-distance").value, 0, 2000) : null,
+    exercises: type === "strength" ? state.fitness.draftExercises.map(normalizeExercise130).filter(Boolean) : [],
+    estimatedKcal: estimateWorkoutKcal130(type, type === "strength" ? "strength" : $("#cardio-activity").value, durationMin, weight),
+    notes: $("#workout-notes").value.trim(), createdAt: new Date().toISOString()
+  };
+}
+function validateWorkoutDraft130(w) {
+  if (!validDate130(w.date)) return "请选择有效训练日期";
+  if (w.type === "strength") {
+    const hasPartialRow = state.fitness.draftExercises.some(e => {
+      const hasInput = [e.name, e.weightKg, e.reps, e.rpe].some(v => String(v ?? "").trim() !== "") || String(e.sets ?? "") !== "3";
+      return hasInput && !normalizeExercise130(e);
+    });
+    if (hasPartialRow) return "动作信息不完整，请检查名称、重量、次数和组数";
+    if (!w.exercises.length) return "请至少填写一个动作的重量、次数和组数；自重训练重量可填 0";
+  } else if (w.durationMin === null || w.durationMin <= 0) return "有氧训练请填写大于 0 的时长";
+  return "";
+}
+function resetWorkoutForm130() {
+  state.fitness.editWorkoutId = null;
+  state.fitness.draftExercises = [blankExercise130()];
+  $("#workout-form").reset(); $("#workout-date").value = state.selectedDate;
+  setWorkoutType130("strength"); renderExerciseDraft130();
+  $("#workout-submit").textContent = "保存训练"; $("#workout-cancel-edit").hidden = true;
+  $("#workout-err").hidden = true;
+}
+function saveWorkout130(event) {
+  event.preventDefault();
+  const draft = workoutDraft130(), error = validateWorkoutDraft130(draft);
+  if (error) { $("#workout-err").textContent = error; $("#workout-err").hidden = false; return; }
+  const normalized = normalizeWorkout130({ ...draft, volumeKg: workoutVolume130(draft) });
+  const index = state.data.workouts.findIndex(w => w.id === normalized.id);
+  if (index >= 0) { normalized.createdAt = state.data.workouts[index].createdAt; state.data.workouts[index] = normalized; }
+  else state.data.workouts.push(normalized);
+  saveData();
+  if (!state.storageOK) { $("#workout-err").textContent = "保存失败：本机存储不可用，请先导出备份"; $("#workout-err").hidden = false; return; }
+  state.selectedDate = normalized.date; resetWorkoutForm130(); refreshFitnessViews130(); toast("训练已保存；消耗仅为估算，未抵扣饮食热量");
+}
+function editWorkout130(id) {
+  const w = state.data.workouts.find(x => x.id === id); if (!w) return;
+  goScreen("add"); setRecordType130("workout"); state.fitness.editWorkoutId = id;
+  $("#workout-date").value = w.date; $("#workout-name").value = w.name; $("#workout-duration").value = w.durationMin ?? "";
+  $("#workout-notes").value = w.notes || ""; setWorkoutType130(w.type);
+  if (w.type === "cardio") { $("#cardio-activity").value = w.activity; $("#cardio-distance").value = w.distanceKm ?? ""; }
+  state.fitness.draftExercises = w.type === "strength" && w.exercises.length ? w.exercises.map(e => ({ ...e })) : [blankExercise130()];
+  renderExerciseDraft130(); $("#workout-submit").textContent = "保存修改"; $("#workout-cancel-edit").hidden = false;
+}
+function deleteWorkout130(id) {
+  const w = state.data.workouts.find(x => x.id === id); if (!w || !confirm(`删除“${w.name}”这条训练记录？`)) return;
+  state.data.workouts = state.data.workouts.filter(x => x.id !== id); saveData(); refreshFitnessViews130(); toast("训练记录已删除");
+}
+function renderTemplateOptions130() {
+  const templates = state.data.workoutTemplates;
+  $("#template-select").innerHTML = `<option value="">选择训练模板</option>` + templates.map(t => `<option value="${esc(t.id)}">${esc(t.name)} · ${t.type === "strength" ? "力量" : "有氧"}</option>`).join("");
+  $("#template-delete").disabled = !templates.length;
+}
+function saveTemplate130() {
+  const w = workoutDraft130(), error = validateWorkoutDraft130(w);
+  if (error) { $("#workout-err").textContent = error; $("#workout-err").hidden = false; return; }
+  const name = $("#workout-name").value.trim() || (w.type === "strength" ? (w.exercises[0]?.name || "力量模板") : "有氧模板");
+  state.data.workoutTemplates.push(normalizeTemplate130({ ...w, name }));
+  saveData(); renderTemplateOptions130(); renderFitnessMe130(); toast("训练模板已保存，可在之后的记录中复用");
+}
+function applyTemplate130() {
+  const t = state.data.workoutTemplates.find(x => x.id === $("#template-select").value); if (!t) { toast("请先选择一个模板"); return; }
+  state.fitness.editWorkoutId = null; $("#workout-name").value = t.name; $("#workout-duration").value = t.durationMin ?? "";
+  $("#workout-notes").value = t.notes || ""; setWorkoutType130(t.type);
+  if (t.type === "cardio") { $("#cardio-activity").value = t.activity; $("#cardio-distance").value = t.distanceKm ?? ""; }
+  state.fitness.draftExercises = t.type === "strength" && t.exercises.length ? t.exercises.map(e => ({ ...e })) : [blankExercise130()];
+  renderExerciseDraft130(); $("#workout-submit").textContent = "保存训练"; $("#workout-cancel-edit").hidden = true;
+}
+function deleteTemplate130() {
+  const id = $("#template-select").value, t = state.data.workoutTemplates.find(x => x.id === id);
+  if (!t) { toast("请先选择要删除的模板"); return; }
+  if (!confirm(`删除模板“${t.name}”？已保存的训练记录不会受影响。`)) return;
+  state.data.workoutTemplates = state.data.workoutTemplates.filter(x => x.id !== id);
+  saveData(); renderTemplateOptions130(); renderFitnessMe130(); toast("模板已删除");
+}
+function updateWorkoutEstimate130() {
+  const type = $("#workout-type").value || "strength";
+  const duration = $("#workout-duration").value, weight = latestBodyMetric130($("#workout-date").value)?.weightKg ?? state.data.profile.weightKg;
+  const kcal = estimateWorkoutKcal130(type, type === "strength" ? "strength" : $("#cardio-activity").value, duration, weight);
+  $("#workout-calorie-preview").textContent = kcal === null ? "填写时长且有可用体重后显示消耗估算；不抵扣饮食热量。" : `本次约 ${kcal} kcal（按 MET 与最近体重估算，不抵扣饮食热量）`;
+}
+function saveBodyMetric130(event) {
+  event.preventDefault();
+  const raw = {
+    id: state.data.bodyMetrics.find(b => b.date === $("#body-date").value)?.id || uid("body"),
+    date: $("#body-date").value, weightKg: $("#body-weight").value,
+    waistCm: $("#body-waist").value, bodyFatPct: $("#body-fat").value, notes: $("#body-notes").value.trim()
+  };
+  const b = normalizeBodyMetric130(raw);
+  if (!b) { $("#body-err").textContent = "请填写有效日期，并至少填写体重、腰围或体脂率中的一项"; $("#body-err").hidden = false; return; }
+  const index = state.data.bodyMetrics.findIndex(x => x.date === b.date);
+  if (index >= 0) { b.createdAt = state.data.bodyMetrics[index].createdAt; state.data.bodyMetrics[index] = b; }
+  else state.data.bodyMetrics.push(b);
+  saveData(); state.selectedDate = b.date; $("#body-form").reset(); $("#body-date").value = b.date; $("#body-err").hidden = true;
+  refreshFitnessViews130(); renderBodyList130(); toast(index >= 0 ? "同日身体数据已更新" : "身体数据已保存");
+}
+function renderBodyList130() {
+  const list = [...state.data.bodyMetrics].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+  $("#body-list").innerHTML = list.length ? list.map(b => `<div class="fitness-record"><span class="fitness-record-icon">${icon("scale")}</span><div class="fitness-record-main"><b>${b.date}</b><span>${b.weightKg === null ? "" : `体重 ${fmt(b.weightKg)} kg · `}${b.waistCm === null ? "" : `腰围 ${fmt(b.waistCm)} cm · `}${b.bodyFatPct === null ? "" : `体脂率 ${fmt(b.bodyFatPct)}%`}</span></div><div class="fitness-record-actions"><button class="icon-btn danger-text" type="button" data-delete-body="${esc(b.id)}" aria-label="删除 ${b.date} 的身体数据">${icon("trash-2")}</button></div></div>`).join("") : `<div class="fitness-empty">还没有身体数据。按日期记录后，这里会显示最近测量。</div>`;
+  const avg = movingAverageDetail130(state.data.bodyMetrics, state.selectedDate, "weightKg", 7);
+  $("#body-average").textContent = avg.value === null ? "截至所选日期，近 7 天暂无体重记录" : `截至 ${state.selectedDate}，近 7 天体重平均 ${fmt(avg.value)} kg（${avg.count} 次测量）`;
+}
+function setTrendKind130(kind) {
+  if (!["diet", "workout", "body"].includes(kind)) kind = "diet";
+  state.fitness.trendKind = kind; renderTrend();
+}
+function barChart130(items, valueKey, unit, color = "#78b95c") {
+  const max = Math.max(1, ...items.map(x => Number(x[valueKey]) || 0));
+  return `<div class="chart">${items.map(x => { const value = Number(x[valueKey]) || 0; return `<div class="bar-col ${value ? "" : "empty"} ${x.date === localDate() ? "today" : ""}"><span class="bar-val">${value ? fmt(value) : "—"}</span><div class="bar-stick" style="height:${Math.max(2, value / max * 105)}px;background:${color}"></div><span class="bar-lab">${x.date.slice(5).replace("-", "/")}</span></div>`; }).join("")}</div><p class="fitness-method">单位：${unit}；空白日期不补值。</p>`;
+}
+function renderWorkoutTrend130() {
+  const days = Number(state.trendRange) || 7, end = state.selectedDate, start = addDays130(end, -(days - 1));
+  const dates = Array.from({ length: days }, (_, i) => addDays130(start, i));
+  const items = dates.map(date => { const ws = state.data.workouts.filter(w => w.date === date); return { date, minutes: ws.reduce((s, w) => s + (w.durationMin || 0), 0) }; });
+  const ws = state.data.workouts.filter(w => w.date >= start && w.date <= end);
+  $("#workout-chart").innerHTML = barChart130(items, "minutes", "分钟 / 日");
+  $("#workout-stat-count").innerHTML = `${ws.length}<small> 次</small>`;
+  $("#workout-stat-minutes").innerHTML = `${fmt(ws.reduce((s, w) => s + (w.durationMin || 0), 0))}<small> 分钟</small>`;
+  $("#workout-stat-volume").innerHTML = `${fmt(ws.reduce((s, w) => s + (w.volumeKg || 0), 0))}<small> kg</small>`;
+  $("#workout-history").innerHTML = ws.length ? [...ws].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)).map(workoutRow130).join("") : `<div class="fitness-empty">所选范围没有训练记录。</div>`;
+}
+function lineChart130(metrics, field, unit) {
+  const points = [...metrics].filter(m => m[field] !== null).sort((a, b) => a.date.localeCompare(b.date)).slice(-14);
+  if (!points.length) return `<div class="fitness-empty">暂无可绘制的数据。</div>`;
+  const values = points.map(p => Number(p[field])), min = Math.min(...values), max = Math.max(...values), spread = Math.max(1, max - min);
+  const coords = points.map((p, i) => ({ x: points.length === 1 ? 160 : 12 + i * 296 / (points.length - 1), y: 96 - (Number(p[field]) - min) / spread * 72, p }));
+  return `<svg class="body-line-chart" viewBox="0 0 320 128" role="img" aria-label="最近 ${points.length} 次${unit}趋势"><path d="M12 100H308" stroke="#e2e8de"/><polyline points="${coords.map(c => `${c.x},${c.y}`).join(" ")}" fill="none" stroke="#78b95c" stroke-width="2.5" stroke-linejoin="round"/>${coords.map(c => `<circle cx="${c.x}" cy="${c.y}" r="3.5" fill="#173f35"/><text x="${c.x}" y="${Math.max(12, c.y - 9)}" text-anchor="middle" font-size="9" fill="#52665b">${fmt(c.p[field])}</text><text x="${c.x}" y="116" text-anchor="middle" font-size="8" fill="#839087">${c.p.date.slice(5)}</text>`).join("")}</svg><p class="fitness-method">单位：${unit}；展示最近 ${points.length} 次测量，纵轴随数据范围缩放。</p>`;
+}
+function renderBodyTrend130() {
+  const end = state.selectedDate, start = addDays130(end, -((Number(state.trendRange) || 7) - 1));
+  const metrics = state.data.bodyMetrics.filter(b => b.date <= end);
+  const latest = latestBodyMetric130(end), avg = movingAverageDetail130(metrics, end, "weightKg", 7);
+  $("#body-chart").innerHTML = lineChart130(metrics.filter(b => b.date >= start), "weightKg", "kg");
+  $("#body-stat-latest").innerHTML = latest?.weightKg == null ? "—" : `${fmt(latest.weightKg)}<small> kg</small>`;
+  $("#body-stat-average").innerHTML = avg.value === null ? "—" : `${fmt(avg.value)}<small> kg</small>`;
+  $("#body-stat-waist").innerHTML = latest?.waistCm == null ? "—" : `${fmt(latest.waistCm)}<small> cm</small>`;
+  $("#body-trend-note").textContent = `${start} 至 ${end} 为当前查看范围；7 日平均按窗口内实际测量值计算，共 ${avg.count} 次。`;
+  $("#body-fat-latest").textContent = latest?.bodyFatPct == null ? "最新体脂率：未记录" : `最新体脂率：${fmt(latest.bodyFatPct)}%（${latest.date}）`;
+}
+function syncFitnessTrend130() {
+  const kind = state.fitness.trendKind;
+  $$('[data-trend-kind]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.trendKind === kind)));
+  $("#trend-diet-panel").hidden = kind !== "diet";
+  $("#trend-workout-panel").hidden = kind !== "workout";
+  $("#trend-body-panel").hidden = kind !== "body";
+  $$('[data-fitness-range]').forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.fitnessRange) === Number(state.trendRange))));
+  if (kind === "workout") renderWorkoutTrend130();
+  if (kind === "body") renderBodyTrend130();
+}
+function openWeeklySummary130() {
+  state.fitness.weekOffset = 0; renderWeeklyDialog130(); $("#dlg-weekly").showModal();
+}
+function renderWeeklyDialog130() {
+  const base = addDays130(state.selectedDate, -7 * state.fitness.weekOffset), s = weeklySummary130(state.data, base);
+  $("#weekly-range").textContent = `${s.start} 至 ${s.end}`;
+  $("#weekly-content").innerHTML = `<div class="fitness-summary-grid weekly"><div><b>${s.trainingCount}</b><span>训练次数</span></div><div><b>${s.trainingMinutes}</b><span>训练分钟</span></div><div><b>${s.calorieGoalDays} / ${s.foodDays}</b><span>热量达标 / 有记录天数</span></div><div><b>${s.proteinGoalDays} / ${s.foodDays}</b><span>蛋白质达标 / 有记录天数</span></div><div><b>${fmt(s.volumeKg)}<small> kg</small></b><span>力量训练容量</span></div><div><b>${s.averageChange === null ? "—" : `${s.averageChange > 0 ? "+" : ""}${fmt(s.averageChange)} kg`}</b><span>7 日平均体重变化</span></div></div><div class="note">本周 7 日平均体重：${s.currentAverage === null ? "数据不足" : `${fmt(s.currentAverage)} kg`}；前一 7 日窗口：${s.previousAverage === null ? "数据不足" : `${fmt(s.previousAverage)} kg`}。变化仅在两个窗口都有测量时计算。</div><p class="fitness-method">热量达标采用目标 ±10% 的个人记录口径；蛋白质达标为摄入量不低于当天（训练日 / 休息日）目标。无饮食记录日期不计为达标，也不计入分母以外的达标天数。以上为客观汇总，不构成健康或医疗建议。</p>`;
+  $("#week-prev").disabled = false; $("#week-current").disabled = state.fitness.weekOffset === 0;
+}
+function openFitnessGoals130() {
+  const g = state.data.goals, p = state.data.profile, latest = latestBodyMetric130(localDate());
+  $("#fitness-goal").value = g.fitnessGoal; $("#fitness-activity").value = g.activityLevel;
+  $("#fitness-calorie-mode").value = g.calorieMode; $("#fitness-manual-target").value = g.calorieTarget ?? calorieTarget130() ?? "";
+  $("#profile-sex").value = p.sex; $("#profile-age").value = p.age ?? ""; $("#profile-height").value = p.heightCm ?? "";
+  $("#profile-weight").value = latest?.weightKg ?? p.weightKg ?? "";
+  updateEnergyEstimate130(); $("#fitness-goal-err").hidden = true; $("#dlg-fitness").showModal();
+}
+function updateEnergyEstimate130() {
+  const profile = { sex: $("#profile-sex").value, age: $("#profile-age").value, heightCm: $("#profile-height").value, weightKg: $("#profile-weight").value };
+  const estimate = estimateEnergy130(profile, $("#fitness-goal").value, $("#fitness-activity").value);
+  $("#fitness-estimate").innerHTML = estimate ? `<b>BMR 约 ${estimate.bmr} kcal/日 · 日常消耗约 ${estimate.tdee} kcal/日</b><span>按所选目标得到 ${estimate.target} kcal/日估算值。仅为公式估算，不是摄入建议。</span>` : `<b>填写完整身体参数后显示估算</b><span>需要生理性别、年龄、身高和体重；不填写也不影响手动目标。</span>`;
+  $("#fitness-manual-row").hidden = $("#fitness-calorie-mode").value !== "manual";
+  return estimate;
+}
+function saveFitnessGoals130(event) {
+  event.preventDefault();
+  const profile = { sex: $("#profile-sex").value, age: $("#profile-age").value, heightCm: $("#profile-height").value, weightKg: $("#profile-weight").value };
+  const estimate = estimateEnergy130(profile, $("#fitness-goal").value, $("#fitness-activity").value);
+  const mode = $("#fitness-calorie-mode").value;
+  let manual = fitnessNumber130($("#fitness-manual-target").value, 1, 50000);
+  if (mode === "manual" && manual === null) { $("#fitness-goal-err").textContent = "手动模式请填写 1–50000 kcal 的有效目标"; $("#fitness-goal-err").hidden = false; return; }
+  if (mode === "auto" && !estimate) { $("#fitness-goal-err").textContent = "自动估算需要完整且有效的身体参数，也可改用手动目标"; $("#fitness-goal-err").hidden = false; return; }
+  state.data.profile = migrateData130({ profile }).profile;
+  state.data.goals = {
+    fitnessGoal: $("#fitness-goal").value, activityLevel: $("#fitness-activity").value,
+    calorieMode: mode, calorieTarget: mode === "manual" ? manual : estimate.target,
+    bmr: estimate?.bmr ?? null, tdee: estimate?.tdee ?? null,
+    estimatedCalories: estimate?.target ?? null, updatedAt: new Date().toISOString()
+  };
+  state.data.settings.dailyTarget = calorieTarget130() ?? "";
+  saveData(); $("#dlg-fitness").close(); refreshFitnessViews130(); toast("健身与能量目标已保存为个人参考");
+}
+function openNutrition130() {
+  for (const day of ["training", "rest"]) for (const key of ["protein", "carb", "fat"]) {
+    $(`#nt-${day}-${key}`).value = state.data.nutritionTargets[day][key];
+  }
+  $("#nutrition-err").hidden = true; $("#dlg-nutrition").showModal();
+}
+function saveNutrition130(event) {
+  event.preventDefault();
+  const next = { training: {}, rest: {} };
+  for (const day of ["training", "rest"]) for (const key of ["protein", "carb", "fat"]) {
+    const raw = $(`#nt-${day}-${key}`).value, value = fitnessNumber130(raw, 0, 2000);
+    if (raw !== "" && value === null) { $("#nutrition-err").textContent = "营养素目标需留空或填写 0–2000 g 的有效数值"; $("#nutrition-err").hidden = false; return; }
+    next[day][key] = value === null ? "" : value;
+  }
+  state.data.nutritionTargets = next; saveData(); $("#dlg-nutrition").close(); refreshFitnessViews130(); toast("训练日与休息日营养目标已保存");
+}
+function markManualGoal130() {
+  if (!state.data.goals) return;
+  state.data.goals.calorieMode = "manual";
+  state.data.goals.calorieTarget = fitnessNumber130(state.data.settings.dailyTarget, 1, 50000);
+}
+function initFitness130() {
+  state.data = migrateData130(state.data);
+  state.fitness = { recordType: "diet", trendKind: "diet", draftExercises: [blankExercise130()], editWorkoutId: null, weekOffset: 0 };
+  // 这两个对话框必须先回填当前目标，不能走通用 data-open 空表单路径。
+  $$('[data-open="dlg-fitness"]').forEach(b => {
+    b.removeAttribute("data-open");
+    b.addEventListener("click", openFitnessGoals130);
+  });
+  $$('[data-open="dlg-nutrition"]').forEach(b => {
+    b.removeAttribute("data-open");
+    b.addEventListener("click", openNutrition130);
+  });
+  const oldRenderToday = renderToday, oldRenderTrend = renderTrend, oldRenderMe = renderMe;
+  renderToday = function () { oldRenderToday(); renderFitnessToday130(); };
+  renderTrend = function () { oldRenderTrend(); syncFitnessTrend130(); };
+  renderMe = function () { oldRenderMe(); renderFitnessMe130(); };
+  $$('[data-record-type]').forEach(b => b.addEventListener("click", () => setRecordType130(b.dataset.recordType)));
+  $$('[data-trend-kind]').forEach(b => b.addEventListener("click", () => setTrendKind130(b.dataset.trendKind)));
+  $$('[data-fitness-range]').forEach(b => b.addEventListener("click", () => { state.trendRange = Number(b.dataset.fitnessRange); renderTrend(); }));
+  $("#workout-type").addEventListener("change", e => setWorkoutType130(e.target.value));
+  $("#workout-form").addEventListener("submit", saveWorkout130);
+  $("#body-form").addEventListener("submit", saveBodyMetric130);
+  $("#fitness-form").addEventListener("submit", saveFitnessGoals130);
+  $("#nutrition-form").addEventListener("submit", saveNutrition130);
+  $("#exercise-add").addEventListener("click", () => { state.fitness.draftExercises.push(blankExercise130()); renderExerciseDraft130(); });
+  $("#exercise-list").addEventListener("input", e => {
+    const input = e.target.closest("[data-ex-field]"); if (!input) return;
+    state.fitness.draftExercises[Number(input.dataset.index)][input.dataset.exField] = input.value;
+    const volume = workoutVolume130({ exercises: state.fitness.draftExercises.map(normalizeExercise130).filter(Boolean) });
+    $("#draft-volume").textContent = `${fmt(volume)} kg`;
+  });
+  $("#exercise-list").addEventListener("click", e => {
+    const b = e.target.closest("[data-remove-exercise]"); if (!b) return;
+    state.fitness.draftExercises.splice(Number(b.dataset.removeExercise), 1); renderExerciseDraft130();
+  });
+  $("#workout-cancel-edit").addEventListener("click", resetWorkoutForm130);
+  for (const id of ["workout-duration", "workout-date", "cardio-activity"]) $(`#${id}`).addEventListener("input", updateWorkoutEstimate130);
+  $("#template-save").addEventListener("click", saveTemplate130); $("#template-apply").addEventListener("click", applyTemplate130); $("#template-delete").addEventListener("click", deleteTemplate130);
+  $("#me-body-add").addEventListener("click", () => { goScreen("add"); setRecordType130("body"); });
+  $("#me-workout-add").addEventListener("click", () => { goScreen("add"); setRecordType130("workout"); });
+  $("#me-weekly").addEventListener("click", openWeeklySummary130);
+  $("#trend-weekly").addEventListener("click", openWeeklySummary130);
+  $("#hero-target-btn").addEventListener("click", openFitnessGoals130);
+  $("#fitness-estimate-btn").addEventListener("click", updateEnergyEstimate130);
+  for (const id of ["fitness-goal", "fitness-activity", "fitness-calorie-mode", "profile-sex", "profile-age", "profile-height", "profile-weight"]) $(`#${id}`).addEventListener("input", updateEnergyEstimate130);
+  $("#week-prev").addEventListener("click", () => { state.fitness.weekOffset++; renderWeeklyDialog130(); });
+  $("#week-current").addEventListener("click", () => { state.fitness.weekOffset = Math.max(0, state.fitness.weekOffset - 1); renderWeeklyDialog130(); });
+  for (const root of [$("#screen-today"), $("#screen-trend"), $("#record-body-panel")]) root.addEventListener("click", e => {
+    const start = e.target.closest("[data-start-workout]"); if (start) { goScreen("add"); setRecordType130("workout"); }
+    const edit = e.target.closest("[data-edit-workout]"); if (edit) editWorkout130(edit.dataset.editWorkout);
+    const del = e.target.closest("[data-delete-workout]"); if (del) deleteWorkout130(del.dataset.deleteWorkout);
+    const body = e.target.closest("[data-delete-body]"); if (body) {
+      if (confirm("删除这条身体测量？")) { state.data.bodyMetrics = state.data.bodyMetrics.filter(b => b.id !== body.dataset.deleteBody); saveData(); refreshFitnessViews130(); renderBodyList130(); }
+    }
+    const week = e.target.closest("[data-open-week]"); if (week) openWeeklySummary130();
+  });
+  $("#meal-grid").addEventListener("click", () => setRecordType130("diet"));
+  $("#fab-add").addEventListener("click", () => setRecordType130("diet"));
+  $("#export-workouts").addEventListener("click", () => saveText130(`食刻_训练_${localDate()}.csv`, "text/csv;charset=utf-8", buildWorkoutCSV130()));
+  $("#export-body").addEventListener("click", () => saveText130(`食刻_身体数据_${localDate()}.csv`, "text/csv;charset=utf-8", buildBodyCSV130()));
+  $("#import-json").addEventListener("click", () => $("#import-file").click());
+  $("#import-file").addEventListener("change", e => {
+    const file = e.target.files && e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = parseImport130(String(reader.result || ""));
+        if (!confirm(`导入将替换本机数据：${imported.entries.length} 条饮食、${imported.workouts.length} 次训练、${imported.bodyMetrics.length} 次测量。建议先导出当前备份。继续？`)) return;
+        const previous = state.data; state.data = imported; saveData();
+        if (!state.storageOK) { state.data = previous; throw new Error("本机存储不可用，未替换原数据"); }
+        state.review = []; state.photoItems = []; resetWorkoutForm130(); refreshFitnessViews130(); toast("备份已导入并通过兼容迁移");
+      } catch (err) { toast(`导入失败：${err.message || "文件无效"}；原数据未覆盖`); }
+      finally { e.target.value = ""; }
+    };
+    reader.onerror = () => { toast("无法读取文件；原数据未覆盖"); e.target.value = ""; };
+    reader.readAsText(file, "UTF-8");
+  });
+  renderExerciseDraft130(); resetWorkoutForm130(); setRecordType130("diet"); syncFitnessTrend130();
+}
+
+initFitness130();
 hydrateIcons();
 bind();
 goScreen("today");

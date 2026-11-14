@@ -1,111 +1,109 @@
-# 食刻 1.2.0 源代码
+# 食刻 Android 2.0.0
 
-这是「食刻」Android 1.2.0 的完整应用源码，包名 `app.shike.diet.fixed`，`versionCode=4`。源码包含原生 WebView 外壳、全部 HTML/CSS/JavaScript、图标、离线资源、构建脚本与回归测试。
+本地优先的「饮食 + 健身目标管理」应用。无需账号、无需服务器；饮食、目标、训练、模板和身体测量均保存在当前设备。2.0.0 基于已交付的 1.3.0，仅升级项目版本标识并保留全部功能、包名、原 localStorage 存储键和数据结构。
 
-> 本源码包不包含签名私钥、密码、Android SDK、APK 或编译产物。重新构建时需要自己的签名；新签名不能覆盖升级由此前其他证书签名的安装包。
+## 1. 现有功能（继承自 1.3.0）
 
-## 目录
+- **健身与能量目标**：减脂、维持、增肌；可按身体参数和活动水平估算，也可手动设置每日热量目标。
+- **训练日 / 休息日营养目标**：分别设置蛋白质、碳水、脂肪；当天有训练记录即采用训练日目标，首页显示摄入与个人目标的进度环。
+- **训练记录**：力量与有氧分开记录；力量支持动作、重量、次数、组数、RPE、容量，有氧支持项目、时长、距离；支持编辑、删除和可复用模板。
+- **身体数据**：记录体重、腰围、体脂率和备注；同日再次保存更新原记录，不重复新增；趋势页显示最近测量和 7 日窗口移动平均。
+- **趋势与每周总结**：饮食 / 训练 / 身体三类趋势，7 / 14 天范围；周总结汇总训练次数、时长、力量容量、热量/蛋白质达标天数及两个 7 日窗口的平均体重变化。
+- **完整备份**：JSON 包含饮食、食物库、设置、目标、训练、模板和身体数据；另提供训练 CSV、身体数据 CSV，保留原饮食 CSV 列结构。
+- **兼容导入**：可导入 1.2.0 JSON；导入前校验并要求确认，失败不会覆盖现有数据。版本更高的备份会被拒绝。
 
-```text
-Shike_1.2.0_Source/
-├── project/app/src/main/
-│   ├── AndroidManifest.xml          # 包名、版本、权限与原生入口
-│   ├── java/app/shike/diet/fixed/
-│   │   └── MainActivity.java        # WebView、相机/相册、导出与启动诊断
-│   ├── assets/
-│   │   ├── index.html               # 应用界面和全部业务逻辑
-│   │   ├── manifest.json            # PWA 清单
-│   │   ├── sw.js                    # 离线缓存
-│   │   ├── icons/                   # PWA 图标
-│   │   └── lucide-LICENSE.txt       # 内嵌 Lucide 图标许可
-│   └── res/                         # Android 应用名、样式与启动图标
-├── scripts/
-│   ├── build_apk.sh                 # 无 Gradle 的命令行 APK 构建
-│   └── verify_apk_assets.py         # APK 与源码 assets 逐字节比对
-├── tests/
-│   ├── test_1_2_0_vm.cjs            # 15 组确定性运行时回归测试
-│   ├── preflight_1_2_0.py           # DOM、图标、版本及数据基线检查
-│   └── baselines/index-1.1.0.html   # 1.1.0 回归基线
-└── reference/                       # 已交付 1.2.0 APK 的验证资料
-```
+## 2. 安装与升级
 
-主要功能代码集中在 `project/app/src/main/assets/index.html`：文字解析、全局食物库、照片预处理与识别候选、USDA 匹配、本地热量计算、四餐汇总、趋势、导入导出和本机持久化。无需 npm 安装前端依赖，Lucide 图标已内嵌。
+包名：`app.shike.diet.fixed`  
+版本：`versionName 2.0.0`，`versionCode 6`  
+系统：`minSdk 29`（Android 10+），`targetSdk 35`。
 
-## 环境与构建
+### 签名变化——请先阅读
 
-这不是 Gradle 工程，而是使用 `aapt2`、`d8`、`zipalign` 和 `apksigner` 直接构建。需要：
+本次 2.0.0 构建使用**新的本地验收签名**。原 1.3.0 构建所用私钥未包含在交付材料中，当前沙箱也无法恢复，因此本包不能直接覆盖先前交付的、签名不同的 1.3.0，也不能覆盖其他旧签名版本。数据格式兼容不等于签名兼容。
 
-- Bash、Python 3、Node.js 18+、zip/unzip
-- JDK 17（`javac`、`keytool`）
-- Android SDK Platform `android-35`
-- Android SDK Build-Tools `35.0.0`
+如设备已安装旧版本：
 
-### 使用现有签名构建
+1. 先在旧版「我的 → 导出 JSON」备份数据，并确认备份文件可用。
+2. 卸载旧签名版本会清除其应用私有存储；未备份的数据无法由本包恢复。
+3. 安装本次 2.0.0 后，在「我的 → 更多备份 → 导入 JSON 备份」选择旧备份，核对记录、目标、训练、模板和身体数据。
+4. 后续只有相同包名、相同签名且 versionCode 不降低的构建才能按 Android 规则覆盖升级。
+
+本次新签名仅用于本地验收。若需长期维护，请使用自己的固定证书重新签名并妥善保管私钥；交付物不包含 keystore、私钥或口令。
+
+### 原生安装提示
+
+Android 可能提示“未知来源应用”或 Play Protect 检查，这是本地侧载的通用提示，不代表已完成 Google Play 审核。请核对包名、版本和交付 SHA-256 后自行决定是否安装。
+
+## 3. 使用入口
+
+- **今日**：切换日期、查看热量与营养素进度、今日训练和本周概览；点击顶栏目标可编辑健身目标。
+- **记一笔**：在「饮食 / 训练 / 身体」之间切换。饮食沿用原文字、拍照和食物库流程；训练可保存模板；身体数据同日保存为更新。
+- **趋势**：切换饮食 / 训练 / 身体，选择 7 或 14 天，打开每周总结。
+- **我的**：管理健身目标、营养目标、模板入口、数据导出/导入、食物库、识别服务配置及应用信息。
+- **窄屏**：320 px 下隐藏顶栏安装按钮，仍可从「我的 → 应用信息」查看安装/离线说明。
+
+## 4. 数据与迁移
+
+localStorage 键保持：`shike-food-energy-ledger-v1`。
+
+1.2.0 数据在首次渲染前于内存中迁移为 `schemaVersion: 2`，原 `entries`、`customFoods`、`settings.dailyTarget` 等字段保留；第一次保存后才写回 schema 2。新增字段：
+
+- `goals`：健身目标、活动水平、目标模式、BMR/TDEE/估算目标和更新时间。
+- `profile`：估算所需生理性别、年龄、身高、体重。
+- `nutritionTargets`：`training` 与 `rest` 各自的 `protein/carb/fat`。
+- `workouts[]`：日期、类型、名称、项目、时长、距离、动作、容量、估算消耗、备注。
+- `workoutTemplates[]`：可复用的训练草稿。
+- `bodyMetrics[]`：日期、体重、腰围、体脂率、备注。
+
+JSON 导入采用**校验并确认后替换**，不是静默合并。完整 JSON 是迁移全部新数据的首选；CSV 用于表格查看，不能作为完整恢复备份。
+
+## 5. 估算口径与限制
+
+- BMR 使用 Mifflin–St Jeor 公式；TDEE 为 BMR × 活动系数。减脂目标 ×0.85、维持 ×1、增肌 ×1.10，并四舍五入到 10 kcal。活动系数包含日常与训练活动，不再次把训练消耗加回目标。
+- 力量容量为各动作 `重量 kg × 次数 × 组数` 之和。自重或未填重量按 0 kg 计，因此不表示实际机械功。
+- 训练消耗采用 MET 估算，需要有效时长和体重；仅展示，**不抵扣饮食热量**。
+- 7 日移动平均只统计窗口内实际测量，不为无记录日期补值；周均变化仅在本周与前一个 7 日窗口均有数据时计算。
+- 周总结的热量达标为个人目标 ±10%，蛋白质达标为摄入不低于当天目标；只统计有饮食记录的日期。缺失营养成分仍按旧逻辑以 0 参与汇总，不代表食物实际不含该成分。
+- 饮食能量、目标、BMR 和运动消耗均为个人记录或公式估算，不构成医疗、营养处方或健康建议。
+
+## 6. 隐私与可选联网
+
+核心记录、目标、趋势、模板、备份和离线启动不要求账号或服务器。Android WebView 资源内置；PWA 在 HTTP(S) 环境使用 Service Worker 缓存完整应用。
+
+仅在主动使用 USDA 查询或已配置的照片识别服务时联网。USDA 使用应用内置 `DEMO_KEY`，有公共限额；识别端点由用户自行配置。请求范围和服务配置请查看应用内对应说明。清除应用数据、卸载或清除浏览器站点数据可能删除本地记录，请先导出 JSON。
+
+## 7. 从源码构建
+
+本仓库不依赖 Gradle。需要：Linux/bash、Python 3、Node.js、JDK 17+、zip/unzip、Android SDK Platform 35 和 Build-Tools 35.0.0。
 
 ```bash
-cd Shike_1.2.0_Source
-export ANDROID_SDK_ROOT=/你的路径/Android/Sdk
-export SHIKE_KEYSTORE=/你的路径/my-release.jks
-export SHIKE_KS_PASS='你的签名密码'
-bash scripts/build_apk.sh
+export ANDROID_SDK_ROOT=/path/to/android-sdk
+export SHIKE_KEYSTORE=/secure/path/your-release.jks
+export SHIKE_KS_PASS='你的口令'
+bash scripts/build_apk.sh /secure/output/shike-android-2.0.0.apk
+python3 scripts/verify_apk_assets.py /secure/output/shike-android-2.0.0.apk
 ```
 
-也可以不设置密码环境变量，改用密码文件：
+构建脚本会检查 8 个 assets、4 段内嵌脚本语法、编译/打包、zipalign 和 APK 签名，并输出 badging、权限和证书信息。本次 Build-Tools 35.0.0、minSdk 29 的实测交付包采用 v3 签名；具体方案以包级验证输出为准，不宣称未启用的 v1/v2。请把 keystore 与输出 APK 放在源码目录之外。
 
-```bash
-export SHIKE_KEYSTORE_PASS_FILE=/你的路径/keystore.pass
-bash scripts/build_apk.sh
-```
+也可使用 Android Studio / Gradle：同步 `project/`，运行 `:app:assembleDebug` 或配置 release 签名后构建；以交付 APK 的包级报告为准，不把另一种构建方式视为已实测。
 
-签名别名应为 `shikefixed`。如现有别名不同，请修改 `scripts/build_apk.sh` 中 `apksigner` 的 `--ks-key-alias`。输出位于：
-
-```text
-build/shike-android-1.2.0.apk
-```
-
-可用 `BUILD_DIR` 改变构建输出目录，用 `ANDROID_BUILD_TOOLS_DIR` 或 `ANDROID_PLATFORM_JAR` 覆盖 SDK 工具位置。
-
-### 仅用于全新安装的本地签名
-
-没有签名时，可显式生成新的本地密钥：
-
-```bash
-export ANDROID_SDK_ROOT=/你的路径/Android/Sdk
-SHIKE_GENERATE_KEYSTORE=1 bash scripts/build_apk.sh
-```
-
-脚本会在 `keystore/` 生成私钥和随机密码文件。请妥善备份且不要公开。
-
-**签名兼容警告：** 新密钥与此前交付 APK 的证书不同，不能覆盖升级原应用。若需保留原应用数据并覆盖升级，必须使用原来的私钥；原私钥未放入公开源码包。不要使用“先卸载再安装”的方式处理签名冲突，卸载会清除本机记录，操作前请先导出备份。
-
-## 测试与核验
-
-在源码根目录执行：
+## 8. 测试
 
 ```bash
 node tests/test_1_2_0_vm.cjs
-python3 tests/preflight_1_2_0.py
+python3 tests/preflight_2_0_0.py
+node tests/test_2_0_0_vm.cjs
+node tests/browser_2_0_0.cjs
 ```
 
-运行时测试覆盖旧数据、跨餐次/日期复用、食物编辑与删除、图片压缩、双置信度、重量范围与参考物、批量加入与防重复、缺少克重拒绝入账、识别失败保护、USDA 匹配夹具、本地热量重算、CSV 转义及重载持久化。识别和在线响应均为协议测试夹具，**不代表真实食物照片识别准确率**。
+`tests/preflight_1_2_0.py` 保留为历史基线测试，固定检查 1.2.0 版本号及旧启动脚本字节，只能在原始 1.2.0 基线目录运行；不通过改写它对 2.0.0 放行。当前源码的饮食回归由 `test_1_2_0_vm.cjs` 和 2.0.0 专项预检共同覆盖。
 
-构建后检查 APK 中的网页资源是否与当前源码一致：
+浏览器测试需要本机 Chromium 和 Puppeteer；可用 `CHROME_PATH=/path/to/chromium` 指定浏览器。它通过移动视口执行真实页面操作，覆盖迁移、目标、营养、力量/有氧、模板、身体数据、趋势、周总结、真实下载、导入、重载、PWA 离线和模拟原生桥分支，并保存 JSON 报告及截图。
 
-```bash
-python3 scripts/verify_apk_assets.py build/shike-android-1.2.0.apk
-```
+详细结果见 `TESTING.md`、`reference/Shike_2.0.0_*.json` 和 `BUILD_VERIFICATION.json`。Chromium/模拟桥测试不等于 Android 真机测试；相机、相册权限、真实 WebView 原生导出、外部服务和旧签名覆盖升级均未在本环境实测。
 
-如需人工检查包信息与签名：
+## 9. 源码说明
 
-```bash
-$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt dump badging build/shike-android-1.2.0.apk
-$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner verify --verbose --print-certs build/shike-android-1.2.0.apk
-```
-
-## 数据、服务与精度边界
-
-- 本机存储键保持为 `shike-food-energy-ledger-v1`。卸载或清除应用数据会删除记录，请定期导出 JSON/CSV。
-- USDA 在线查询需要网络；源码保留官方 `DEMO_KEY` 回退，正式使用建议申请自己的 API Key。
-- 拍照识别需要用户配置兼容 HTTPS 服务并授权上传；未配置或未授权时不会上传，也不会生成虚假食物或热量。
-- 单目照片不能保证绝对克重或识别准确率。热量按最终所选食物与用户确认克数在本地重算，不采用识别服务自报热量。
-- 原交付包完成了代码、无渲染运行时和签名 APK 包级检查；Android 真机启动、相机、系统导出及实际覆盖升级仍需设备验证。
+主要业务仍在 `project/app/src/main/assets/index.html`，保持原架构与内嵌 Lucide 图标，无新增运行时第三方脚本或框架。`sw.js` 缓存版本为 `shike-v2.0.0`。`reference/legacy-1.2.0/` 与 `reference/legacy-1.3.0/` 仅保存历史资料，不是本次构建结果。源码包不含签名材料、测试下载文件、缓存或构建中间产物。

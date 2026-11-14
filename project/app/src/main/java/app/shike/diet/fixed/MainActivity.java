@@ -333,7 +333,7 @@ public final class MainActivity extends Activity {
         } catch (Throwable error) {
             webViewVersion = "读取失败：" + error;
         }
-        return "食刻 1.2.0\n"
+        return "食刻 2.0.0\n"
                 + "包名：app.shike.diet.fixed\n"
                 + "启动地址：" + START_URL + "\n"
                 + "启动阶段：" + startupStage + "\n"
